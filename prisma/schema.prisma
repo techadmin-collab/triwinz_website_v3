@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+model Blog {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  title      String
+  slug       String   @unique
+  content    String
+  excerpt    String?
+  coverImage String?
+  published  Boolean  @default(false)
+  seoTitle   String?
+  seoDesc    String?
+  createdAt  DateTime @default(now())
+}
+
+model CaseStudy {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  title      String
+  slug       String   @unique
+  content    String
+  summary    String
+  coverImage String?
+  client     String?
+  industry   String?
+  result     String?
+  published  Boolean  @default(false)
+  seoTitle   String?
+  seoDesc    String?
+  createdAt  DateTime @default(now())
+}
+
+model Job {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  title            String
+  slug             String   @unique
+  department       String
+  location         String
+  type             String   // Employment | Contract | Internship (multi: "Employment / Contract")
+  workMode         String   @default("Hybrid") // WFH | WFO | Hybrid
+  experience       String
+  joiningPeriod    String   @default("") // e.g. Immediate, 15 days, 30 days, 60 days
+  summary          String
+  about            String
+  responsibilities String[]
+  requirements     String[]
+  qualifications   String[] @default([])
+  niceToHave       String[]
+  published        Boolean  @default(false)
+  createdAt        DateTime @default(now())
+}
+
+model JobApplication {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  jobSlug        String
+  jobTitle       String
+  fullName       String
+  email          String
+  phone          String
+  coverLetter                 String?
+  referralSource              String?
+  availableToJoinAndRelocate  Boolean?
+  resumeUrl                   String
+  resumePublicId String?
+  resumeFileName String?
+  status         String   @default("new") // new | shortlisted | on_hold | rejected | selected
+  createdAt      DateTime @default(now())
+
+  @@index([jobSlug])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ContactMessage {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  fullName   String
+  email      String
+  phone      String
+  company    String
+  message    String
+  emailSent  Boolean  @default(false)
+  emailError String?
+  status     String   @default("new") // new | read | archived
+  createdAt  DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([emailSent])
+}
+
+model AdminUser {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String // admin | staff
+  permissions  String[]
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([role])
+  @@index([active])
+}
