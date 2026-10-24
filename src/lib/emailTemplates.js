@@ -308,3 +308,107 @@ export function applicationRejectedTemplate({ fullName, jobTitle }) {
 
   return { subject, text, html };
 }
+
+/** Training program application → confirmation to applicant */
+export function trainingApplicationReceivedTemplate({ fullName }) {
+  const subject = "We received your Training Program application";
+  const text = [
+    `Dear ${fullName},`,
+    "",
+    "Thank you for applying to the Triwinz Technologies Training Program.",
+    "",
+    "Your application has been received. Our team will review your details and contact you with the next steps, including the batch schedule and selection process.",
+    "",
+    "Best regards,",
+    "Training Team",
+    "Triwinz Technologies Pvt. Ltd.",
+    "Thiruvananthapuram, Kerala",
+  ].join("\n");
+
+  const html = baseLayout({
+    title: "Application received",
+    eyebrow: "Training Program",
+    preview: "Thank you for applying to the Triwinz Training Program",
+    footerNote:
+      "This is an automated confirmation from Triwinz Careers. Please do not reply to this email.",
+    bodyHtml: `
+      <p style="margin:0 0 14px;">Dear <strong style="color:#111827;">${escapeHtml(fullName)}</strong>,</p>
+      <p style="margin:0 0 14px;">
+        Thank you for applying to the
+        <strong style="color:#111827;">Triwinz Technologies Training Program</strong>.
+      </p>
+      <p style="margin:0 0 22px;">
+        Your application has been received. Our team will review your details and contact you
+        with the next steps, including the batch schedule and selection process.
+      </p>
+      <p style="margin:0;color:#111827;line-height:1.7;">
+        Best regards,<br />
+        <strong>Training Team</strong><br />
+        Triwinz Technologies Pvt. Ltd.<br />
+        <span style="color:#6b7280;">Thiruvananthapuram, Kerala</span>
+      </p>
+    `,
+  });
+
+  return { subject, text, html };
+}
+
+/** Training program application → internal notification */
+export function trainingApplicationNotificationTemplate({
+  fullName,
+  email,
+  phone,
+  qualification,
+  college,
+  yearOfPassing,
+  resumeUrl,
+}) {
+  const subject = `New training program application from ${fullName}`;
+  const text = [
+    "New training program application",
+    "",
+    `Name: ${fullName}`,
+    `Email: ${email}`,
+    `Phone: ${phone}`,
+    `Qualification: ${qualification}`,
+    `College: ${college}`,
+    `Year of passing: ${yearOfPassing}`,
+    `Resume: ${resumeUrl || "Not attached"}`,
+  ].join("\n");
+
+  const html = baseLayout({
+    title: "New training application",
+    eyebrow: "Training Program",
+    preview: `${fullName} applied for the Training Program`,
+    footerNote:
+      "This is an internal notification from the Triwinz website training form.",
+    bodyHtml: `
+      <p style="margin:0 0 18px;">
+        A new application for the Training Program was submitted through the careers page.
+      </p>
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid ${BRAND.cyanBorder};border-radius:10px;background:${BRAND.cyanSoft};padding:4px 18px;">
+        ${detailRow("Name", `<strong style="color:#111827;">${escapeHtml(fullName)}</strong>`)}
+        ${detailRow(
+          "Email",
+          `<a href="mailto:${escapeHtml(email)}" style="color:${BRAND.cyan};text-decoration:none;font-weight:600;">${escapeHtml(email)}</a>`,
+        )}
+        ${detailRow("Phone", escapeHtml(phone))}
+        ${detailRow("Qualification", escapeHtml(qualification))}
+        ${detailRow("College", escapeHtml(college))}
+        ${detailRow("Passing year", escapeHtml(yearOfPassing))}
+        ${detailRow(
+          "Resume",
+          resumeUrl
+            ? `<a href="${escapeHtml(resumeUrl)}" style="color:${BRAND.cyan};text-decoration:none;font-weight:600;">View resume</a>`
+            : "Not attached",
+          true,
+        )}
+      </table>
+      <p style="margin:20px 0 0;font-size:13px;color:#6b7280;">
+        Manage this application from the Training section of the admin dashboard.
+      </p>
+    `,
+  });
+
+  return { subject, text, html };
+}

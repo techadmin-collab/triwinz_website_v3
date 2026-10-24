@@ -77,6 +77,24 @@ model JobApplication {
   @@index([createdAt])
 }
 
+model TrainingApplication {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  fullName       String
+  email          String
+  phone          String
+  qualification  String
+  college        String
+  yearOfPassing  String
+  resumeUrl      String?
+  resumePublicId String?
+  resumeFileName String?
+  status         String   @default("new") // new | contacted | enrolled | rejected
+  createdAt      DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}
+
 model ContactMessage {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   fullName   String
