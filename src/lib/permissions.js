@@ -2,6 +2,7 @@ export const ALL_MODULE_KEYS = [
   "dashboard",
   "jobs",
   "applications",
+  "training",
   "contacts",
   "users",
 ];
@@ -25,6 +26,12 @@ export const ADMIN_MODULES = [
     label: "Applications",
     href: "/admin/applications",
     pathPrefixes: ["/admin/applications", "/admin/shortlisted"],
+  },
+  {
+    key: "training",
+    label: "Training",
+    href: "/admin/training",
+    pathPrefixes: ["/admin/training"],
   },
   {
     key: "contacts",
@@ -82,6 +89,7 @@ export function getModuleKeyForPath(pathname) {
   ) {
     return "applications";
   }
+  if (pathname.startsWith("/admin/training")) return "training";
   if (pathname.startsWith("/admin/contacts")) return "contacts";
   return null;
 }

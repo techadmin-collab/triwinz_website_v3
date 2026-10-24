@@ -1,5 +1,6 @@
 import { Box, Container, Typography } from "@mui/material";
 import JobCard from "./sections/JobCard";
+import TrainingApplyModal from "./sections/TrainingApplyModal";
 import { getPublishedJobs } from "./sections/jobs";
 import { defaultOpenGraph, defaultTwitter } from "../../../lib/seo";
 
@@ -121,6 +122,10 @@ export default async function CareersPage() {
             looking for people who care about craft, ownership, and building
             technology that helps businesses scale.
           </Typography>
+
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+            <TrainingApplyModal />
+          </Box>
         </Container>
       </Box>
 
