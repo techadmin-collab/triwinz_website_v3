@@ -3,14 +3,16 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
 import EmojiEventsOutlinedIcon from "@mui/icons-material/EmojiEventsOutlined";
-import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
 import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
 import ApartmentOutlinedIcon from "@mui/icons-material/ApartmentOutlined";
 import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
 import CodeOutlinedIcon from "@mui/icons-material/CodeOutlined";
+import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
 import RecordVoiceOverOutlinedIcon from "@mui/icons-material/RecordVoiceOverOutlined";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
+import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
+import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -45,8 +47,8 @@ const cardSx = {
 const ICONS = {
   training: <SchoolOutlinedIcon />,
   internship: <WorkOutlineIcon />,
+  projects: <AccountTreeOutlinedIcon />,
   scholarship: <EmojiEventsOutlinedIcon />,
-  salary: <PaymentsOutlinedIcon />,
   mentor: <Groups2OutlinedIcon />,
   workplace: <ApartmentOutlinedIcon />,
   career: <TrendingUpOutlinedIcon />,
@@ -88,7 +90,6 @@ const faqJsonLd = {
 /* ── Page ──────────────────────────────────────────────────── */
 
 export default function IntensiveCorporateTrainingPage() {
-  const showShares = p.fee.instalments.every((i) => i.share);
 
   return (
     <Box sx={{ fontFamily: "montserrat, inter", backgroundColor: "#fff" }}>
@@ -139,35 +140,63 @@ export default function IntensiveCorporateTrainingPage() {
             </Box>
           </Box>
 
+          {p.hero.tagline ? (
+            <Typography
+              textAlign="center"
+              sx={{
+                fontSize: { xs: "1.05rem", md: "1.35rem" },
+                fontWeight: 700,
+                letterSpacing: "0.01em",
+                maxWidth: 900,
+                mx: "auto",
+                mb: 2,
+                opacity: 0.97,
+              }}
+            >
+              {p.hero.tagline}
+            </Typography>
+          ) : null}
+
           <Typography
             component="h1"
             textAlign="center"
             fontWeight={800}
-            sx={{ fontSize: { xs: "2rem", md: "3.2rem" }, lineHeight: 1.15, maxWidth: 1000, mx: "auto", mb: 3 }}
+            sx={{ fontSize: { xs: "2rem", md: "3.2rem" }, lineHeight: 1.15, whiteSpace: "pre-line", maxWidth: 1000, mx: "auto", mb: 3 }}
           >
             {p.hero.headline}
           </Typography>
 
           <Typography
             textAlign="center"
-            sx={{ maxWidth: 860, mx: "auto", lineHeight: 1.7, fontSize: { xs: "0.95rem", md: "1.08rem" }, opacity: 0.93, mb: 4 }}
+            sx={{ maxWidth: 860, mx: "auto", lineHeight: 1.7, fontSize: { xs: "0.95rem", md: "1.08rem" }, opacity: 0.93 }}
           >
             {p.hero.subheadline}
           </Typography>
 
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <TrainingApplyModal
-              buttonLabel="Apply Now"
-              buttonSx={{
-                minWidth: { xs: "100%", sm: 220 },
-                color: PURPLE,
-                backgroundImage: "none",
-                backgroundColor: "#fff",
-                boxShadow: "0 10px 24px rgba(0,0,0,0.18)",
-                "&:hover": { backgroundImage: "none", backgroundColor: "#f4efff", boxShadow: "0 12px 28px rgba(0,0,0,0.24)" },
-              }}
-            />
-          </Box>
+          {p.hero.tag ? (
+            <Box sx={{ display: "flex", justifyContent: "center", mt: { xs: 3, md: 3.5 } }}>
+              <Box
+                sx={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 0.75,
+                  px: 2.25,
+                  py: 0.8,
+                  borderRadius: 999,
+                  backgroundColor: "#fff",
+                  color: PURPLE,
+                  boxShadow: "0 8px 20px rgba(0,0,0,0.18)",
+                  fontSize: { xs: "0.78rem", sm: "0.9rem" },
+                  fontWeight: 800,
+                  letterSpacing: "0.03em",
+                  textTransform: "uppercase",
+                }}
+              >
+                <WorkspacePremiumOutlinedIcon sx={{ fontSize: 18 }} />
+                {p.hero.tag}
+              </Box>
+            </Box>
+          ) : null}
         </Box>
       </Box>
 
@@ -178,7 +207,7 @@ export default function IntensiveCorporateTrainingPage() {
             ...cardSx,
             boxShadow: "0 18px 40px rgba(80, 20, 210, 0.12)",
             display: "grid",
-            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "repeat(4, 1fr)" },
+            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "repeat(3, 1fr)", lg: "repeat(5, 1fr)" },
             gap: { xs: 2, md: 2.5 },
             p: { xs: 2.5, md: 3 },
           }}
@@ -239,7 +268,7 @@ export default function IntensiveCorporateTrainingPage() {
 
       {/* 4. How the programme works */}
       <Band>
-        <SectionTitle title="How the programme works" intro="Six months on the job, then a defined path into the TriWinz team." center />
+        <SectionTitle title="How the programme works" intro="One year on the job: training, internship, then six months of enterprise projects with the TriWinz team." center />
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" }, gap: { xs: 2.5, md: 3 } }}>
           {p.phases.map((phase, i) => (
             <Box key={phase.title} sx={{ ...cardSx, p: { xs: 2.5, md: 3 }, display: "flex", flexDirection: "column" }}>
@@ -270,7 +299,7 @@ export default function IntensiveCorporateTrainingPage() {
 
       {/* 5. What you will learn */}
       <Box sx={{ ...container, py: { xs: 7, md: 10 } }}>
-        <SectionTitle title="What you will learn" intro="A structured self-study path across the full stack, plus the workplace skills that make you job-ready." center />
+        <SectionTitle title="What you will learn" intro="A structured self-paced training path across the full stack, plus the workplace skills that make you job-ready." center />
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", lg: "repeat(4, 1fr)" }, gap: 2 }}>
           {p.modules.map((m) => (
             <Box key={m.title} sx={{ ...cardSx, p: 2.5, position: "relative", overflow: "hidden", "&::before": { content: '""', position: "absolute", top: 0, left: 0, right: 0, height: 3, background: gradientStrong } }}>
@@ -321,27 +350,24 @@ export default function IntensiveCorporateTrainingPage() {
       <Band>
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" }, gap: { xs: 7, lg: 6 }, alignItems: "start" }}>
           <Box>
-            <SectionTitle title="Programme fee and EMI options" />
-            <Typography sx={{ color: "#444", lineHeight: 1.75, mb: 3 }}>
-              {p.fee.total ? (
-                <>
-                  The total programme fee is <strong>{p.fee.total}</strong>.{" "}
-                </>
-              ) : (
-                <>Contact us for the total programme fee. </>
-              )}
-              {p.fee.intro}
-            </Typography>
-            <SimpleTable
-              columns={showShares ? ["Instalment", "When it is paid", "Share of fee"] : ["Instalment", "When it is paid"]}
-              template={showShares ? "110px 1fr 110px" : "110px 1fr"}
-              rows={p.fee.instalments.map((i) => (showShares ? [i.name, i.when, i.share] : [i.name, i.when]))}
-            />
-            {p.fee.notes.map((n) => (
-              <Typography key={n} sx={{ mt: 2, color: "#555", fontSize: "0.9rem" }}>
-                {n}
-              </Typography>
-            ))}
+            <SectionTitle title={p.fee.title} />
+            <Box sx={{ ...cardSx, p: { xs: 3, md: 4 }, display: "flex", gap: 2, alignItems: "flex-start" }}>
+              <IconBadge icon={<PaymentsOutlinedIcon />} />
+              <Box>
+                <Typography sx={{ color: "#222", fontWeight: 700, fontSize: { xs: "1.05rem", md: "1.15rem" }, mb: 1 }}>
+                  {p.fee.text}
+                </Typography>
+                {p.howToApply.contactPhone ? (
+                  <Box
+                    component="a"
+                    href={p.howToApply.contactPhoneHref}
+                    sx={{ color: PURPLE, fontWeight: 700, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 0.75 }}
+                  >
+                    <PhoneOutlinedIcon sx={{ fontSize: 18 }} /> {p.howToApply.contactPhone}
+                  </Box>
+                ) : null}
+              </Box>
+            </Box>
           </Box>
 
           <Box>
@@ -353,9 +379,11 @@ export default function IntensiveCorporateTrainingPage() {
                     <Typography component="h3" fontWeight={800} sx={{ fontSize: "1.05rem" }}>
                       {row.stage}
                     </Typography>
-                    <Box sx={{ px: 1.5, py: 0.5, borderRadius: 999, background: gradientStrong, color: "#fff", fontWeight: 700, fontSize: "0.8rem" }}>
-                      {row.amount}
-                    </Box>
+                    {row.amount ? (
+                      <Box sx={{ px: 1.5, py: 0.5, borderRadius: 999, background: gradientStrong, color: "#fff", fontWeight: 700, fontSize: "0.8rem" }}>
+                        {row.amount}
+                      </Box>
+                    ) : null}
                   </Box>
                   <KeyValue label="Basis" value={row.basis} />
                   <KeyValue label="Applied at" value={row.appliedAt} />
@@ -366,39 +394,6 @@ export default function IntensiveCorporateTrainingPage() {
           </Box>
         </Box>
       </Band>
-
-      {/* 10. Salary after the internship */}
-      <Box sx={{ ...container, py: { xs: 7, md: 10 } }}>
-        <Box
-          sx={{
-            borderRadius: 4,
-            p: { xs: 3, md: 5 },
-            color: "#fff",
-            background: gradientStrong,
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "0.8fr 1.2fr" },
-            gap: { xs: 3, md: 5 },
-            alignItems: "center",
-          }}
-        >
-          <Box>
-            <Typography component="h2" fontWeight={800} sx={{ fontSize: { xs: "1.45rem", md: "1.75rem" }, mb: 2 }}>
-              {p.salary.title}
-            </Typography>
-            <Typography fontWeight={800} sx={{ fontSize: { xs: "1.8rem", md: "2.4rem" }, lineHeight: 1.1 }}>
-              {p.salary.range}
-            </Typography>
-            <Typography sx={{ opacity: 0.9, mt: 0.5 }}>{p.salary.rangeLabel}</Typography>
-          </Box>
-          <Box sx={{ display: "grid", gap: 2 }}>
-            {p.salary.paragraphs.map((para, i) => (
-              <Typography key={i} sx={{ lineHeight: 1.75, opacity: 0.95 }}>
-                {para}
-              </Typography>
-            ))}
-          </Box>
-        </Box>
-      </Box>
 
       {/* 11. Why train with TriWinz */}
       <Band>
@@ -436,23 +431,6 @@ export default function IntensiveCorporateTrainingPage() {
         </Typography>
         <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "center", alignItems: "center", gap: 1.5 }}>
           <TrainingApplyModal buttonLabel="Apply Now" buttonSx={{ minWidth: { xs: "100%", sm: 220 } }} />
-          <Link href={p.howToApply.jobDescriptionHref} style={{ textDecoration: "none", width: "100%", maxWidth: 260 }}>
-            <Button
-              fullWidth
-              sx={{
-                py: 1.4,
-                borderRadius: 2.5,
-                fontWeight: 800,
-                textTransform: "none",
-                fontSize: "1rem",
-                color: PURPLE,
-                border: "1.5px solid rgba(80, 20, 210, 0.35)",
-                "&:hover": { backgroundColor: "rgba(80, 20, 210, 0.05)", borderColor: PURPLE },
-              }}
-            >
-              View Job Description
-            </Button>
-          </Link>
         </Box>
         <ContactLine />
       </Box>
@@ -611,44 +589,6 @@ function KeyValue({ label, value }) {
         {label}
       </Typography>
       <Typography sx={{ fontSize: "0.9rem", color: "#333", lineHeight: 1.55 }}>{value}</Typography>
-    </Box>
-  );
-}
-
-function SimpleTable({ columns, rows, template }) {
-  return (
-    <Box sx={{ ...cardSx, overflow: "hidden" }}>
-      <Box sx={{ display: { xs: "none", sm: "grid" }, gridTemplateColumns: template, gap: 2, px: 2.5, py: 1.5, background: gradientStrong, color: "#fff" }}>
-        {columns.map((c) => (
-          <Typography key={c} sx={{ fontSize: "0.78rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            {c}
-          </Typography>
-        ))}
-      </Box>
-      {rows.map((row, r) => (
-        <Box
-          key={r}
-          sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", sm: template },
-            gap: { xs: 0.5, sm: 2 },
-            px: 2.5,
-            py: 1.75,
-            borderTop: r ? "1px solid rgba(80, 20, 210, 0.07)" : "none",
-            backgroundColor: r % 2 ? "rgba(80, 20, 210, 0.025)" : "#fff",
-          }}
-        >
-          {row.map((cell, c) => (
-            <Typography key={c} sx={{ fontSize: "0.92rem", color: c === 0 ? PURPLE : "#333", fontWeight: c === 0 ? 800 : 500, lineHeight: 1.55 }}>
-              <Box component="span" sx={{ display: { xs: c === 0 ? "none" : "inline", sm: "none" }, fontWeight: 700, color: "#888", mr: 0.75 }}>
-                {columns[c]}:
-              </Box>
-              {c === 0 ? <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>{cell} instalment</Box> : null}
-              <Box component="span" sx={{ display: c === 0 ? { xs: "none", sm: "inline" } : "inline" }}>{cell}</Box>
-            </Typography>
-          ))}
-        </Box>
-      ))}
     </Box>
   );
 }

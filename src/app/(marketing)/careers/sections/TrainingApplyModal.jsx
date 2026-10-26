@@ -73,7 +73,7 @@ export default function TrainingApplyModal({
               opacity: 0.9,
             }}
           >
-            Apply for the 6-month training and internship programme
+            Apply for the one-year training, internship and project programme
           </Box>
           <IconButton
             aria-label="Close"
