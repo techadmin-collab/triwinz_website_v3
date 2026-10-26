@@ -9,6 +9,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { Drawer, IconButton } from "@mui/material";
 import { usePathname } from "next/navigation";
+const TRAINING_PROGRAM_PATH = "/careers/intensive-corporate-training";
 
 const menuItemStyle = {
   px: 2,
@@ -71,11 +72,13 @@ const dropdownStyle = (open, width) => ({
 export default function Header() {
   const [productOpen, setProductOpen] = useState(false);
   const [serviceOpen, setServiceOpen] = useState(false);
+  const [careersOpen, setCareersOpen] = useState(false);
 
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [mobileCareersOpen, setMobileCareersOpen] = useState(false);
 
   const pathname = usePathname();
 
@@ -337,20 +340,51 @@ export default function Header() {
             >
               Case Studies
             </Button>
-            <Button
-              color="inherit"
-              component={Link}
-              href="/careers"
-              sx={{
-                color: "inherit",
-                transition: "color 0.25s ease-in-out",
-                "&:hover": {
-                  color: "#000",
-                },
-              }}
+            <Box
+              onMouseEnter={() => setCareersOpen(true)}
+              onMouseLeave={() => setCareersOpen(false)}
+              sx={{ position: "relative" }}
             >
-              Careers
-            </Button>
+              <Button
+                color="inherit"
+                component={Link}
+                href="/careers"
+                endIcon={<KeyboardArrowDownIcon />}
+                sx={{
+                  color: pathname?.startsWith("/careers") ? "#000" : "inherit",
+                  transition: "color 0.25s ease-in-out",
+                  "&:hover": { color: "#000" },
+                }}
+              >
+                Careers
+              </Button>
+
+              <Box sx={dropdownStyle(careersOpen, 290)}>
+                <Box
+                  component={Link}
+                  href="/careers"
+                  onClick={() => setCareersOpen(false)}
+                  sx={{
+                    ...menuItemStyle,
+                    color: pathname === "/careers" ? "#000000a4" : "inherit",
+                  }}
+                >
+                  Open Positions
+                </Box>
+                <Box
+                  component={Link}
+                  href={TRAINING_PROGRAM_PATH}
+                  onClick={() => setCareersOpen(false)}
+                  sx={{
+                    ...menuItemStyle,
+                    color:
+                      pathname === TRAINING_PROGRAM_PATH ? "#000000a4" : "inherit",
+                  }}
+                >
+                  Intensive Corporate Training Programme
+                </Box>
+              </Box>
+            </Box>
             {/* <Button
               color="inherit"
               component={Link}
@@ -724,16 +758,65 @@ export default function Header() {
             </Button>
           </Box>
 
+          {/* Careers */}
           <Box>
             <Button
-              component={Link}
-              href="/careers"
               fullWidth
-              sx={mobileLinkStyle}
-              onClick={() => setMobileOpen(false)}
+              onClick={() => setMobileCareersOpen(!mobileCareersOpen)}
+              sx={{
+                justifyContent: "space-between",
+                color: "#000",
+                py: 1.2,
+              }}
+              endIcon={
+                <KeyboardArrowDownIcon
+                  sx={{
+                    transform: mobileCareersOpen
+                      ? "rotate(180deg)"
+                      : "rotate(0deg)",
+                    transition: "0.2s",
+                  }}
+                />
+              }
             >
               Careers
             </Button>
+
+            <Box
+              sx={{
+                maxHeight: mobileCareersOpen ? 200 : 0,
+                overflow: "hidden",
+                transition: "max-height 0.3s ease",
+                backgroundColor: "#acacac4d",
+              }}
+            >
+              <Button
+                component={Link}
+                href="/careers"
+                fullWidth
+                sx={{
+                  ...mobileSubLinkStyle,
+                  color: "#000000a4",
+                  fontWeight: pathname === "/careers" ? 700 : 600,
+                }}
+                onClick={() => setMobileOpen(false)}
+              >
+                Open Positions
+              </Button>
+              <Button
+                component={Link}
+                href={TRAINING_PROGRAM_PATH}
+                fullWidth
+                sx={{
+                  ...mobileSubLinkStyle,
+                  color: "#000000a4",
+                  fontWeight: pathname === TRAINING_PROGRAM_PATH ? 700 : 600,
+                }}
+                onClick={() => setMobileOpen(false)}
+              >
+                Intensive Corporate Training Programme
+              </Button>
+            </Box>
           </Box>
 
           <Button

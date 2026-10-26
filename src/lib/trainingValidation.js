@@ -2,13 +2,11 @@
 // Used by the client form (inline errors) and the API route (server-side check).
 
 export const QUALIFICATIONS = [
-  "B.Tech / B.E.",
-  "M.Tech / M.E.",
+  "B.E. / B.Tech (Computer Science / IT)",
+  "B.E. / B.Tech (Other engineering discipline)",
   "BCA",
   "MCA",
-  "B.Sc (Computer Science / IT)",
-  "M.Sc (Computer Science / IT)",
-  "Diploma",
+  "B.Sc Computer Science",
   "Other",
 ];
 

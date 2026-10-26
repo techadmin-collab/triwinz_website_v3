@@ -256,7 +256,7 @@ export default function AdminTrainingPage() {
                                   url: row.resumeUrl,
                                   fileName: row.resumeFileName,
                                   fullName: row.fullName,
-                                  jobTitle: "Training Program",
+                                  jobTitle: "Corporate Training Programme",
                                 })
                               }
                               sx={{ border: "1px solid #e5e7eb", borderRadius: 1.5 }}
