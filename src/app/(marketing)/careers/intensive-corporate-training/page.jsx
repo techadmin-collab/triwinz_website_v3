@@ -487,7 +487,7 @@ export default function IntensiveCorporateTrainingPage() {
             border: "1px solid rgba(80, 20, 210, 0.1)",
           }}
         >
-          <Typography component="h2" fontWeight={800} sx={{ fontSize: { xs: "1.35rem", md: "1.85rem" }, maxWidth: 760, mx: "auto", mb: 3, lineHeight: 1.3 }}>
+          <Typography component="h2" fontWeight={800} sx={{ fontSize: { xs: "1.35rem", md: "1.85rem" }, maxWidth: 760, mx: "auto", mb: 3, lineHeight: 1.3, whiteSpace: "pre-line" }}>
             {p.closing.headline}
           </Typography>
           <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -495,12 +495,6 @@ export default function IntensiveCorporateTrainingPage() {
           </Box>
         </Box>
 
-        <Box sx={{ mt: 5, pt: 3, borderTop: "1px solid rgba(80, 20, 210, 0.1)", display: "grid", gap: 0.75, color: "#666", fontSize: "0.82rem", lineHeight: 1.6 }}>
-          <Typography sx={{ fontSize: "inherit", fontWeight: 700, color: "#333" }}>
-            {p.company.name} · CIN: {p.company.cin}
-          </Typography>
-          <Typography sx={{ fontSize: "inherit", mt: 1, fontStyle: "italic" }}>{p.terms}</Typography>
-        </Box>
       </Box>
     </Box>
   );

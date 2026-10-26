@@ -325,15 +325,9 @@ export const trainingProgram = {
     },
   ],
 
-  // 14. Closing CTA and company details
+  // 14. Closing CTA
   closing: {
     headline:
-      "Start your software career with real projects, real mentors and a real path to a job.",
+      "Train. Intern. Build enterprise software.\nStart your Full-Stack career at TriWinz.", // \n = line break
   },
-  company: {
-    name: "TriWinz Technologies Pvt Ltd",
-    cin: "U72900TN2017PTC119814",
-  },
-  terms:
-    "Terms apply. Scholarships and absorption are subject to evaluation outcomes, company selection criteria and business requirements.",
 };
