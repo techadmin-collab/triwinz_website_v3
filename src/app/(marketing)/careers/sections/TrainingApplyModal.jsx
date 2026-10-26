@@ -10,19 +10,20 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import TrainingApplyForm from "./TrainingApplyForm";
 
 export default function TrainingApplyModal({
-  buttonLabel = "Join Our Training Program",
+  buttonLabel = "Apply Now",
+  buttonSx = {},
+  fullWidth = false,
 }) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
       <Button
+        fullWidth={fullWidth}
         onClick={() => setOpen(true)}
-        startIcon={<SchoolOutlinedIcon />}
         sx={{
           py: 1.5,
           px: 4,
@@ -31,13 +32,14 @@ export default function TrainingApplyModal({
           letterSpacing: "0.02em",
           textTransform: "none",
           fontSize: "1rem",
-          color: "#5014d2",
-          backgroundColor: "#fff",
-          boxShadow: "0 10px 24px rgba(0, 0, 0, 0.18)",
+          color: "#fff",
+          backgroundImage: "linear-gradient(96deg, #5014D2 0%, #DD3CA7 100%)",
+          boxShadow: "0 10px 24px rgba(80, 20, 210, 0.28)",
           "&:hover": {
-            backgroundColor: "#f4efff",
-            boxShadow: "0 12px 28px rgba(0, 0, 0, 0.24)",
+            backgroundImage: "linear-gradient(96deg, #4512b8 0%, #c73596 100%)",
+            boxShadow: "0 12px 28px rgba(80, 20, 210, 0.35)",
           },
+          ...buttonSx,
         }}
       >
         {buttonLabel}
@@ -60,7 +62,7 @@ export default function TrainingApplyModal({
             color: "#fff",
           }}
         >
-          Join Our Training Program
+          Intensive Corporate Training Programme
           <Box
             component="span"
             sx={{
@@ -71,7 +73,7 @@ export default function TrainingApplyModal({
               opacity: 0.9,
             }}
           >
-            Fill in your details and our team will get in touch
+            Apply for the 6-month training and internship programme
           </Box>
           <IconButton
             aria-label="Close"
