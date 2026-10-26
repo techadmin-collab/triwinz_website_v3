@@ -14,7 +14,6 @@ import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
 import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Link from "next/link";
 import TrainingApplyModal from "../sections/TrainingApplyModal";
@@ -411,32 +410,8 @@ export default function IntensiveCorporateTrainingPage() {
         </Box>
       </Band>
 
-      {/* 12. How to apply */}
+      {/* 12. FAQ */}
       <Box sx={{ ...container, py: { xs: 7, md: 10 } }}>
-        <SectionTitle title="How to apply" center />
-        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: `repeat(${p.howToApply.steps.length}, 1fr)` }, gap: 2, mb: 4 }}>
-          {p.howToApply.steps.map((step, i) => (
-            <Box key={step} sx={{ ...cardSx, p: 2.5, textAlign: "center" }}>
-              <Box sx={{ width: 40, height: 40, mx: "auto", mb: 1.5, borderRadius: "50%", display: "grid", placeItems: "center", background: gradientStrong, color: "#fff", fontWeight: 800 }}>
-                {i + 1}
-              </Box>
-              <Typography fontWeight={700} sx={{ fontSize: "0.95rem", lineHeight: 1.45 }}>
-                {step}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
-        <Typography textAlign="center" sx={{ color: "#444", maxWidth: 680, mx: "auto", lineHeight: 1.7, mb: 3 }}>
-          {p.howToApply.text}
-        </Typography>
-        <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "center", alignItems: "center", gap: 1.5 }}>
-          <TrainingApplyModal buttonLabel="Apply Now" buttonSx={{ minWidth: { xs: "100%", sm: 220 } }} />
-        </Box>
-        <ContactLine />
-      </Box>
-
-      {/* 13. FAQ */}
-      <Band>
         <SectionTitle title="Frequently asked questions" center />
         <Box sx={{ maxWidth: 860, mx: "auto", display: "grid", gap: 1.5 }}>
           {p.faqs.map((f) => (
@@ -474,28 +449,30 @@ export default function IntensiveCorporateTrainingPage() {
             </Box>
           ))}
         </Box>
-      </Band>
-
-      {/* 14. Closing CTA + company details */}
-      <Box sx={{ ...container, py: { xs: 7, md: 10 } }}>
-        <Box
-          sx={{
-            p: { xs: 3, md: 5 },
-            borderRadius: 4,
-            textAlign: "center",
-            background: "linear-gradient(135deg, rgba(80,20,210,0.06) 0%, rgba(221,60,167,0.06) 100%)",
-            border: "1px solid rgba(80, 20, 210, 0.1)",
-          }}
-        >
-          <Typography component="h2" fontWeight={800} sx={{ fontSize: { xs: "1.35rem", md: "1.85rem" }, maxWidth: 760, mx: "auto", mb: 3, lineHeight: 1.3, whiteSpace: "pre-line" }}>
-            {p.closing.headline}
-          </Typography>
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <TrainingApplyModal buttonLabel="Apply Now" buttonSx={{ minWidth: { xs: "100%", sm: 280 } }} />
-          </Box>
-        </Box>
-
       </Box>
+
+      {/* 13. How to apply */}
+      <Band>
+        <SectionTitle title="How to apply" center />
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: `repeat(${p.howToApply.steps.length}, 1fr)` }, gap: 2, mb: 4 }}>
+          {p.howToApply.steps.map((step, i) => (
+            <Box key={step} sx={{ ...cardSx, p: 2.5, textAlign: "center" }}>
+              <Box sx={{ width: 40, height: 40, mx: "auto", mb: 1.5, borderRadius: "50%", display: "grid", placeItems: "center", background: gradientStrong, color: "#fff", fontWeight: 800 }}>
+                {i + 1}
+              </Box>
+              <Typography fontWeight={700} sx={{ fontSize: "0.95rem", lineHeight: 1.45 }}>
+                {step}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+        <Typography textAlign="center" sx={{ color: "#444", maxWidth: 680, mx: "auto", lineHeight: 1.7, mb: 3 }}>
+          {p.howToApply.text}
+        </Typography>
+        <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "center", alignItems: "center", gap: 1.5 }}>
+          <TrainingApplyModal buttonLabel="Apply Now" buttonSx={{ minWidth: { xs: "100%", sm: 220 } }} />
+        </Box>
+      </Band>
     </Box>
   );
 }
@@ -583,27 +560,6 @@ function KeyValue({ label, value }) {
         {label}
       </Typography>
       <Typography sx={{ fontSize: "0.9rem", color: "#333", lineHeight: 1.55 }}>{value}</Typography>
-    </Box>
-  );
-}
-
-function ContactLine() {
-  const { contactPhone, contactPhoneHref, contactEmail } = p.howToApply;
-  if (!contactPhone && !contactEmail) return null;
-  const linkSx = { color: PURPLE, fontWeight: 700, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 0.75 };
-  return (
-    <Box sx={{ mt: 3, display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: { xs: 1.5, sm: 3 }, color: "#555" }}>
-      <Typography sx={{ fontSize: "0.92rem" }}>Questions? Contact us:</Typography>
-      {contactPhone ? (
-        <Box component="a" href={contactPhoneHref} sx={linkSx}>
-          <PhoneOutlinedIcon sx={{ fontSize: 18 }} /> {contactPhone}
-        </Box>
-      ) : null}
-      {contactEmail ? (
-        <Box component="a" href={`mailto:${contactEmail}`} sx={linkSx}>
-          <MailOutlineIcon sx={{ fontSize: 18 }} /> {contactEmail}
-        </Box>
-      ) : null}
     </Box>
   );
 }

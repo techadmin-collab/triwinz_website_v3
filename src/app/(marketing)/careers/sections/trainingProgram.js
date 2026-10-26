@@ -324,10 +324,4 @@ export const trainingProgram = {
       a: "Python, Django, PostgreSQL, React JS, Git, AI-assisted coding, business communication and personality development.",
     },
   ],
-
-  // 14. Closing CTA
-  closing: {
-    headline:
-      "Train. Intern. Build enterprise software.\nStart your Full-Stack career at TriWinz.", // \n = line break
-  },
 };
