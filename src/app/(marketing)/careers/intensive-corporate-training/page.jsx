@@ -11,9 +11,7 @@ import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
 import RecordVoiceOverOutlinedIcon from "@mui/icons-material/RecordVoiceOverOutlined";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
-import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
 import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
-import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Link from "next/link";
 import TrainingApplyModal from "../sections/TrainingApplyModal";
@@ -206,7 +204,7 @@ export default function IntensiveCorporateTrainingPage() {
             ...cardSx,
             boxShadow: "0 18px 40px rgba(80, 20, 210, 0.12)",
             display: "grid",
-            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "repeat(3, 1fr)", lg: "repeat(5, 1fr)" },
+            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", lg: `repeat(${p.hero.highlights.length}, 1fr)` },
             gap: { xs: 2, md: 2.5 },
             p: { xs: 2.5, md: 3 },
           }}
@@ -345,53 +343,30 @@ export default function IntensiveCorporateTrainingPage() {
         </Box>
       </Box>
 
-      {/* 8 + 9. Fee + Scholarships */}
+      {/* 9. Scholarships */}
       <Band>
-        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" }, gap: { xs: 7, lg: 6 }, alignItems: "start" }}>
-          <Box>
-            <SectionTitle title={p.fee.title} />
-            <Box sx={{ ...cardSx, p: { xs: 3, md: 4 }, display: "flex", gap: 2, alignItems: "flex-start" }}>
-              <IconBadge icon={<PaymentsOutlinedIcon />} />
-              <Box>
-                <Typography sx={{ color: "#222", fontWeight: 700, fontSize: { xs: "1.05rem", md: "1.15rem" }, mb: 1 }}>
-                  {p.fee.text}
+        <SectionTitle title="Scholarships" intro={p.scholarships.intro} center />
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: { xs: 2, md: 3 }, maxWidth: 960, mx: "auto" }}>
+          {p.scholarships.rows.map((row) => (
+            <Box key={row.stage} sx={{ ...cardSx, p: { xs: 2.5, md: 3 } }}>
+              <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 1, mb: 1.5 }}>
+                <Typography component="h3" fontWeight={800} sx={{ fontSize: "1.05rem" }}>
+                  {row.stage}
                 </Typography>
-                {p.howToApply.contactPhone ? (
-                  <Box
-                    component="a"
-                    href={p.howToApply.contactPhoneHref}
-                    sx={{ color: PURPLE, fontWeight: 700, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 0.75 }}
-                  >
-                    <PhoneOutlinedIcon sx={{ fontSize: 18 }} /> {p.howToApply.contactPhone}
+                {row.amount ? (
+                  <Box sx={{ px: 1.5, py: 0.5, borderRadius: 999, background: gradientStrong, color: "#fff", fontWeight: 700, fontSize: "0.8rem" }}>
+                    {row.amount}
                   </Box>
                 ) : null}
               </Box>
+              <KeyValue label="Basis" value={row.basis} />
+              <KeyValue label="Applied at" value={row.appliedAt} />
             </Box>
-          </Box>
-
-          <Box>
-            <SectionTitle title="Scholarships" intro={p.scholarships.intro} />
-            <Box sx={{ display: "grid", gap: 2 }}>
-              {p.scholarships.rows.map((row) => (
-                <Box key={row.stage} sx={{ ...cardSx, p: { xs: 2.5, md: 3 } }}>
-                  <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 1, mb: 1.5 }}>
-                    <Typography component="h3" fontWeight={800} sx={{ fontSize: "1.05rem" }}>
-                      {row.stage}
-                    </Typography>
-                    {row.amount ? (
-                      <Box sx={{ px: 1.5, py: 0.5, borderRadius: 999, background: gradientStrong, color: "#fff", fontWeight: 700, fontSize: "0.8rem" }}>
-                        {row.amount}
-                      </Box>
-                    ) : null}
-                  </Box>
-                  <KeyValue label="Basis" value={row.basis} />
-                  <KeyValue label="Applied at" value={row.appliedAt} />
-                </Box>
-              ))}
-            </Box>
-            <Typography sx={{ mt: 2.5, color: "#555", fontSize: "0.9rem", lineHeight: 1.7 }}>{p.scholarships.note}</Typography>
-          </Box>
+          ))}
         </Box>
+        <Typography textAlign="center" sx={{ mt: 3, color: "#555", fontSize: "0.9rem", lineHeight: 1.7, maxWidth: 760, mx: "auto" }}>
+          {p.scholarships.note}
+        </Typography>
       </Band>
 
       {/* 11. Why train with TriWinz */}

@@ -42,8 +42,7 @@ export const trainingProgram = {
     highlights: [
       { icon: "training", label: "3 months training" },
       { icon: "internship", label: "3 months guided internship" },
-      { icon: "projects", label: "6 months enterprise project experience" },
-      { icon: "scholarship", label: "Up to 30% scholarship" },
+      { icon: "projects", label: "6 months experience" },
       {
         icon: "career",
         label: "Guaranteed job",
@@ -213,12 +212,6 @@ export const trainingProgram = {
       },
     ],
     note: "Your evaluations directly influence your scholarship eligibility.",
-  },
-
-  // 8. Programme fee
-  fee: {
-    title: "Programme fee",
-    text: "Contact us for fee details.",
   },
 
   // 9. Scholarships
