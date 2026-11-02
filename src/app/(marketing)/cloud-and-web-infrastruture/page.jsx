@@ -1,18 +1,6 @@
-import React from "react";
-import CloudInfrastructureHero from "./sections/CloudInfrastructureHero";
-import WhatWeDoSection from "./sections/WhatWeDoSection";
-import ServicesDetailSection from "./sections/ServicesDetailSection";
-import CloudCTA from "./sections/CloudCTA";
+import { permanentRedirect } from "next/navigation";
 
-const page = () => {
-  return (
-    <>
-      <CloudInfrastructureHero />
-      <WhatWeDoSection />
-      <ServicesDetailSection />
-      <CloudCTA />
-    </>
-  );
-};
-
-export default page;
+// Old misspelled URL. Permanently redirects to the correct address.
+export default function LegacyCloudInfrastructurePage() {
+  permanentRedirect("/cloud-and-web-infrastructure");
+}

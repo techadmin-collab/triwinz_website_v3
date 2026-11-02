@@ -14,7 +14,7 @@ const B2BAggregators = () => {
         width="64"
         height="64"
         rx="32"
-        fill="#450CCA"
+        fill="#164546"
         fillOpacity="0.1"
       ></rect>
       <path
@@ -61,8 +61,8 @@ const B2BAggregators = () => {
           y2="41.3333"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#5014d2ff"></stop>
-          <stop offset="1" stopColor="#dd3ca7fd"></stop>
+          <stop stopColor="#1D5758ff"></stop>
+          <stop offset="1" stopColor="#2BD1C7fd"></stop>
         </linearGradient>
         <linearGradient
           id="paint1_linear_409_3265"
@@ -72,8 +72,8 @@ const B2BAggregators = () => {
           y2="41.3333"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#5014d2ff"></stop>
-          <stop offset="1" stopColor="#dd3ca7fd"></stop>
+          <stop stopColor="#1D5758ff"></stop>
+          <stop offset="1" stopColor="#2BD1C7fd"></stop>
         </linearGradient>
         <linearGradient
           id="paint2_linear_409_3265"
@@ -83,8 +83,8 @@ const B2BAggregators = () => {
           y2="22.6667"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#5014d2ff"></stop>
-          <stop offset="1" stopColor="#dd3ca7fd"></stop>
+          <stop stopColor="#1D5758ff"></stop>
+          <stop offset="1" stopColor="#2BD1C7fd"></stop>
         </linearGradient>
         <linearGradient
           id="paint3_linear_409_3265"
@@ -94,8 +94,8 @@ const B2BAggregators = () => {
           y2="34.6667"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#5014d2ff"></stop>
-          <stop offset="1" stopColor="#dd3ca7fd"></stop>
+          <stop stopColor="#1D5758ff"></stop>
+          <stop offset="1" stopColor="#2BD1C7fd"></stop>
         </linearGradient>
         <linearGradient
           id="paint4_linear_409_3265"
@@ -105,8 +105,8 @@ const B2BAggregators = () => {
           y2="29.3334"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#5014d2ff"></stop>
-          <stop offset="1" stopColor="#dd3ca7fd"></stop>
+          <stop stopColor="#1D5758ff"></stop>
+          <stop offset="1" stopColor="#2BD1C7fd"></stop>
         </linearGradient>
       </defs>
     </svg>

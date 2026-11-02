@@ -47,7 +47,7 @@ function InfoCard({ title, description }) {
         },
         p: { xs: 3, md: 4 },
         borderRadius: 3,
-        backgroundColor: "#FAF5FF",
+        backgroundColor: "#F5FCFB",
         border: "1px solid #EEE",
       }}
     >

@@ -51,8 +51,8 @@ export default function WhatWeDo() {
               px: { xs: 2, sm: 2.5 },
               py: 0.8,
               borderRadius: "999px",
-              backgroundColor: "#efe9ff",
-              color: "#6d28d9",
+              backgroundColor: "#DDF5F3",
+              color: "#1D5758",
               fontWeight: 800,
               fontSize: { xs: "0.7rem", sm: "0.9rem" },
             }}
@@ -110,7 +110,7 @@ export default function WhatWeDo() {
                   p: { xs: 2.5, md: 3 },
                   borderRadius: "8px",
                   borderLeft: "6px solid",
-                  borderImage: "linear-gradient(#3D74FF, #FF4F81) 1",
+                  borderImage: "linear-gradient(#1D5758, #2BD1C7) 1",
                   backgroundColor: "#fff",
                   boxShadow: "0 10px 30px rgba(0,0,0,0.06)",
                 }}

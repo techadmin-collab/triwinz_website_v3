@@ -23,7 +23,7 @@ export default function VisaHero() {
       {/* Background Image with ALT */}
       <Box
         component="img"
-        src="/evisa-suite/dhdh.webp"
+        src="/evisa-suite/dhdh-teal.webp"
         alt="EmiratiVisa"
         sx={{
           position: "absolute",
@@ -40,7 +40,7 @@ export default function VisaHero() {
         sx={{
           position: "absolute",
           inset: 0,
-          background: "linear-gradient(122deg, #5014d2ff 0%, #dd3ca73d 100%)",
+          background: "linear-gradient(122deg, #1D5758ff 0%, #2BD1C73d 100%)",
           zIndex: -1,
         }}
       />
@@ -53,7 +53,7 @@ export default function VisaHero() {
         }}
       >
         {/* <Image
-          src="/evisa-suite/dhdh.webp" // 👈 your background image path
+          src="/evisa-suite/dhdh-teal.webp" // 👈 your background image path
           alt="Passport background"
           fill
           priority

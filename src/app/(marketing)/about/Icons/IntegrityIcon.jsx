@@ -9,8 +9,8 @@ export default function IntegrityIcon({ size = 24 }) {
           x2="100%"
           y2="100%"
         >
-          <stop offset="0%" stopColor="#6d28d9" />
-          <stop offset="100%" stopColor="#ec4899" />
+          <stop offset="0%" stopColor="#1D5758" />
+          <stop offset="100%" stopColor="#2BD1C7" />
         </linearGradient>
       </defs>
 
@@ -39,7 +39,7 @@ export const IntegrityFirstIcon = () => (
       width="41"
       height="41"
       rx="20.5"
-      fill="#450CCA"
+      fill="#164546"
       fillOpacity="0.1"
     ></rect>
     <path
@@ -65,8 +65,8 @@ export const IntegrityFirstIcon = () => (
         y2="30.8428"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_408_2194"
@@ -76,8 +76,8 @@ export const IntegrityFirstIcon = () => (
         y2="17.5259"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#3D74FF"></stop>
-        <stop offset="1" stopColor="#FF4F81"></stop>
+        <stop stopColor="#1D5758"></stop>
+        <stop offset="1" stopColor="#2BD1C7"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -97,7 +97,7 @@ export const TransparencyIcon = () => (
       width="41"
       height="41"
       rx="20.5"
-      fill="#450CCA"
+      fill="#164546"
       fillOpacity="0.1"
     ></rect>
     <path
@@ -116,8 +116,8 @@ export const TransparencyIcon = () => (
         y2="30.4072"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -137,7 +137,7 @@ export const DiversityToInnovationIcon = () => (
       width="41"
       height="41"
       rx="20.5"
-      fill="#450CCA"
+      fill="#164546"
       fillOpacity="0.1"
     ></rect>
     <path
@@ -159,8 +159,8 @@ export const DiversityToInnovationIcon = () => (
         y2="18.9072"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_408_2209"
@@ -170,8 +170,8 @@ export const DiversityToInnovationIcon = () => (
         y2="30.4072"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -191,7 +191,7 @@ export const InclusivityIcon = () => (
       width="41"
       height="41"
       rx="20.5"
-      fill="#450CCA"
+      fill="#164546"
       fillOpacity="0.1"
     ></rect>
     <path
@@ -210,8 +210,8 @@ export const InclusivityIcon = () => (
         y2="29.75"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -231,7 +231,7 @@ export const ContinuousLearningIcon = () => (
       width="41"
       height="41"
       rx="20.5"
-      fill="#450CCA"
+      fill="#164546"
       fillOpacity="0.1"
     ></rect>
     <path
@@ -257,8 +257,8 @@ export const ContinuousLearningIcon = () => (
         y2="21.8571"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_408_2226"
@@ -268,8 +268,8 @@ export const ContinuousLearningIcon = () => (
         y2="27"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -289,7 +289,7 @@ export const BringWholeSelfIcon = () => (
       width="41"
       height="41"
       rx="20.5"
-      fill="#450CCA"
+      fill="#164546"
       fillOpacity="0.1"
     ></rect>
     <path
@@ -322,8 +322,8 @@ export const BringWholeSelfIcon = () => (
         y2="31.5"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_408_2235"
@@ -333,8 +333,8 @@ export const BringWholeSelfIcon = () => (
         y2="19.4611"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint2_linear_408_2235"
@@ -344,8 +344,8 @@ export const BringWholeSelfIcon = () => (
         y2="25.6286"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>

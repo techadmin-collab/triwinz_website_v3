@@ -10,7 +10,7 @@ export const LocationIcon = () => (
       width="48"
       height="48"
       rx="12"
-      fill="#6B26D9"
+      fill="#1D5758"
       fillOpacity="0.1"
     ></rect>
     <path
@@ -36,8 +36,8 @@ export const LocationIcon = () => (
         y2="23.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_477_1774"
@@ -47,8 +47,8 @@ export const LocationIcon = () => (
         y2="22"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -66,7 +66,7 @@ export const GlobeIcon = () => (
       width="48"
       height="48"
       rx="12"
-      fill="#6B26D9"
+      fill="#1D5758"
       fillOpacity="0.1"
     ></rect>
     <path
@@ -99,8 +99,8 @@ export const GlobeIcon = () => (
         y2="24"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_477_1781"
@@ -110,8 +110,8 @@ export const GlobeIcon = () => (
         y2="24"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#3D74FF"></stop>
-        <stop offset="1" stopColor="#FF4F81"></stop>
+        <stop stopColor="#1D5758"></stop>
+        <stop offset="1" stopColor="#2BD1C7"></stop>
       </linearGradient>
       <linearGradient
         id="paint2_linear_477_1781"
@@ -121,8 +121,8 @@ export const GlobeIcon = () => (
         y2="24.5"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -140,7 +140,7 @@ export const EmailIcon = () => (
       width="48"
       height="48"
       rx="12"
-      fill="#9947EB"
+      fill="#2BD1C7"
       fillOpacity="0.1"
     ></rect>
     <path
@@ -166,8 +166,8 @@ export const EmailIcon = () => (
         y2="24"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_477_1798"
@@ -177,8 +177,8 @@ export const EmailIcon = () => (
         y2="21.998"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -196,7 +196,7 @@ export const CallIcon = () => (
       width="48"
       height="48"
       rx="12"
-      fill="#9947EB"
+      fill="#2BD1C7"
       fillOpacity="0.1"
     ></rect>
     <path
@@ -215,8 +215,8 @@ export const CallIcon = () => (
         y2="23.964"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -234,7 +234,7 @@ export const BuildingIcon = () => (
       width="48"
       height="48"
       rx="12"
-      fill="#6B26D9"
+      fill="#1D5758"
       fillOpacity="0.1"
     ></rect>
     <path
@@ -295,8 +295,8 @@ export const BuildingIcon = () => (
         y2="24"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_477_1821"
@@ -306,8 +306,8 @@ export const BuildingIcon = () => (
         y2="29"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint2_linear_477_1821"
@@ -317,8 +317,8 @@ export const BuildingIcon = () => (
         y2="27.5"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint3_linear_477_1821"
@@ -328,8 +328,8 @@ export const BuildingIcon = () => (
         y2="18.5"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint4_linear_477_1821"
@@ -339,8 +339,8 @@ export const BuildingIcon = () => (
         y2="22.5"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint5_linear_477_1821"
@@ -350,8 +350,8 @@ export const BuildingIcon = () => (
         y2="26.5"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint6_linear_477_1821"
@@ -361,8 +361,8 @@ export const BuildingIcon = () => (
         y2="30.5"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>

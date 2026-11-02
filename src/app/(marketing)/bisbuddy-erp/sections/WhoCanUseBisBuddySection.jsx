@@ -130,7 +130,7 @@ export default function WhoCanUseBisBuddySection() {
                     justifyContent: "center",
                     color: "#fff",
                     background:
-                      "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+                      "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
                   }}
                 >
                   {item.icon}

@@ -1,4 +1,4 @@
-import { Box, Container, Typography, Button } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 
 export default function ProductHeroSection() {
   return (
@@ -12,8 +12,8 @@ export default function ProductHeroSection() {
         color: "#fff",
         position: "relative",
         backgroundImage: `
-  linear-gradient(122deg, #5014d2ff 0%, #dd3ca73d 100%),
-  url("/triwinz-cloudkart/hncb.webp")
+  linear-gradient(122deg, #1D5758ff 0%, #2BD1C73d 100%),
+  url("/triwinz-cloudkart/hncb-teal.webp")
 `,
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -96,7 +96,6 @@ export default function ProductHeroSection() {
           {/* Description */}
           <Typography
             sx={{
-              mb: 4,
               opacity: 0.85,
               lineHeight: 1.7,
               fontSize: { xs: "0.95rem", md: "1rem" },
@@ -108,40 +107,6 @@ export default function ProductHeroSection() {
             without relying on marketplaces or losing margin to intermediaries.
           </Typography>
 
-          {/* CTA */}
-          <Button
-            variant="contained"
-            sx={{
-              px: 4,
-              py: 1.4,
-              borderRadius: 2,
-              fontWeight: 600,
-              textTransform: "none",
-              backgroundColor: "#fff",
-              boxShadow: "0px 10px 30px rgba(0,0,0,0.25)",
-              mx: { xs: "auto", md: 0 },
-              display: "inline-flex",
-              "&:hover": {
-                backgroundColor: "#fff",
-                opacity: 0.95,
-              },
-            }}
-          >
-            <Box
-              component="span"
-              sx={{
-                background:
-                  "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                color: "transparent",
-                fontWeight: 700,
-                transition: "all 0.3s ease-in-out",
-              }}
-            >
-              View Our Pricing
-            </Box>
-          </Button>
         </Box>
       </Box>
     </Box>

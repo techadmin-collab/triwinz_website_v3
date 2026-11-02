@@ -9,8 +9,8 @@ export default function LearningIcon({ size = 28 }) {
           x2="100%"
           y2="100%"
         >
-          <stop offset="0%" stopColor="#6d28d9" />
-          <stop offset="100%" stopColor="#ec4899" />
+          <stop offset="0%" stopColor="#1D5758" />
+          <stop offset="100%" stopColor="#2BD1C7" />
         </linearGradient>
       </defs>
 

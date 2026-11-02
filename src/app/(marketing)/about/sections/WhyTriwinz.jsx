@@ -22,7 +22,7 @@ export default function WhyTriWinz() {
     <Box
       sx={{
         py: { xs: 8, md: 12 },
-        backgroundColor: "#faf9ff",
+        backgroundColor: "#F5FCFB",
         fontFamily: "montserrat, inter",
       }}
     >
@@ -52,7 +52,7 @@ export default function WhyTriWinz() {
         <Typography
           textAlign="center"
           sx={{
-            color: "#6d28d9",
+            color: "#1D5758",
             mb: { xs: 4, md: 6 },
             fontWeight: 700,
             fontSize: { xs: "0.95rem", sm: "1rem" },
@@ -103,7 +103,7 @@ export default function WhyTriWinz() {
                     height: 20,
                     borderRadius: "50%",
                     background:
-                      "linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #6d28d9, #ec4899) border-box",
+                      "linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #1D5758, #2BD1C7) border-box",
                     border: "2px solid transparent",
                     display: "flex",
                     alignItems: "center",
@@ -119,8 +119,8 @@ export default function WhyTriWinz() {
                         x2="100%"
                         y2="100%"
                       >
-                        <stop offset="0%" stopColor="#6d28d9" />
-                        <stop offset="100%" stopColor="#ec4899" />
+                        <stop offset="0%" stopColor="#1D5758" />
+                        <stop offset="100%" stopColor="#2BD1C7" />
                       </linearGradient>
                     </defs>
 

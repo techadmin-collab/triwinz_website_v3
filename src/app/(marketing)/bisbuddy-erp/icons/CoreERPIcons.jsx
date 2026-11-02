@@ -43,8 +43,8 @@ export const NoItExpertiseIcon = () => (
         y2="20"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_518_3200"
@@ -54,8 +54,8 @@ export const NoItExpertiseIcon = () => (
         y2="28.3333"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint2_linear_518_3200"
@@ -65,8 +65,8 @@ export const NoItExpertiseIcon = () => (
         y2="15.8335"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint3_linear_518_3200"
@@ -76,8 +76,8 @@ export const NoItExpertiseIcon = () => (
         y2="11.4084"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -121,8 +121,8 @@ export const SalesAndPOSBillingIcon = () => (
         y2="35"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_518_3224"
@@ -132,8 +132,8 @@ export const SalesAndPOSBillingIcon = () => (
         y2="35"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint2_linear_518_3224"
@@ -143,8 +143,8 @@ export const SalesAndPOSBillingIcon = () => (
         y2="15.0837"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -202,8 +202,8 @@ export const PurchaseAndVendorManagementIcon = () => (
         y2="20"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_518_3247"
@@ -213,8 +213,8 @@ export const PurchaseAndVendorManagementIcon = () => (
         y2="8.33337"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint2_linear_518_3247"
@@ -224,8 +224,8 @@ export const PurchaseAndVendorManagementIcon = () => (
         y2="15.5"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint3_linear_518_3247"
@@ -235,8 +235,8 @@ export const PurchaseAndVendorManagementIcon = () => (
         y2="22.1666"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint4_linear_518_3247"
@@ -246,8 +246,8 @@ export const PurchaseAndVendorManagementIcon = () => (
         y2="28.8334"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -285,8 +285,8 @@ export const FinanceAndExpenseTrackingIcon = () => (
         y2="19.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_518_3272"
@@ -296,8 +296,8 @@ export const FinanceAndExpenseTrackingIcon = () => (
         y2="17.1667"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -334,8 +334,8 @@ export const PostSalesServiceModuleIcon = () => (
         y2="19.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_518_3294"
@@ -345,8 +345,8 @@ export const PostSalesServiceModuleIcon = () => (
         y2="20"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -397,8 +397,8 @@ export const RealTimeDashboardIcon = () => (
         y2="20"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_518_3316"
@@ -408,8 +408,8 @@ export const RealTimeDashboardIcon = () => (
         y2="21.6667"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint2_linear_518_3316"
@@ -419,8 +419,8 @@ export const RealTimeDashboardIcon = () => (
         y2="18.3333"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <linearGradient
         id="paint3_linear_518_3316"
@@ -430,8 +430,8 @@ export const RealTimeDashboardIcon = () => (
         y2="25.8333"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>

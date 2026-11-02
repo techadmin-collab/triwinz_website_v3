@@ -48,7 +48,7 @@ export default function ServicesDetailSection() {
                   component={Link}
                   href="/evisa-suite"
                   sx={{
-                    color: "#5014d2ff",
+                    color: "#1D5758ff",
                     fontWeight: 600,
                     textDecoration: "none",
                     "&:hover": {
@@ -162,7 +162,7 @@ export default function ServicesDetailSection() {
                   component={Link}
                   href="/evisa-suite"
                   sx={{
-                    color: "#5014d2ff",
+                    color: "#1D5758ff",
                     fontWeight: 600,
                     textDecoration: "none",
                     "&:hover": {

@@ -7,7 +7,7 @@ export default function CallToActionSection() {
     <Box
       sx={{
         py: { xs: 8, md: 12 },
-        background: "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+        background: "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
         color: "#fff",
         fontFamily: "montserrat, inter",
       }}
@@ -75,7 +75,7 @@ export default function CallToActionSection() {
                 borderRadius: 2,
                 textTransform: "none",
                 background:
-                  "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+                  "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
                 boxShadow: "0px 10px 30px rgba(0,0,0,0.2)",
                 "&:hover": {
                   opacity: 0.9,

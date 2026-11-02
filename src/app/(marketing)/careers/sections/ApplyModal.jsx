@@ -39,11 +39,11 @@ export default function ApplyModal({
           textTransform: "none",
           fontSize: "1rem",
           color: "#fff",
-          backgroundImage: "linear-gradient(96deg, #5014D2 0%, #DD3CA7 100%)",
-          boxShadow: "0 10px 24px rgba(80, 20, 210, 0.28)",
+          backgroundImage: "linear-gradient(96deg, #1D5758 0%, #2BD1C7 100%)",
+          boxShadow: "0 10px 24px rgba(29, 87, 88, 0.28)",
           "&:hover": {
-            backgroundImage: "linear-gradient(96deg, #4512b8 0%, #c73596 100%)",
-            boxShadow: "0 12px 28px rgba(80, 20, 210, 0.35)",
+            backgroundImage: "linear-gradient(96deg, #164546 0%, #22B3AA 100%)",
+            boxShadow: "0 12px 28px rgba(29, 87, 88, 0.35)",
           },
           ...buttonSx,
         }}
@@ -70,7 +70,7 @@ export default function ApplyModal({
             pr: 6,
             pb: 0.5,
             backgroundImage:
-              "linear-gradient(122deg, #5014d2 0%, #dd3ca7 100%)",
+              "linear-gradient(122deg, #1D5758 0%, #2BD1C7 100%)",
             color: "#fff",
           }}
         >

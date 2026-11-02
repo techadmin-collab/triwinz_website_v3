@@ -8,7 +8,7 @@ export default function FinalCTASection() {
         py: { xs: 8, md: 12 },
         textAlign: "center",
         color: "#fff",
-        background: "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+        background: "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
         fontFamily: "montserrat, inter",
       }}
     >

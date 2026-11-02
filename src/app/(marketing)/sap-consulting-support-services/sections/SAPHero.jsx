@@ -11,7 +11,7 @@ export default function SAPHero() {
         p: 2,
         color: "#fff",
         backgroundImage:
-          "linear-gradient(122deg, #5014d2ff 0%, #dd3ca73d 100%), url('/sap-consulting-support-services/gbdb.webp')",
+          "linear-gradient(122deg, #1D5758ff 0%, #2BD1C73d 100%), url('/sap-consulting-support-services/gbdb-teal.webp')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

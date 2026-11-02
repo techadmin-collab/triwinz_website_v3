@@ -5,7 +5,7 @@ export default function MissionVision() {
     <Box
       sx={{
         py: { xs: 6, sm: 8, md: 12 },
-        background: "linear-gradient(90deg, #3D74FF 0%, #FF4F81 100%)",
+        background: "linear-gradient(90deg, #1D5758 0%, #2BD1C7 100%)",
         fontFamily: "montserrat, inter",
         color: "#fff",
       }}

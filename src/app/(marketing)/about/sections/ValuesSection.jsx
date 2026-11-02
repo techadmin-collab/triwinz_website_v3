@@ -111,7 +111,24 @@ function ValueCard({ title, text, icon }) {
         borderRadius: "14px",
         backgroundColor: "#fff",
         boxShadow: "0 10px 30px rgba(0,0,0,0.06)",
-        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        position: "relative",
+        isolation: "isolate", // keeps the gradient layer behind the content
+        overflow: "hidden",
+        // Same timing in and out, so nothing snaps back
+        transition:
+          "transform 0.4s ease, box-shadow 0.4s ease, color 0.4s ease",
+
+        // Gradient layer that fades in (a background gradient itself can't animate)
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          inset: 0,
+          zIndex: -1,
+          borderRadius: "inherit",
+          backgroundImage: "linear-gradient(122deg, #1D5758 0%, #2BD1C7 100%)",
+          opacity: 0,
+          transition: "opacity 0.4s ease",
+        },
 
         // Disable hover lift on touch devices
         "@media (hover: hover)": {
@@ -119,9 +136,9 @@ function ValueCard({ title, text, icon }) {
             transform: "translateY(-4px)",
             boxShadow: "0 16px 40px rgba(0,0,0,0.1)",
             color: "#fff",
-            backgroundImage:
-              "linear-gradient(122deg, #5014D2 0%, #DD3CA7 100%)",
-            transition: "all 0.3s ease-in-out",
+          },
+          "&:hover::before": {
+            opacity: 1,
           },
         },
       }}

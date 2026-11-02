@@ -28,10 +28,8 @@ export default function ServiceBox({ title, icon }) {
       {/* Text */}
       <Typography
         sx={{
-          fontWeight: 500,
-          background: "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
+          fontWeight: 600,
+          color: "#1D5758",
           fontSize: { xs: "0.7rem", md: "1rem" },
           whiteSpace: "nowrap",
         }}

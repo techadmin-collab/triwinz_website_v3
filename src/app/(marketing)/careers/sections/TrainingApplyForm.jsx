@@ -32,11 +32,11 @@ const inputStyle = {
     backgroundColor: "#fff",
     borderRadius: 2,
     transition: "box-shadow 0.2s ease",
-    "& fieldset": { borderColor: "rgba(80, 20, 210, 0.12)" },
-    "&:hover fieldset": { borderColor: "rgba(80, 20, 210, 0.3)" },
+    "& fieldset": { borderColor: "rgba(29, 87, 88, 0.12)" },
+    "&:hover fieldset": { borderColor: "rgba(29, 87, 88, 0.3)" },
     "&.Mui-focused": {
-      boxShadow: "0 0 0 3px rgba(80, 20, 210, 0.1)",
-      "& fieldset": { borderColor: "#5014d2" },
+      boxShadow: "0 0 0 3px rgba(29, 87, 88, 0.1)",
+      "& fieldset": { borderColor: "#1D5758" },
     },
     "&.Mui-error fieldset": { borderColor: "#d32f2f" },
   },
@@ -290,13 +290,13 @@ export default function TrainingApplyForm({ onSuccess }) {
           borderColor: resumeError
             ? "#d32f2f"
             : resumeFile
-              ? "rgba(80, 20, 210, 0.45)"
-              : "rgba(80, 20, 210, 0.2)",
+              ? "rgba(29, 87, 88, 0.45)"
+              : "rgba(29, 87, 88, 0.2)",
           backgroundColor: resumeError
             ? "rgba(211, 47, 47, 0.04)"
             : resumeFile
-              ? "rgba(80, 20, 210, 0.04)"
-              : "rgba(80, 20, 210, 0.02)",
+              ? "rgba(29, 87, 88, 0.04)"
+              : "rgba(29, 87, 88, 0.02)",
           textAlign: "center",
         }}
       >
@@ -308,7 +308,7 @@ export default function TrainingApplyForm({ onSuccess }) {
               justifyContent: "center",
               gap: 1,
               mb: 1,
-              color: "#5014d2",
+              color: "#1D5758",
             }}
           >
             <DescriptionOutlinedIcon sx={{ fontSize: 22 }} />
@@ -336,10 +336,10 @@ export default function TrainingApplyForm({ onSuccess }) {
             sx={{
               textTransform: "none",
               fontWeight: 700,
-              color: "#5014d2",
+              color: "#1D5758",
               borderRadius: 2,
               px: 2,
-              "&:hover": { backgroundColor: "rgba(80, 20, 210, 0.06)" },
+              "&:hover": { backgroundColor: "rgba(29, 87, 88, 0.06)" },
             }}
           >
             {resumeFile ? "Change file" : "Upload resume"}
@@ -400,8 +400,8 @@ export default function TrainingApplyForm({ onSuccess }) {
           fontWeight: 800,
           letterSpacing: "0.02em",
           color: "#fff",
-          backgroundImage: "linear-gradient(96deg, #5014D2 0%, #DD3CA7 100%)",
-          boxShadow: "0 10px 24px rgba(80, 20, 210, 0.28)",
+          backgroundImage: "linear-gradient(96deg, #1D5758 0%, #2BD1C7 100%)",
+          boxShadow: "0 10px 24px rgba(29, 87, 88, 0.28)",
           "&.Mui-disabled": { color: "#fff", opacity: 0.75 },
         }}
       >

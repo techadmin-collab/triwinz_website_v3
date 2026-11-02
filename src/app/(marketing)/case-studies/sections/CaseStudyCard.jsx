@@ -34,7 +34,7 @@ const CaseStudyCard = ({ client, industry, summary, result, slug }) => {
             height: 8,
             flexShrink: 0,
             background:
-              "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+              "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
           }}
         />
 
@@ -102,7 +102,7 @@ const CaseStudyCard = ({ client, industry, summary, result, slug }) => {
             >
               OUTCOME
             </Typography>
-            <Typography variant="body2" fontWeight={600} color="primary.dark">
+            <Typography variant="body2" fontWeight={600} sx={{ color: "#1D5758" }}>
               {result}
             </Typography>
           </Box>

@@ -65,7 +65,7 @@ export default function ServicesDetailSection() {
             <Box sx={{ flex: 1 }}>
               <Box
                 component="img"
-                src="/cloud-and-web-infrastructure/104240-1.webp"
+                src="/cloud-and-web-infrastructure/104240-1-teal.webp"
                 alt="Intelligent Software. Purpose - Built ERP."
                 sx={{
                   width: "100%",

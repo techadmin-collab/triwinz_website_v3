@@ -120,7 +120,7 @@ export default function UseCasesSection() {
                     boxShadow: "0px 10px 30px rgba(0,0,0,0.12)",
                     transform: "translateY(-4px)",
                     backgroundImage:
-                      "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+                      "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
                     "&:hover .MuiTypography-root": {
                       color: "#fff",
                     },
@@ -135,8 +135,8 @@ export default function UseCasesSection() {
                       mb: 2,
                       width: 56,
                       height: 56,
-                      bgcolor: "#F2ECFF",
-                      color: "#7C4DFF",
+                      bgcolor: "#DDF5F3",
+                      color: "#1D5758",
                     }}
                   >
                     {item.icon}

@@ -9,8 +9,8 @@ export default function DiversityIcon({ size = 22 }) {
           x2="100%"
           y2="100%"
         >
-          <stop offset="0%" stopColor="#6d28d9" />
-          <stop offset="100%" stopColor="#ec4899" />
+          <stop offset="0%" stopColor="#1D5758" />
+          <stop offset="100%" stopColor="#2BD1C7" />
         </linearGradient>
       </defs>
 
@@ -77,8 +77,8 @@ export const PeopleWithPurposeIcon = () => (
         y2="24.341"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -130,8 +130,8 @@ export const AgileByBelief = () => (
         y2="24.341"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -181,8 +181,8 @@ export const TechnologyForHumanImpactIcon = () => (
         y2="24.341"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>

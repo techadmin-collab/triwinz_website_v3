@@ -13,8 +13,8 @@ export default function HeroSection() {
         alignItems: { xs: "flex-start", md: "center" },
         color: "#fff",
         backgroundImage: `
-  linear-gradient(122deg, #5014d2ff 0%, #dd3ca73d 100%),
-  url("/india-domain-mart/gdb.webp")
+  linear-gradient(122deg, #1D5758ff 0%, #2BD1C73d 100%),
+  url("/india-domain-mart/gdb-teal.webp")
 `,
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -125,29 +125,20 @@ export default function HeroSection() {
                 borderRadius: 2,
                 fontWeight: 600,
                 textTransform: "none",
-                backgroundColor: "#fff",
+                color: "#fff",
+                backgroundImage:
+                  "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
                 boxShadow: "0px 10px 30px rgba(0,0,0,0.25)",
                 mx: { xs: "auto", md: 0 },
                 display: "inline-flex",
                 "&:hover": {
-                  backgroundColor: "#fff",
-                  opacity: 0.95,
+                  backgroundImage:
+                    "linear-gradient(122deg, #164546 0%, #22B3AA 100%)",
+                  boxShadow: "0px 12px 32px rgba(0,0,0,0.3)",
                 },
               }}
             >
-              <Box
-                component="span"
-                sx={{
-                  background:
-                    "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  color: "transparent",
-                  transition: "all 0.3s ease-in-out",
-                }}
-              >
-                Get Started Today
-              </Box>
+              Get Started Today
             </Button>
           </a>
         </Box>

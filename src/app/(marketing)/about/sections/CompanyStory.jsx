@@ -38,8 +38,8 @@ export default function CompanyStory() {
                 px: { xs: 2, md: 2.5 },
                 py: 0.8,
                 borderRadius: "999px",
-                backgroundColor: "#efe9ff",
-                color: "#6d28d9",
+                backgroundColor: "#DDF5F3",
+                color: "#1D5758",
                 fontWeight: 800,
                 fontSize: { xs: "0.75rem", md: "0.85rem" },
               }}
@@ -100,7 +100,7 @@ export default function CompanyStory() {
               <Box
                 component="span"
                 sx={{
-                  color: "#6d28d9",
+                  color: "#1D5758",
                   fontWeight: 700,
                 }}
               >

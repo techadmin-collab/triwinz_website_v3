@@ -97,7 +97,7 @@ export default function WhyChooseUs() {
                     transform: "translateY(-4px)",
                     boxShadow: "0px 14px 40px rgba(0,0,0,0.1)",
                     backgroundImage:
-                      "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+                      "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
                     color: "#fff",
                   },
                 }}
@@ -110,7 +110,7 @@ export default function WhyChooseUs() {
                     mx: "auto",
                     mb: 2,
                     borderRadius: "50%",
-                    backgroundColor: "#F2ECFF",
+                    backgroundColor: "#DDF5F3",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",

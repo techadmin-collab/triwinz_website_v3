@@ -65,8 +65,8 @@ export default function WhyTriWinzSection() {
               px: 3,
               py: 0.8,
               borderRadius: "999px",
-              backgroundColor: "#EFE6FF",
-              color: "#6A1BFF",
+              backgroundColor: "#DDF5F3",
+              color: "#1D5758",
               fontSize: "0.85rem",
               fontWeight: 800,
             }}
@@ -134,7 +134,7 @@ export default function WhyTriWinzSection() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      background: "linear-gradient(135deg, #6A6CF6, #FF4D94)",
+                      background: "linear-gradient(135deg, #1D5758, #2BD1C7)",
                       color: "#fff",
                     }}
                   >

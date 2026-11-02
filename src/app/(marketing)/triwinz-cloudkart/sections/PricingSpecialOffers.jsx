@@ -117,7 +117,7 @@ export default function PricingSpecialOffers() {
                 transition: "border-color 0.3s ease-in-out",
 
                 "&:hover": {
-                  borderColor: "#7C3BED",
+                  borderColor: "#2BD1C7",
                 },
               }}
             >
@@ -137,7 +137,7 @@ export default function PricingSpecialOffers() {
                     mb: 2,
                     fontSize: "1.6rem",
                     background:
-                      "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+                      "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
                     // backgroundClip: "text",
                     WebkitBackgroundClip: "text",
                     color: "transparent",
@@ -185,7 +185,7 @@ export default function PricingSpecialOffers() {
                       <CheckIcon
                         sx={{
                           fontSize: 18,
-                          color: "#5014d2ff",
+                          color: "#1D5758ff",
                         }}
                       />
                       {feature}

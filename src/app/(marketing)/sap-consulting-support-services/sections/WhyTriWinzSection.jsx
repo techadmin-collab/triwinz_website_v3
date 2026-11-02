@@ -69,8 +69,8 @@ export default function WhyTriWinzSection() {
               px: 3,
               py: 0.8,
               borderRadius: "999px",
-              backgroundColor: "#EFE6FF",
-              color: "#6A1BFF",
+              backgroundColor: "#DDF5F3",
+              color: "#1D5758",
               fontSize: "0.85rem",
               fontWeight: 700,
             }}

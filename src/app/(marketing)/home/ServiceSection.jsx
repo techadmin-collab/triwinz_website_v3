@@ -5,8 +5,11 @@ export default function ServicesSection() {
   return (
     <Box
       sx={{
+        // Section icons come from a shared file with a purple-pink gradient; recolour here only
+        "& stop[stop-color='#5014d2ff']": { stopColor: "#1D5758" },
+        "& stop[stop-color='#dd3ca7fd']": { stopColor: "#2BD1C7" },
         py: { xs: 8, md: 12 },
-        backgroundColor: "#faf9ff",
+        backgroundColor: "#F5FCFB",
         minHeight: "100vh",
         fontFamily: "montserrat, inter",
       }}
@@ -30,7 +33,7 @@ export default function ServicesSection() {
           textAlign="center"
           gutterBottom
           sx={{
-            color: "#5014D2",
+            color: "#1D5758",
             fontSize: "20px",
             fontWeight: 700,
           }}
@@ -66,18 +69,37 @@ export default function ServicesSection() {
                   border: "1px solid #E5E7EB",
                   backgroundColor: "transparent",
                   backgroundImage:
-                    "linear-gradient(135deg, #FFFFFF 0%, #F8F6FE 100%)",
+                    "linear-gradient(135deg, #FFFFFF 0%, #F3FBFA 100%)",
                   boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
                   transform: "translateY(0px)",
-                  transition: "all 0.3s ease",
+                  position: "relative",
+                  isolation: "isolate", // keeps the gradient layer behind the content
+                  overflow: "hidden",
+                  // Same timing in and out, so nothing snaps back
+                  transition:
+                    "transform 0.4s ease, box-shadow 0.4s ease, color 0.4s ease",
+
+                  // Teal gradient layer that fades in on hover
+                  // (switching between two background gradients can't animate)
+                  "&::before": {
+                    content: '""',
+                    position: "absolute",
+                    inset: 0,
+                    zIndex: -1,
+                    borderRadius: "inherit",
+                    backgroundImage:
+                      "linear-gradient(122deg, #1D5758 0%, #2BD1C7 100%)",
+                    opacity: 0,
+                    transition: "opacity 0.4s ease",
+                  },
 
                   "&:hover": {
                     transform: "translateY(-6px)",
-                    transition: "all 0.3s ease",
                     boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
                     color: "#fff",
-                    backgroundImage:
-                      "linear-gradient(122deg, #5014D2 0%, #DD3CA7 100%)",
+                  },
+                  "&:hover::before": {
+                    opacity: 1,
                   },
                 }}
               >
@@ -88,11 +110,11 @@ export default function ServicesSection() {
                     height: 40,
                     p: 0.8,
                     borderRadius: "12px",
-                    background: "linear-gradient(135deg, #ede9fe, #f5f3ff)",
+                    background: "linear-gradient(135deg, #D9F4F2, #EEFAF9)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "#6d28d9",
+                    color: "#1D5758",
                     mb: 2,
                   }}
                 >

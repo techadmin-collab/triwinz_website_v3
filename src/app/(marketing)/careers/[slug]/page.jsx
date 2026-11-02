@@ -78,7 +78,7 @@ export default async function CareerDetailPage({ params }) {
         minHeight: "100vh",
         fontFamily: "montserrat, inter",
         background:
-          "linear-gradient(180deg, #faf8ff 0%, #ffffff 28%, #ffffff 100%)",
+          "linear-gradient(180deg, #F5FCFB 0%, #ffffff 28%, #ffffff 100%)",
       }}
     >
       {/* Hero — same pattern as Careers / Case Studies listing */}
@@ -96,7 +96,7 @@ export default async function CareerDetailPage({ params }) {
             position: "absolute",
             inset: 0,
             backgroundImage:
-              "linear-gradient(122deg, #5014d2ff 0%, #dd3ca73d 100%),url('/about/bg-1-1.webp')",
+              "linear-gradient(122deg, #1D5758ff 0%, #2BD1C73d 100%),url('/about/bg-teal.webp')",
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -198,8 +198,8 @@ export default async function CareerDetailPage({ params }) {
             p: { xs: 2, md: 2.5 },
             borderRadius: 3,
             backgroundColor: "#fff",
-            boxShadow: "0 18px 40px rgba(80, 20, 210, 0.1)",
-            border: "1px solid rgba(80, 20, 210, 0.08)",
+            boxShadow: "0 18px 40px rgba(29, 87, 88, 0.1)",
+            border: "1px solid rgba(29, 87, 88, 0.08)",
           }}
         >
           {metaItems.map((item) => (
@@ -223,8 +223,8 @@ export default async function CareerDetailPage({ params }) {
                   alignItems: "center",
                   justifyContent: "center",
                   background:
-                    "linear-gradient(135deg, rgba(80,20,210,0.1) 0%, rgba(221,60,167,0.1) 100%)",
-                  color: "#5014d2",
+                    "linear-gradient(135deg, rgba(29, 87, 88,0.1) 0%, rgba(43, 209, 199,0.1) 100%)",
+                  color: "#1D5758",
                   "& svg": { fontSize: 20 },
                 }}
               >
@@ -352,8 +352,8 @@ export default async function CareerDetailPage({ params }) {
             borderRadius: 3,
             textAlign: "center",
             background:
-              "linear-gradient(135deg, rgba(80,20,210,0.06) 0%, rgba(221,60,167,0.06) 100%)",
-            border: "1px solid rgba(80, 20, 210, 0.1)",
+              "linear-gradient(135deg, rgba(29, 87, 88,0.06) 0%, rgba(43, 209, 199,0.06) 100%)",
+            border: "1px solid rgba(29, 87, 88, 0.1)",
           }}
         >
           <Typography
@@ -383,8 +383,8 @@ export default async function CareerDetailPage({ params }) {
         <Box
           sx={{
             borderTop: "1px solid",
-            borderColor: "rgba(80, 20, 210, 0.08)",
-            background: "linear-gradient(180deg, #faf8ff 0%, #fff 100%)",
+            borderColor: "rgba(29, 87, 88, 0.08)",
+            background: "linear-gradient(180deg, #F5FCFB 0%, #fff 100%)",
             py: { xs: 6, md: 8 },
           }}
         >
@@ -411,11 +411,11 @@ export default async function CareerDetailPage({ params }) {
                   height: 6,
                 },
                 "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: "rgba(80, 20, 210, 0.25)",
+                  backgroundColor: "rgba(29, 87, 88, 0.25)",
                   borderRadius: 999,
                 },
                 "&::-webkit-scrollbar-track": {
-                  backgroundColor: "rgba(80, 20, 210, 0.06)",
+                  backgroundColor: "rgba(29, 87, 88, 0.06)",
                   borderRadius: 999,
                 },
               }}
@@ -433,21 +433,21 @@ export default async function CareerDetailPage({ params }) {
                       p: 3,
                       borderRadius: 3,
                       backgroundColor: "#fff",
-                      border: "1px solid rgba(80, 20, 210, 0.1)",
+                      border: "1px solid rgba(29, 87, 88, 0.1)",
                       scrollSnapAlign: "start",
                       transition:
                         "transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease",
                       "&:hover": {
                         transform: "translateY(-3px)",
-                        borderColor: "rgba(80, 20, 210, 0.28)",
-                        boxShadow: "0 14px 30px rgba(80, 20, 210, 0.1)",
+                        borderColor: "rgba(29, 87, 88, 0.28)",
+                        boxShadow: "0 14px 30px rgba(29, 87, 88, 0.1)",
                       },
                     }}
                   >
                     <Typography
                       variant="caption"
                       sx={{
-                        color: "#5014d2",
+                        color: "#1D5758",
                         fontWeight: 700,
                         textTransform: "uppercase",
                         letterSpacing: "0.05em",
@@ -491,7 +491,7 @@ function Section({ title, intro, children, last = false, inColumn = false }) {
       sx={{
         mb: last ? 0 : { xs: 5, md: 6 },
         pb: last ? 0 : { xs: 5, md: 6 },
-        borderBottom: last ? "none" : "1px solid rgba(80, 20, 210, 0.08)",
+        borderBottom: last ? "none" : "1px solid rgba(29, 87, 88, 0.08)",
       }}
     >
       <Typography
@@ -533,11 +533,11 @@ function CheckList({ items }) {
             alignItems: "flex-start",
             p: 1.25,
             borderRadius: 2,
-            backgroundColor: "rgba(80, 20, 210, 0.03)",
-            border: "1px solid rgba(80, 20, 210, 0.06)",
+            backgroundColor: "rgba(29, 87, 88, 0.03)",
+            border: "1px solid rgba(29, 87, 88, 0.06)",
             transition: "background-color 0.2s ease",
             "&:hover": {
-              backgroundColor: "rgba(80, 20, 210, 0.055)",
+              backgroundColor: "rgba(29, 87, 88, 0.055)",
             },
           }}
         >
@@ -551,7 +551,7 @@ function CheckList({ items }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              background: "linear-gradient(135deg, #5014d2 0%, #dd3ca7 100%)",
+              background: "linear-gradient(135deg, #1D5758 0%, #2BD1C7 100%)",
               color: "#fff",
             }}
           >

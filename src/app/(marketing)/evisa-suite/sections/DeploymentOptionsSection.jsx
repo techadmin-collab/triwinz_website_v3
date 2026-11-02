@@ -19,7 +19,7 @@ const deploymentOptions = [
       "Go live within weeks with our fully managed cloud solution. No infrastructure management required.",
     icon: <SaasModel />,
     badge: "Fastest deployment",
-    gradient: "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+    gradient: "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
   },
   {
     title: "Private Cloud or On-Premise",
@@ -27,7 +27,7 @@ const deploymentOptions = [
       "Complete data sovereignty with custom infrastructure deployment on your premises or private cloud.",
     icon: <PrivateCloudorOnPremise />,
     badge: "Maximum control",
-    gradient: "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+    gradient: "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
   },
   {
     title: "White-Label",
@@ -35,7 +35,7 @@ const deploymentOptions = [
       "Your logo, your domain, your workflow. Fully customizable branded solution for your organization.",
     icon: <WhiteLabel />,
     badge: "Full customization",
-    gradient: "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+    gradient: "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
   },
 ];
 

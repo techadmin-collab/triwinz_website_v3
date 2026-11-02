@@ -4,6 +4,13 @@ import WhatWeOffer from "./sections/WhatWeOffer";
 import ServicesDetailSection from "./sections/ServicesDetailSection";
 import WhyTriWinzSection from "./sections/WhyTriWinzSection";
 import SAPCTA from "./sections/SAPCTA";
+import { Box } from "@mui/material";
+
+// Shared icons (also used on other pages) are recoloured to teal here only.
+const tealIcons = {
+  "& stop[stop-color='#5014d2ff' i], & stop[stop-color='#5014d2' i]": { stopColor: "#1D5758" },
+  "& stop[stop-color='#dd3ca7fd' i], & stop[stop-color='#dd3ca7ff' i], & stop[stop-color='#dd3ca7' i]": { stopColor: "#2BD1C7" },
+};
 
 export const metadata = {
   title:
@@ -17,13 +24,13 @@ export const metadata = {
 
 const page = () => {
   return (
-    <>
+    <Box sx={tealIcons}>
       <SAPHero />
       <WhatWeOffer />
       <ServicesDetailSection />
       <WhyTriWinzSection />
       <SAPCTA />
-    </>
+    </Box>
   );
 };
 

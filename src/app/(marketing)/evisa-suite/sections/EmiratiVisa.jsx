@@ -41,8 +41,8 @@ export default function EmiratiVisa() {
                 px: 2.5,
                 py: 0.8,
                 borderRadius: "999px",
-                backgroundColor: "#EEF2FF",
-                color: "#4F46E5",
+                backgroundColor: "#DDF5F3",
+                color: "#1D5758",
                 fontWeight: 700,
                 fontSize: "0.95rem",
               }}
@@ -130,7 +130,11 @@ export default function EmiratiVisa() {
                 px: 3,
                 py: 1.4,
                 background:
-                  "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+                  "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
+                "&:hover": {
+                  background:
+                    "linear-gradient(122deg, #164546 0%, #22B3AA 100%)",
+                },
               }}
               href="https://www.emirativisa.com"
               target="_blank"
@@ -231,7 +235,7 @@ function StatBox({ title, subtitle, sx }) {
       <Typography
         fontWeight={700}
         sx={{
-          background: "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+          background: "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
           WebkitBackgroundClip: "text",
           backgroundClip: "text",
           color: "transparent",

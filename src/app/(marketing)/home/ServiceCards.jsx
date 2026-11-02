@@ -42,7 +42,7 @@ export default function ServiceCards() {
           Trusted by Industry Leaders
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-          <img src="Gradient.webp" alt="" />
+          <img src="/Gradient-teal.webp" alt="" />
         </Box>
 
         <Container maxWidth="xl" sx={{ py: 4 }}>
@@ -66,12 +66,12 @@ export default function ServiceCards() {
 
                     padding: "11px 40px",
 
-                    boxShadow: "0px 4px 20px -2px rgba(80, 20, 210, 0.1)",
+                    boxShadow: "0px 4px 20px -2px rgba(29, 87, 88, 0.1)",
                     transition: "all 0.3s ease",
 
                     "&:hover": {
                       transform: "translateY(-4px)",
-                      boxShadow: "0px 8px 28px -2px rgba(80, 20, 210, 0.18)",
+                      boxShadow: "0px 8px 28px -2px rgba(29, 87, 88, 0.18)",
                     },
                   }}
                 >

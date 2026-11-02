@@ -12,19 +12,19 @@ const CheckIcon = () => (
       width="40"
       height="40"
       rx="12"
-      fill="#5014d2ff"
+      fill="#1D5758ff"
       fillOpacity="0.1"
     ></rect>
     <path
       d="M20 30C25.5228 30 30 25.5228 30 20C30 14.4772 25.5228 10 20 10C14.4772 10 10 14.4772 10 20C10 25.5228 14.4772 30 20 30Z"
-      stroke="#5014d2ff"
+      stroke="#1D5758ff"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     ></path>
     <path
       d="M17 20L19 22L23 18"
-      stroke="#5014d2ff"
+      stroke="#1D5758ff"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"

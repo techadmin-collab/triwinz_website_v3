@@ -12,7 +12,7 @@ export default function HeroSection() {
         p: 2,
         color: "#fff",
         position: "relative",
-        backgroundImage: `linear-gradient(122deg, #5014d2ff 0%, #dd3ca73d 100%),url("/it-digital-transformation/gbdb.webp")`,
+        backgroundImage: `linear-gradient(122deg, #1D5758ff 0%, #2BD1C73d 100%),url("/it-digital-transformation/gbdb-teal.webp")`,
         backgroundSize: "cover",
         backgroundPosition: "center right",
         backgroundRepeat: "no-repeat",

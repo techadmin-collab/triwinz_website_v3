@@ -3,8 +3,8 @@ export default function IconWrapper({ children }) {
     <svg width="40" height="40" viewBox="0 0 40 40">
       <defs>
         <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#6366F1" />
-          <stop offset="100%" stopColor="#EC4899" />
+          <stop offset="0%" stopColor="#1D5758" />
+          <stop offset="100%" stopColor="#2BD1C7" />
         </linearGradient>
       </defs>
 

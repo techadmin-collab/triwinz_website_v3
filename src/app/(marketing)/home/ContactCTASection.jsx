@@ -77,7 +77,7 @@ export default function ContactCTASection() {
       sx={{
         py: { xs: 8, md: 12 },
         px: 2,
-        background: "linear-gradient(122deg, #5014D2 0%, #DD3CA7 100%)",
+        background: "linear-gradient(122deg, #1D5758 0%, #2BD1C7 100%)",
         color: "#fff",
         minHeight: "100vh",
         fontFamily: "montserrat, inter",
@@ -99,18 +99,9 @@ export default function ContactCTASection() {
           variant="h3"
           fontWeight={700}
           textAlign="center"
-          gutterBottom
+          sx={{ mb: 6 }}
         >
-          Let’s Talk About Scaling Your Business
-        </Typography>
-
-        <Typography
-          textAlign="center"
-          sx={{ maxWidth: 720, mx: "auto", mb: 6, opacity: 0.9 }}
-        >
-          Whether you’re exploring digital transformation, smarter
-          infrastructure, or tailored IT strategies our experts are here to
-          help. Book a quick call and let’s build something great together.
+          Book a call, let’s build something together.
         </Typography>
 
         <Box
@@ -177,12 +168,8 @@ Sat: 9:00 AM – 2:00 PM IST`}
                 border: "1px solid rgba(255,255,255,0.25)",
               }}
             >
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>
                 Let’s Talk About Scaling Your Business
-              </Typography>
-
-              <Typography sx={{ mb: 3, opacity: 0.9 }}>
-                Book a call, let’s build something together.
               </Typography>
 
               {/* FORM */}
@@ -284,25 +271,30 @@ Sat: 9:00 AM – 2:00 PM IST`}
                 />
 
                 <Button
-                  fullWidth
                   variant="contained"
                   type="submit"
                   disabled={sending}
                   sx={{
                     mt: 1,
-                    color: "#fff",
+                    width: "100%",
+                    px: 4,
+                    color: "#1D5758",
                     fontWeight: 700,
                     py: 1.3,
                     borderRadius: "8px",
-                    backgroundImage:
-                      "linear-gradient(96deg, #5014D2 0%, #DD3CA7 100%)",
-                    boxShadow: "0 10px 24px rgba(80, 20, 210, 0.28)",
+                    // The site theme adds a purple-pink gradient image to contained buttons; turn it off here
+                    backgroundImage: "none",
+                    backgroundColor: "#fff",
+                    boxShadow: "0 10px 24px rgba(0, 0, 0, 0.2)",
                     "&:hover": {
-                      backgroundImage:
-                        "linear-gradient(96deg, #4510b8 0%, #c43395 100%)",
+                      backgroundImage: "none",
+                      backgroundColor: "#E6FAF8",
+                      boxShadow: "0 12px 28px rgba(0, 0, 0, 0.25)",
                     },
                     "&.Mui-disabled": {
-                      color: "#fff",
+                      color: "#1D5758",
+                      backgroundImage: "none",
+                      backgroundColor: "#fff",
                       opacity: 0.75,
                     },
                   }}

@@ -46,7 +46,7 @@ export default function JobCard({
           transition: "transform 0.3s ease, box-shadow 0.3s ease",
           "&:hover": {
             transform: "translateY(-4px)",
-            boxShadow: "0 12px 32px rgba(80, 20, 210, 0.15)",
+            boxShadow: "0 12px 32px rgba(29, 87, 88, 0.15)",
           },
         }}
       >
@@ -54,7 +54,7 @@ export default function JobCard({
           sx={{
             height: 8,
             flexShrink: 0,
-            background: "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+            background: "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
           }}
         />
 
@@ -81,8 +81,8 @@ export default function JobCard({
               label={formatJobTypes(type)}
               size="small"
               sx={{
-                backgroundColor: "rgba(80, 20, 210, 0.08)",
-                color: "#5014d2",
+                backgroundColor: "rgba(29, 87, 88, 0.08)",
+                color: "#1D5758",
                 fontWeight: 500,
               }}
             />
@@ -90,8 +90,8 @@ export default function JobCard({
               label={workMode || "Hybrid"}
               size="small"
               sx={{
-                backgroundColor: "rgba(221, 60, 167, 0.08)",
-                color: "#b02a86",
+                backgroundColor: "rgba(43, 209, 199, 0.08)",
+                color: "#178C85",
                 fontWeight: 500,
               }}
             />
@@ -183,7 +183,7 @@ export default function JobCard({
               pt: 1,
               borderTop: "1px solid",
               borderColor: "divider",
-              color: "#5014d2",
+              color: "#1D5758",
               fontWeight: 600,
               fontSize: "0.9rem",
             }}

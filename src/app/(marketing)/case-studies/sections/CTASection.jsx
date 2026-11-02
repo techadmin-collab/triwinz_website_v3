@@ -12,7 +12,7 @@ const CTASection = () => {
           p: 6,
           textAlign: "center",
           backgroundColor: "primary.lightest",
-          background: "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+          background: "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
           color: "#fff",
           borderRadius: 4,
         }}
@@ -38,8 +38,16 @@ const CTASection = () => {
               px: 4,
               py: 1.5,
               fontWeight: 600,
-              backgroundColor: "#ffffffff",
-              color: "#000000c0",
+              color: "#fff",
+              backgroundColor: "rgba(255,255,255,0.18)",
+              backgroundImage: "none",
+              backdropFilter: "blur(6px)",
+              boxShadow: "0px 10px 30px rgba(0,0,0,0.2)",
+              "&:hover": {
+                backgroundColor: "rgba(255,255,255,0.28)",
+                backgroundImage: "none",
+                boxShadow: "0px 12px 32px rgba(0,0,0,0.25)",
+              },
             }}
           >
             Schedule a Consultation

@@ -19,7 +19,7 @@ export default function ConsultingSpectrum() {
         fontFamily: "montserrat, inter",
       }}
     >
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" sx={{ px: { xs: 3, sm: 5, md: 8, lg: 12 } }}>
         <Box
           sx={{
             display: "flex",

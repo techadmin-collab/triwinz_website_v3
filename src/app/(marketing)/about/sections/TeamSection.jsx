@@ -123,7 +123,7 @@ export default function TeamSection() {
     <Box
       sx={{
         py: { xs: 8, md: 12 },
-        // backgroundImage: "linear-gradient(122deg, #5014D2 0%, #DD3CA7 100%)",
+        // backgroundImage: "linear-gradient(122deg, #1D5758 0%, #2BD1C7 100%)",
         color: "#000",
         fontFamily: "montserrat, inter",
       }}

@@ -30,6 +30,9 @@ export default function HeroSection() {
   return (
     <Box
       sx={{
+        // Tile icons come from a shared file with a purple-pink gradient; make them solid dark teal here only
+        "& stop[stop-color='#5014d2ff']": { stopColor: "#1D5758" },
+        "& stop[stop-color='#dd3ca7fd']": { stopColor: "#1D5758" },
         position: "relative",
         minHeight: { xs: "auto", md: "100vh", xl: "80vh" },
         display: "flex",
@@ -136,7 +139,9 @@ export default function HeroSection() {
             lineHeight: 1.2,
           }}
         >
-          From Problem-Solving to Business Scaling – Smarter IT Solutions
+          From Problem-Solving
+          <br />
+          to Business Scaling – Smarter IT Solutions
         </Typography>
 
         {/* Subheading */}

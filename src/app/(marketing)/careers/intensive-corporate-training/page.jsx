@@ -30,15 +30,15 @@ const container = {
   maxWidth: { xs: "1250px", xl: "xl" },
 };
 
-const PURPLE = "#5014d2";
-const gradientStrong = "linear-gradient(135deg, #5014d2 0%, #dd3ca7 100%)";
+const PURPLE = "#1D5758";
+const gradientStrong = "linear-gradient(135deg, #1D5758 0%, #2BD1C7 100%)";
 const gradientSoft =
-  "linear-gradient(135deg, rgba(80,20,210,0.1) 0%, rgba(221,60,167,0.1) 100%)";
+  "linear-gradient(135deg, rgba(29,87,88,0.1) 0%, rgba(43,209,199,0.1) 100%)";
 const cardSx = {
   borderRadius: 3,
   backgroundColor: "#fff",
-  border: "1px solid rgba(80, 20, 210, 0.1)",
-  boxShadow: "0 12px 30px rgba(80, 20, 210, 0.06)",
+  border: "1px solid rgba(29, 87, 88, 0.1)",
+  boxShadow: "0 12px 30px rgba(29, 87, 88, 0.06)",
 };
 
 const ICONS = {
@@ -102,7 +102,7 @@ export default function IntensiveCorporateTrainingPage() {
             position: "absolute",
             inset: 0,
             backgroundImage:
-              "linear-gradient(122deg, #5014d2ff 0%, #dd3ca73d 100%),url('/about/bg-1-1.webp')",
+              "linear-gradient(122deg, #1D5758ff 0%, #2BD1C73d 100%),url('/about/bg-teal.webp')",
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -202,7 +202,7 @@ export default function IntensiveCorporateTrainingPage() {
         <Box
           sx={{
             ...cardSx,
-            boxShadow: "0 18px 40px rgba(80, 20, 210, 0.12)",
+            boxShadow: "0 18px 40px rgba(29, 87, 88, 0.12)",
             display: "grid",
             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", lg: `repeat(${p.hero.highlights.length}, 1fr)` },
             gap: { xs: 2, md: 2.5 },
@@ -246,8 +246,8 @@ export default function IntensiveCorporateTrainingPage() {
                     gap: { xs: 0.25, sm: 2 },
                     px: { xs: 2, md: 2.5 },
                     py: 1.5,
-                    backgroundColor: i % 2 ? "#fff" : "rgba(80, 20, 210, 0.025)",
-                    borderTop: i ? "1px solid rgba(80, 20, 210, 0.07)" : "none",
+                    backgroundColor: i % 2 ? "#fff" : "rgba(29, 87, 88, 0.025)",
+                    borderTop: i ? "1px solid rgba(29, 87, 88, 0.07)" : "none",
                   }}
                 >
                   <Typography sx={{ fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: PURPLE, pt: { sm: 0.25 } }}>
@@ -411,7 +411,7 @@ export default function IntensiveCorporateTrainingPage() {
                 "& summary::-webkit-details-marker": { display: "none" },
                 "& .faq-icon": { transition: "transform 0.2s ease", color: PURPLE },
                 "&[open] .faq-icon": { transform: "rotate(180deg)" },
-                "&[open]": { borderColor: "rgba(80, 20, 210, 0.3)" },
+                "&[open]": { borderColor: "rgba(29, 87, 88, 0.3)" },
               }}
             >
               <Box component="summary">
@@ -456,7 +456,7 @@ export default function IntensiveCorporateTrainingPage() {
 
 function Band({ children }) {
   return (
-    <Box sx={{ background: "linear-gradient(180deg, #faf8ff 0%, #f6f2ff 100%)", borderTop: "1px solid rgba(80,20,210,0.06)", borderBottom: "1px solid rgba(80,20,210,0.06)" }}>
+    <Box sx={{ background: "linear-gradient(180deg, #F5FCFB 0%, #EEFAF9 100%)", borderTop: "1px solid rgba(29,87,88,0.06)", borderBottom: "1px solid rgba(29,87,88,0.06)" }}>
       <Box sx={{ ...container, py: { xs: 7, md: 10 } }}>{children}</Box>
     </Box>
   );
@@ -496,7 +496,7 @@ function CheckList({ items, muted = false }) {
               mt: 0.25,
               display: "grid",
               placeItems: "center",
-              background: muted ? "rgba(80,20,210,0.15)" : gradientStrong,
+              background: muted ? "rgba(29,87,88,0.15)" : gradientStrong,
               color: muted ? PURPLE : "#fff",
             }}
           >
@@ -522,7 +522,7 @@ function ListCard({ title, items, muted = false }) {
 
 function NoteBox({ children }) {
   return (
-    <Box sx={{ mt: { xs: 3, md: 4 }, p: { xs: 2, md: 2.5 }, borderRadius: 2.5, borderLeft: `4px solid ${PURPLE}`, backgroundColor: "rgba(80, 20, 210, 0.05)" }}>
+    <Box sx={{ mt: { xs: 3, md: 4 }, p: { xs: 2, md: 2.5 }, borderRadius: 2.5, borderLeft: `4px solid ${PURPLE}`, backgroundColor: "rgba(29, 87, 88, 0.05)" }}>
       <Typography sx={{ color: "#333", lineHeight: 1.7, fontWeight: 500 }}>{children}</Typography>
     </Box>
   );

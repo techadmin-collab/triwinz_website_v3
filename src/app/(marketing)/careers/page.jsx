@@ -53,7 +53,7 @@ export default async function CareersPage() {
             position: "absolute",
             inset: 0,
             backgroundImage:
-              "linear-gradient(122deg, #5014d2ff 0%, #dd3ca73d 100%),url('/about/bg-1-1.webp')",
+              "linear-gradient(122deg, #1D5758ff 0%, #2BD1C73d 100%),url('/about/bg-teal.webp')",
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -140,11 +140,11 @@ export default async function CareersPage() {
                   letterSpacing: "0.02em",
                   textTransform: "none",
                   fontSize: "1rem",
-                  color: "#5014d2",
+                  color: "#1D5758",
                   backgroundColor: "#fff",
                   boxShadow: "0 10px 24px rgba(0, 0, 0, 0.18)",
                   "&:hover": {
-                    backgroundColor: "#f4efff",
+                    backgroundColor: "#E6FAF8",
                     boxShadow: "0 12px 28px rgba(0, 0, 0, 0.24)",
                   },
                 }}

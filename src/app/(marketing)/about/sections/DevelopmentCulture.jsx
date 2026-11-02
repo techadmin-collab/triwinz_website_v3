@@ -55,8 +55,8 @@ export default function DevelopmentCulture() {
               px: 2.5,
               py: 0.8,
               borderRadius: "999px",
-              backgroundColor: "#efe9ff",
-              color: "#6d28d9",
+              backgroundColor: "#DDF5F3",
+              color: "#1D5758",
               fontWeight: 700,
               fontSize: "0.85rem",
             }}

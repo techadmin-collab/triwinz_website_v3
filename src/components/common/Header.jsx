@@ -3,13 +3,22 @@
 import Link from "next/link";
 import { AppBar, Toolbar, Button, Box } from "@mui/material";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { Drawer, IconButton } from "@mui/material";
 import { usePathname } from "next/navigation";
 const TRAINING_PROGRAM_PATH = "/careers/intensive-corporate-training";
+
+// Current page in the header: bold underline instead of a colour change
+const selectedStyle = {
+  fontWeight: 700,
+  textDecoration: "underline",
+  textDecorationThickness: "2px",
+  textDecorationColor: "#2BD1C7",
+  textUnderlineOffset: "6px",
+};
 
 const menuItemStyle = {
   px: 2,
@@ -20,7 +29,7 @@ const menuItemStyle = {
   fontWeight: 500,
   transition: "color 0.25s ease, background-color 0.25s ease",
   "&:hover": {
-    color: "#000",
+    color: "#2BD1C7",
   },
 };
 
@@ -47,7 +56,7 @@ const dropdownStyle = (open, width) => ({
   left: 0,
   width,
   borderRadius: 2,
-  backgroundColor: "#ACACACB8",
+  backgroundColor: "#1D5758F5",
   color: "#fff",
   py: 1,
   zIndex: 1300,
@@ -69,6 +78,42 @@ const dropdownStyle = (open, width) => ({
   },
 });
 
+/* ---------- Detect a light background behind the header ---------- */
+
+function luminance(r, g, b) {
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+}
+
+// Returns true when the visible background at (x, y), ignoring the header itself, is light.
+function isLightBehind(x, y, headerEl) {
+  const stack = document.elementsFromPoint(x, y);
+  const target = stack.find((el) => !headerEl.contains(el));
+  if (!target) return false;
+  if (target.tagName === "IMG" || target.tagName === "VIDEO") return false;
+
+  for (let el = target; el && el !== document.documentElement; el = el.parentElement) {
+    const style = getComputedStyle(el);
+    const bgImage = style.backgroundImage;
+    if (bgImage && bgImage !== "none") {
+      if (bgImage.includes("url(")) return false; // photo or illustration: treat as not light
+      const colors = [...bgImage.matchAll(/rgba?\(([^)]+)\)/g)].map((m) =>
+        m[1].split(",").map((v) => parseFloat(v)),
+      );
+      if (colors.length) {
+        const avg =
+          colors.reduce((sum, [r, g, b]) => sum + luminance(r, g, b), 0) / colors.length;
+        return avg > 0.85;
+      }
+    }
+    const m = style.backgroundColor.match(/rgba?\(([^)]+)\)/);
+    if (m) {
+      const [r, g, b, a = 1] = m[1].split(",").map((v) => parseFloat(v));
+      if (a > 0.5) return luminance(r, g, b) > 0.85;
+    }
+  }
+  return true; // nothing painted behind it: the page itself is white
+}
+
 export default function Header() {
   const [productOpen, setProductOpen] = useState(false);
   const [serviceOpen, setServiceOpen] = useState(false);
@@ -81,6 +126,34 @@ export default function Header() {
   const [mobileCareersOpen, setMobileCareersOpen] = useState(false);
 
   const pathname = usePathname();
+  const headerRef = useRef(null);
+  const [onLightBg, setOnLightBg] = useState(false);
+
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    let frame = 0;
+    const check = () => {
+      frame = 0;
+      const rect = el.getBoundingClientRect();
+      const y = rect.top + rect.height / 2;
+      // sample a few points across the header so a single image or card doesn't decide it
+      const xs = [0.2, 0.5, 0.8].map((f) => rect.left + rect.width * f);
+      const lightCount = xs.filter((x) => isLightBehind(x, y, el)).length;
+      setOnLightBg(lightCount >= 2);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [pathname]);
 
   if (pathname?.startsWith("/admin")) {
     return null;
@@ -89,6 +162,7 @@ export default function Header() {
   return (
     <>
       <AppBar
+        ref={headerRef}
         position="fixed"
         elevation={1}
         className="mt-7 mb-7 h-12.5 rounded-xl"
@@ -99,8 +173,18 @@ export default function Header() {
           right: 0,
           justifyContent: "center",
           alignContent: "center",
-          borderTop: "1px solid #e0e0e0",
-          backgroundColor: "#838383CC",
+          // Frosted-glass look: lightly tinted, blurred background with a soft light edge.
+          // A slight dark tint keeps the white menu text readable over light page sections.
+          // Darker glass when sitting over a white/light section, lighter glass otherwise
+          backgroundColor: onLightBg
+            ? "rgba(40, 46, 52, 0.55)"
+            : "rgba(40, 46, 52, 0.38)",
+          transition: "background-color 0.35s ease",
+          backdropFilter: "blur(16px) saturate(180%)",
+          WebkitBackdropFilter: "blur(16px) saturate(180%)",
+          border: "1px solid rgba(255, 255, 255, 0.28)",
+          boxShadow:
+            "0 8px 32px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.35)",
           fontFamily: "montserrat, inter",
         }}
       >
@@ -150,7 +234,7 @@ export default function Header() {
                 color: "inherit",
                 transition: "color 0.25s ease-in-out",
                 "&:hover": {
-                  color: "#000",
+                  color: "#2BD1C7",
                 },
               }}
             >
@@ -160,10 +244,11 @@ export default function Header() {
               component={Link}
               href="/about"
               sx={{
-                color: pathname === "/about" ? "#000" : "inherit",
+                color: "inherit",
+                ...(pathname === "/about" ? selectedStyle : {}),
                 transition: "color 0.25s ease-in-out",
                 "&:hover": {
-                  color: "#000",
+                  color: "#2BD1C7",
                 },
               }}
             >
@@ -181,7 +266,7 @@ export default function Header() {
                 sx={{
                   color: "inherit",
                   transition: "color 0.25s ease-in-out",
-                  "&:hover": { color: "#000" },
+                  "&:hover": { color: "#2BD1C7" },
                 }}
               >
                 Products
@@ -194,8 +279,8 @@ export default function Header() {
                   href="/evisa-suite/"
                   sx={{
                     ...menuItemStyle,
-                    color:
-                      pathname === "/evisa-suite" ? "#000000a4" : "inherit",
+                    color: "inherit",
+                    ...(pathname === "/evisa-suite" ? selectedStyle : {}),
                   }}
                 >
                   eVisa Suite
@@ -205,10 +290,8 @@ export default function Header() {
                   href="/india-domain-mart"
                   sx={{
                     ...menuItemStyle,
-                    color:
-                      pathname === "/india-domain-mart"
-                        ? "#000000a4"
-                        : "inherit",
+                    color: "inherit",
+                    ...(pathname === "/india-domain-mart" ? selectedStyle : {}),
                   }}
                 >
                   India Domain Mart
@@ -218,10 +301,8 @@ export default function Header() {
                   href="/triwinz-cloudkart"
                   sx={{
                     ...menuItemStyle,
-                    color:
-                      pathname === "/triwinz-cloudkart"
-                        ? "#000000a4"
-                        : "inherit",
+                    color: "inherit",
+                    ...(pathname === "/triwinz-cloudkart" ? selectedStyle : {}),
                   }}
                 >
                   TriWinz CloudKart
@@ -231,8 +312,8 @@ export default function Header() {
                   href="/bisbuddy-erp"
                   sx={{
                     ...menuItemStyle,
-                    color:
-                      pathname === "/bisbuddy-erp" ? "#000000a4" : "inherit",
+                    color: "inherit",
+                    ...(pathname === "/bisbuddy-erp" ? selectedStyle : {}),
                   }}
                 >
                   BisBuddy ERP
@@ -251,7 +332,7 @@ export default function Header() {
                 sx={{
                   color: "inherit",
                   transition: "color 0.25s ease-in-out",
-                  "&:hover": { color: "#000" },
+                  "&:hover": { color: "#2BD1C7" },
                 }}
               >
                 Services
@@ -263,10 +344,8 @@ export default function Header() {
                   href="/it-digital-transformation"
                   sx={{
                     ...menuItemStyle,
-                    color:
-                      pathname === "/it-digital-transformation"
-                        ? "#000000a4"
-                        : "inherit",
+                    color: "inherit",
+                    ...(pathname === "/it-digital-transformation" ? selectedStyle : {}),
                   }}
                 >
                   IT & Digital Transformation
@@ -276,23 +355,19 @@ export default function Header() {
                   href="/sap-consulting-support-services"
                   sx={{
                     ...menuItemStyle,
-                    color:
-                      pathname === "/sap-consulting-support-services"
-                        ? "#000000a4"
-                        : "inherit",
+                    color: "inherit",
+                    ...(pathname === "/sap-consulting-support-services" ? selectedStyle : {}),
                   }}
                 >
                   SAP Consulting & Support Services
                 </Box>
                 <Box
                   component={Link}
-                  href="/cloud-and-web-infrastruture"
+                  href="/cloud-and-web-infrastructure"
                   sx={{
                     ...menuItemStyle,
-                    color:
-                      pathname === "/cloud-and-web-infrastruture"
-                        ? "#000000a4"
-                        : "inherit",
+                    color: "inherit",
+                    ...(pathname === "/cloud-and-web-infrastructure" ? selectedStyle : {}),
                   }}
                 >
                   Cloud and Web Infrastructure
@@ -302,10 +377,8 @@ export default function Header() {
                   href="/custom-software-erp-development"
                   sx={{
                     ...menuItemStyle,
-                    color:
-                      pathname === "/custom-software-erp-development"
-                        ? "#000000a4"
-                        : "inherit",
+                    color: "inherit",
+                    ...(pathname === "/custom-software-erp-development" ? selectedStyle : {}),
                   }}
                 >
                   Custom Software & ERP Development
@@ -315,10 +388,8 @@ export default function Header() {
                   href="/egovernance-visa-platform-solutions"
                   sx={{
                     ...menuItemStyle,
-                    color:
-                      pathname === "/egovernance-visa-platform-solutions"
-                        ? "#000000a4"
-                        : "inherit",
+                    color: "inherit",
+                    ...(pathname === "/egovernance-visa-platform-solutions" ? selectedStyle : {}),
                   }}
                 >
                   eGovernance & Visa Platform Solutions
@@ -334,7 +405,7 @@ export default function Header() {
                 color: "inherit",
                 transition: "color 0.25s ease-in-out",
                 "&:hover": {
-                  color: "#000",
+                  color: "#2BD1C7",
                 },
               }}
             >
@@ -351,9 +422,10 @@ export default function Header() {
                 href="/careers"
                 endIcon={<KeyboardArrowDownIcon />}
                 sx={{
-                  color: pathname?.startsWith("/careers") ? "#000" : "inherit",
+                  color: "inherit",
+                  ...(pathname?.startsWith("/careers") ? selectedStyle : {}),
                   transition: "color 0.25s ease-in-out",
-                  "&:hover": { color: "#000" },
+                  "&:hover": { color: "#2BD1C7" },
                 }}
               >
                 Careers
@@ -366,7 +438,8 @@ export default function Header() {
                   onClick={() => setCareersOpen(false)}
                   sx={{
                     ...menuItemStyle,
-                    color: pathname === "/careers" ? "#000000a4" : "inherit",
+                    color: "inherit",
+                    ...(pathname === "/careers" ? selectedStyle : {}),
                   }}
                 >
                   Open Positions
@@ -377,8 +450,8 @@ export default function Header() {
                   onClick={() => setCareersOpen(false)}
                   sx={{
                     ...menuItemStyle,
-                    color:
-                      pathname === TRAINING_PROGRAM_PATH ? "#000000a4" : "inherit",
+                    color: "inherit",
+                    ...(pathname === TRAINING_PROGRAM_PATH ? selectedStyle : {}),
                   }}
                 >
                   Intensive Corporate Training Programme
@@ -393,7 +466,7 @@ export default function Header() {
                 color: "inherit",
                 transition: "color 0.25s ease-in-out",
                 "&:hover": {
-                  color: "#000",
+                  color: "#2BD1C7",
                 },
               }}
             >
@@ -417,12 +490,20 @@ export default function Header() {
               component={Link}
               href="/contact-us"
               sx={{
-                backgroundImage:
-                  "linear-gradient(96deg, #5014D2 0%, #DD3CA7 100%)",
+                backgroundColor: "#fff",
                 borderRadius: "10px",
-                px: 5,
-                py: 1.5,
-                color: "white",
+                // Header bar is 50px tall: 38px button leaves 6px above and below.
+                // Toolbar already pads ~4.8px on the right; +1.2px makes that gap 6px too.
+                height: "38px",
+                px: 2.5,
+                py: 0,
+                mr: "1.2px",
+                color: "#1D5758",
+                fontWeight: "600",
+                "&:hover": {
+                  backgroundColor: "#E6FAF8",
+                  color: "#1D5758",
+                },
 
                 display: { xs: "none", lg: "flex" },
                 alignItems: "center",
@@ -430,7 +511,6 @@ export default function Header() {
 
                 textTransform: "none", // optional (cleaner text)
                 lineHeight: 1, // important for vertical centering
-                fontWeight: "500",
                 fontSize: "16px",
               }}
             >
@@ -458,7 +538,7 @@ export default function Header() {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              backgroundColor: "#838383CC",
+              backgroundColor: "#1D5758",
               // mb: 2,
             }}
           >
@@ -678,16 +758,16 @@ export default function Header() {
 
               <Button
                 component={Link}
-                href="/cloud-and-web-infrastruture"
+                href="/cloud-and-web-infrastructure"
                 fullWidth
                 sx={{
                   ...mobileSubLinkStyle,
                   color:
-                    pathname === "/cloud-and-web-infrastruture"
+                    pathname === "/cloud-and-web-infrastructure"
                       ? "#000000a4"
                       : "#000000a4",
                   fontWeight:
-                    pathname === "/cloud-and-web-infrastruture" ? 700 : 600,
+                    pathname === "/cloud-and-web-infrastructure" ? 700 : 600,
                 }}
                 onClick={() => setMobileOpen(false)}
               >
@@ -837,7 +917,7 @@ export default function Header() {
               sx={{
                 mt: 2,
                 backgroundImage:
-                  "linear-gradient(96deg, #5014D2 0%, #DD3CA7 100%)",
+                  "linear-gradient(96deg, #2BD1C7 0%, #1D5758 100%)",
                 color: "#fff",
                 borderRadius: "10px",
                 py: 1.4,

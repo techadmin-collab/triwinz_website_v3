@@ -162,12 +162,12 @@ function SocialIcon({ icon, href }) {
         height: 42,
         borderRadius: "50%",
         background:
-          "linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #6d28d9, #ec4899) border-box",
+          "linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #1D5758, #2BD1C7) border-box",
         border: "1px solid transparent",
         color: "#111",
         transition: "all 0.3s ease",
         "&:hover": {
-          color: "#6d28d9",
+          color: "#1D5758",
           transform: "translateY(-2px)",
         },
       }}
@@ -190,7 +190,7 @@ function FooterLink({ icon, label, link = "#" }) {
         color: "#111",
         transition: "color 0.3s ease",
         "&:hover": {
-          color: "#6d28d9",
+          color: "#1D5758",
         },
       }}
     >

@@ -9,7 +9,7 @@ export default function DevelopmentCTA() {
   return (
     <Box
       sx={{
-        background: "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+        background: "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
         py: { xs: 6, md: 10 },
         px: 2,
         color: "#fff",
@@ -71,29 +71,23 @@ export default function DevelopmentCTA() {
                 borderRadius: 2,
                 fontWeight: 600,
                 textTransform: "none",
-                backgroundColor: "#fff",
-                boxShadow: "0px 10px 30px rgba(0,0,0,0.25)",
+                color: "#fff",
+                backgroundColor: "rgba(255,255,255,0.14)",
+                backgroundImage: "none",
+                backdropFilter: "blur(6px)",
+                boxShadow: "0px 10px 30px rgba(0,0,0,0.2)",
                 mx: { xs: "auto", md: 0 },
                 display: "inline-flex",
+                // Icons have a built-in gradient stroke; force them white here
+                "& .MuiButton-startIcon svg path": { stroke: "#fff" },
                 "&:hover": {
-                  backgroundColor: "#fff",
-                  opacity: 0.95,
+                  backgroundColor: "rgba(255,255,255,0.24)",
+                  backgroundImage: "none",
+                  boxShadow: "0px 12px 32px rgba(0,0,0,0.25)",
                 },
               }}
             >
-              <Box
-                component="span"
-                sx={{
-                  background:
-                    "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  color: "transparent",
-                  fontWeight: 600,
-                }}
-              >
-                Book a Free Consultation or Demo
-              </Box>
+              Book a Free Consultation or Demo
             </Button>
           </Link>
 
@@ -111,29 +105,23 @@ export default function DevelopmentCTA() {
                 borderRadius: 2,
                 fontWeight: 600,
                 textTransform: "none",
-                backgroundColor: "#fff",
-                boxShadow: "0px 10px 30px rgba(0,0,0,0.25)",
+                color: "#fff",
+                backgroundColor: "rgba(255,255,255,0.14)",
+                backgroundImage: "none",
+                backdropFilter: "blur(6px)",
+                boxShadow: "0px 10px 30px rgba(0,0,0,0.2)",
                 mx: { xs: "auto", md: 0 },
                 display: "inline-flex",
+                // Icons have a built-in gradient stroke; force them white here
+                "& .MuiButton-startIcon svg path": { stroke: "#fff" },
                 "&:hover": {
-                  backgroundColor: "#fff",
-                  opacity: 0.95,
+                  backgroundColor: "rgba(255,255,255,0.24)",
+                  backgroundImage: "none",
+                  boxShadow: "0px 12px 32px rgba(0,0,0,0.25)",
                 },
               }}
             >
-              <Box
-                component="span"
-                sx={{
-                  background:
-                    "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  color: "transparent",
-                  fontWeight: 600,
-                }}
-              >
-                corpconnect@triwinz.com
-              </Box>
+              corpconnect@triwinz.com
             </Button>
           </a>
         </Box>

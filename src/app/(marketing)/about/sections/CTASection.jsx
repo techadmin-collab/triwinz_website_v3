@@ -8,7 +8,7 @@ export default function CTASection() {
     <Box
       sx={{
         py: { xs: 8, md: 10 },
-        background: "linear-gradient(122deg, #5014d2ff 0%, #dd3ca7ff 100%)",
+        background: "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
         color: "#fff",
         fontFamily: "montserrat, inter",
         textAlign: "center",

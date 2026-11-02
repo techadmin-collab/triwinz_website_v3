@@ -163,7 +163,7 @@ export default function WhatWeOfferSection() {
                       alignItems: "center",
                       justifyContent: "center",
                       color: "#fff",
-                      background: "linear-gradient(135deg, #6A6CF6, #FF4D94)",
+                      background: "linear-gradient(135deg, #1D5758, #2BD1C7)",
                     }}
                   >
                     {service.icon}

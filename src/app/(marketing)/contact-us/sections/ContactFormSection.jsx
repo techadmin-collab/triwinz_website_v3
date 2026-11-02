@@ -45,7 +45,7 @@ export default function ContactFormSection() {
       sx={{
         py: { xs: 8, md: 12 },
         px: 2,
-        background: "linear-gradient(122deg, #5014D2 0%, #DD3CA7 100%)",
+        background: "linear-gradient(122deg, #1D5758 0%, #2BD1C7 100%)",
         display: "flex",
         justifyContent: "center",
         fontFamily: "montserrat, inter",
@@ -114,9 +114,9 @@ export default function ContactFormSection() {
               borderRadius: 2,
               fontWeight: 700,
               backgroundColor: "#fff",
-              color: "#6A1BFF",
+              color: "#1D5758",
               "&:hover": {
-                backgroundColor: "#F3F3F3",
+                backgroundColor: "#E6FAF8",
               },
             }}
           >

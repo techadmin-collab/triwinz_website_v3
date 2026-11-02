@@ -47,8 +47,8 @@ export function GlobeIcon() {
           y2="23.7485"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#5014d2ff"></stop>
-          <stop offset="1" stopColor="#dd3ca7fd"></stop>
+          <stop stopColor="#1D5758ff"></stop>
+          <stop offset="1" stopColor="#2BD1C7fd"></stop>
         </linearGradient>
       </defs>
     </svg>

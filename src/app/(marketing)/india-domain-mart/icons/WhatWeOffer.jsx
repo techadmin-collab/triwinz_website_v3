@@ -30,8 +30,8 @@ export const DomainIcon = () => (
         y2="23.7485"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -82,8 +82,8 @@ export const ProfessionalEmailIcon = () => (
           y2="23.7485"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#5014d2ff"></stop>
-          <stop offset="1" stopColor="#dd3ca7fd"></stop>
+          <stop stopColor="#1D5758ff"></stop>
+          <stop offset="1" stopColor="#2BD1C7fd"></stop>
         </linearGradient>
         <clipPath id="clip0_348_803">
           <rect
@@ -148,8 +148,8 @@ export const VirtualMachinesAndServerDeploymentIcon = () => (
         y2="23.7485"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <clipPath id="clip0_348_819">
         <rect
@@ -243,8 +243,8 @@ export const CloudHostingAndVPSSolutionsIcon = () => (
         y2="23.7485"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -282,8 +282,8 @@ export const SSLCertificatesAndWebsiteSecurity = () => (
         y2="23.7485"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <clipPath id="clip0_348_851">
         <rect
@@ -463,8 +463,8 @@ export const SaasApplicationHostingIcon = () => (
         y2="23.7485"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#5014d2ff"></stop>
-        <stop offset="1" stopColor="#dd3ca7fd"></stop>
+        <stop stopColor="#1D5758ff"></stop>
+        <stop offset="1" stopColor="#2BD1C7fd"></stop>
       </linearGradient>
       <clipPath id="clip0_348_867">
         <rect

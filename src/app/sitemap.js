@@ -46,6 +46,12 @@ export default function sitemap() {
       priority: 1.0,
     },
     {
+      url: `${baseUrl}/cloud-and-web-infrastructure/`,
+      lastModified,
+      changeFrequency: "daily",
+      priority: 1.0,
+    },
+    {
       url: `${baseUrl}/careers/`,
       lastModified,
       changeFrequency: "weekly",
