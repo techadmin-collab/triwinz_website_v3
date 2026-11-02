@@ -114,7 +114,7 @@ export default function ShortlistedJobsPage() {
                       borderRadius: 1.5,
                       display: "grid",
                       placeItems: "center",
-                    bgcolor: "#f5f0ff",
+                    bgcolor: "#E6F7F6",
                     color: BRAND.primary,
                     mb: 2,
                   }}

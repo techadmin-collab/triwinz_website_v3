@@ -71,7 +71,7 @@ export default async function AdminDashboardPage() {
       count: newApplications,
       href: "/admin/applications?status=new",
       icon: FiberNewOutlinedIcon,
-      tone: "#f5f0ff",
+      tone: "#E6F7F6",
       iconColor: BRAND.primary,
       module: "applications",
     },
@@ -80,8 +80,8 @@ export default async function AdminDashboardPage() {
       count: shortlistedApplications,
       href: "/admin/shortlisted",
       icon: StarOutlineIcon,
-      tone: "#fdf2f8",
-      iconColor: BRAND.accent,
+      tone: "#E6FAF8",
+      iconColor: BRAND.accentDark,
       module: "applications",
     },
     {
@@ -98,8 +98,8 @@ export default async function AdminDashboardPage() {
       count: jobs,
       href: "/admin/jobs",
       icon: WorkOutlineIcon,
-      tone: "#f5f3ff",
-      iconColor: "#6d28d9",
+      tone: "#EEF4F4",
+      iconColor: "#2E7D7E",
       module: "jobs",
     },
   ].filter((card) => hasModuleAccess(session, card.module));
@@ -152,12 +152,12 @@ export default async function AdminDashboardPage() {
                   height: "100%",
                   p: 2.5,
                   borderRadius: 2,
-                  border: "1px solid rgba(80, 20, 210, 0.1)",
+                  border: "1px solid rgba(29, 87, 88, 0.1)",
                   bgcolor: "#fff",
                   transition: "border-color 0.15s ease, box-shadow 0.15s ease",
                   "&:hover": {
-                    borderColor: "rgba(80, 20, 210, 0.28)",
-                    boxShadow: "0 8px 24px rgba(80, 20, 210, 0.08)",
+                    borderColor: "rgba(29, 87, 88, 0.28)",
+                    boxShadow: "0 8px 24px rgba(29, 87, 88, 0.08)",
                   },
                 }}
               >
@@ -206,7 +206,7 @@ export default async function AdminDashboardPage() {
           sx={{
             p: 2.5,
             borderRadius: 2,
-            border: "1px solid rgba(80, 20, 210, 0.1)",
+            border: "1px solid rgba(29, 87, 88, 0.1)",
             bgcolor: "#fff",
             mb: 3,
           }}
@@ -235,7 +235,7 @@ export default async function AdminDashboardPage() {
                 borderRadius: 1.5,
                 display: "grid",
                 placeItems: "center",
-                bgcolor: "#f5f0ff",
+                bgcolor: "#E6F7F6",
                 color: BRAND.primary,
                 flexShrink: 0,
               }}
@@ -279,8 +279,8 @@ export default async function AdminDashboardPage() {
                       transition:
                         "border-color 0.15s ease, background-color 0.15s ease",
                       "&:hover": {
-                        borderColor: "rgba(80, 20, 210, 0.25)",
-                        bgcolor: "#faf8ff",
+                        borderColor: "rgba(29, 87, 88, 0.25)",
+                        bgcolor: "#F5FCFB",
                       },
                     }}
                   >
@@ -318,7 +318,7 @@ export default async function AdminDashboardPage() {
                         placeItems: "center",
                         bgcolor:
                           job.count > 0
-                            ? "rgba(80, 20, 210, 0.1)"
+                            ? "rgba(29, 87, 88, 0.1)"
                             : "#f3f4f6",
                         color: job.count > 0 ? BRAND.primary : "#6b7280",
                         fontWeight: 800,
@@ -341,7 +341,7 @@ export default async function AdminDashboardPage() {
         sx={{
           p: 2.5,
           borderRadius: 2,
-          border: "1px solid rgba(80, 20, 210, 0.1)",
+          border: "1px solid rgba(29, 87, 88, 0.1)",
           bgcolor: "#fff",
         }}
       >
@@ -374,14 +374,14 @@ export default async function AdminDashboardPage() {
                         textTransform: "none",
                         fontWeight: 700,
                         color: BRAND.primary,
-                        border: "1px solid rgba(80, 20, 210, 0.2)",
-                        bgcolor: "#faf8ff",
+                        border: "1px solid rgba(29, 87, 88, 0.2)",
+                        bgcolor: "#F5FCFB",
                         px: 2,
                         py: 1,
                         justifyContent: "space-between",
                         "&:hover": {
-                          bgcolor: "#f5f0ff",
-                          borderColor: "rgba(80, 20, 210, 0.35)",
+                          bgcolor: "#E6F7F6",
+                          borderColor: "rgba(29, 87, 88, 0.35)",
                         },
                       }
                 }

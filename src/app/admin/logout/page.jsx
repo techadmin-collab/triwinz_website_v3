@@ -16,7 +16,7 @@ export default function AdminLogoutPage() {
         display: "grid",
         placeItems: "center",
         gap: 1.5,
-        background: "linear-gradient(122deg, #5014D2 0%, #DD3CA7 100%)",
+        background: "linear-gradient(122deg, #1D5758 0%, #2BD1C7 100%)",
         color: "#fff",
         px: 2,
       }}

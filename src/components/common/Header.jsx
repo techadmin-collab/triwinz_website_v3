@@ -56,7 +56,14 @@ const dropdownStyle = (open, width) => ({
   left: 0,
   width,
   borderRadius: 2,
-  backgroundColor: "#1D5758F5",
+  // Same frosted glass as the header bar. The tint is a little stronger than the
+  // bar's because the menu often sits over busy page content.
+  backgroundColor: "rgba(40, 46, 52, 0.55)",
+  backdropFilter: "blur(16px) saturate(180%)",
+  WebkitBackdropFilter: "blur(16px) saturate(180%)",
+  border: "1px solid rgba(255, 255, 255, 0.28)",
+  boxShadow:
+    "0 8px 32px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.35)",
   color: "#fff",
   py: 1,
   zIndex: 1300,
@@ -176,12 +183,24 @@ export default function Header() {
           // Frosted-glass look: lightly tinted, blurred background with a soft light edge.
           // A slight dark tint keeps the white menu text readable over light page sections.
           // Darker glass when sitting over a white/light section, lighter glass otherwise
-          backgroundColor: onLightBg
-            ? "rgba(40, 46, 52, 0.55)"
-            : "rgba(40, 46, 52, 0.38)",
-          transition: "background-color 0.35s ease",
-          backdropFilter: "blur(16px) saturate(180%)",
-          WebkitBackdropFilter: "blur(16px) saturate(180%)",
+          // The glass tint + blur sit on a layer behind the bar (::before) rather than on
+          // the bar itself, so the dropdown menus inside it can blur the page too.
+          backgroundColor: "transparent",
+          isolation: "isolate",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            inset: 0,
+            borderRadius: "inherit",
+            zIndex: -1,
+            pointerEvents: "none",
+            backgroundColor: onLightBg
+              ? "rgba(40, 46, 52, 0.55)"
+              : "rgba(40, 46, 52, 0.38)",
+            transition: "background-color 0.35s ease",
+            backdropFilter: "blur(16px) saturate(180%)",
+            WebkitBackdropFilter: "blur(16px) saturate(180%)",
+          },
           border: "1px solid rgba(255, 255, 255, 0.28)",
           boxShadow:
             "0 8px 32px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.35)",

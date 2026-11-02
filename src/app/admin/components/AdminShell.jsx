@@ -348,7 +348,7 @@ export default function AdminShell({ children }) {
               py: 1.25,
               bgcolor: "rgba(255,255,255,0.88)",
               backdropFilter: "blur(10px)",
-              borderBottom: "1px solid rgba(80, 20, 210, 0.1)",
+              borderBottom: "1px solid rgba(29, 87, 88, 0.1)",
             }}
           >
             <IconButton
@@ -384,7 +384,7 @@ export default function AdminShell({ children }) {
             flexShrink: 0,
             position: "fixed",
             inset: "0 auto 0 0",
-            borderRight: "1px solid rgba(80, 20, 210, 0.12)",
+            borderRight: "1px solid rgba(29, 87, 88, 0.12)",
             transition: "width 0.2s ease",
             zIndex: 1100,
           }}
@@ -412,7 +412,7 @@ export default function AdminShell({ children }) {
             py: 1.75,
             bgcolor: "rgba(255,255,255,0.82)",
             backdropFilter: "blur(10px)",
-            borderBottom: "1px solid rgba(80, 20, 210, 0.1)",
+            borderBottom: "1px solid rgba(29, 87, 88, 0.1)",
           }}
         >
           <Box sx={{ textAlign: "right" }}>

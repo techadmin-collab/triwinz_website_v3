@@ -137,11 +137,11 @@ export default function AdminResourceList({
                 height: 6,
               },
               "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "rgba(80, 20, 210, 0.25)",
+                backgroundColor: "rgba(29, 87, 88, 0.25)",
                 borderRadius: 999,
               },
               "&::-webkit-scrollbar-track": {
-                backgroundColor: "rgba(80, 20, 210, 0.06)",
+                backgroundColor: "rgba(29, 87, 88, 0.06)",
                 borderRadius: 999,
               },
             }}
@@ -186,7 +186,7 @@ export default function AdminResourceList({
                           component="span"
                           sx={{
                             "&:hover": {
-                              color: "#5014d2",
+                              color: "#1D5758",
                               textDecoration: "underline",
                             },
                           }}

@@ -1,14 +1,14 @@
 /** Shared Triwinz brand tokens for admin + site CTAs */
 export const BRAND = {
-  primary: "#5014D2",
-  primaryDark: "#4310b3",
-  accent: "#DD3CA7",
-  accentDark: "#c43393",
-  gradient: "linear-gradient(96deg, #5014D2 0%, #DD3CA7 100%)",
-  gradientHover: "linear-gradient(96deg, #4310b3 0%, #c43393 100%)",
-  gradientWide: "linear-gradient(122deg, #5014D2 0%, #DD3CA7 100%)",
-  pageBg: "#faf8ff",
-  sidebarBg: "linear-gradient(165deg, #5014D2 0%, #8a2bc4 45%, #DD3CA7 100%)",
+  primary: "#1D5758",
+  primaryDark: "#164546",
+  accent: "#2BD1C7",
+  accentDark: "#1A9E96",
+  gradient: "linear-gradient(96deg, #1D5758 0%, #2BD1C7 100%)",
+  gradientHover: "linear-gradient(96deg, #164546 0%, #1A9E96 100%)",
+  gradientWide: "linear-gradient(122deg, #1D5758 0%, #2BD1C7 100%)",
+  pageBg: "#F5FCFB",
+  sidebarBg: "linear-gradient(165deg, #133B3C 0%, #1D5758 50%, #1F7E7A 100%)",
   glass: "#838383CC",
 };
 

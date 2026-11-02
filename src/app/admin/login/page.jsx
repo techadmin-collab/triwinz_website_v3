@@ -59,7 +59,7 @@ function LoginLoading() {
         minHeight: "100vh",
         display: "grid",
         placeItems: "center",
-        background: "linear-gradient(122deg, #5014D2 0%, #DD3CA7 100%)",
+        background: "linear-gradient(122deg, #1D5758 0%, #2BD1C7 100%)",
       }}
     >
       <CircularProgress size={28} sx={{ color: "#fff" }} />
@@ -142,7 +142,7 @@ function AdminLoginForm() {
         placeItems: "center",
         px: 2,
         py: 4,
-        background: "linear-gradient(122deg, #5014D2 0%, #DD3CA7 100%)",
+        background: "linear-gradient(122deg, #1D5758 0%, #2BD1C7 100%)",
         fontFamily: "montserrat, inter, system-ui, sans-serif",
       }}
     >
@@ -268,15 +268,15 @@ function AdminLoginForm() {
                 borderRadius: "10px",
                 color: "#fff",
                 backgroundImage:
-                  "linear-gradient(96deg, #5014D2 0%, #DD3CA7 100%)",
+                  "linear-gradient(96deg, #1D5758 0%, #2BD1C7 100%)",
                 "&:hover": {
                   backgroundImage:
-                    "linear-gradient(96deg, #4310b3 0%, #c43393 100%)",
+                    "linear-gradient(96deg, #164546 0%, #1A9E96 100%)",
                 },
                 "&.Mui-disabled": {
                   color: "#fff",
                   backgroundImage:
-                    "linear-gradient(96deg, #5014D2 0%, #DD3CA7 100%)",
+                    "linear-gradient(96deg, #1D5758 0%, #2BD1C7 100%)",
                   opacity: 0.75,
                 },
               }}

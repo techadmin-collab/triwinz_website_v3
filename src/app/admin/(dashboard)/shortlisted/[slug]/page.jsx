@@ -246,7 +246,7 @@ export default function ShortlistedJobApplicationsPage() {
         action={
           <Chip
             label={`${total} shortlisted`}
-            sx={{ fontWeight: 700, bgcolor: "#f5f0ff", color: BRAND.primary }}
+            sx={{ fontWeight: 700, bgcolor: "#E6F7F6", color: BRAND.primary }}
           />
         }
       />
@@ -256,7 +256,7 @@ export default function ShortlistedJobApplicationsPage() {
         sx={{
           overflow: "hidden",
           borderRadius: 2,
-          border: "1px solid rgba(80, 20, 210, 0.1)",
+          border: "1px solid rgba(29, 87, 88, 0.1)",
           bgcolor: "#fff",
         }}
       >
@@ -447,10 +447,10 @@ export default function ShortlistedJobApplicationsPage() {
                               size="small"
                               onClick={() => openApplicationEdit(row)}
                               sx={{
-                                border: "1px solid rgba(80, 20, 210, 0.2)",
+                                border: "1px solid rgba(29, 87, 88, 0.2)",
                                 borderRadius: 1.5,
                                 color: BRAND.primary,
-                                "&:hover": { bgcolor: "#f5f0ff" },
+                                "&:hover": { bgcolor: "#E6F7F6" },
                               }}
                             >
                               <EditOutlinedIcon fontSize="small" />

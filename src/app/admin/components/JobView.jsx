@@ -313,7 +313,7 @@ export default function JobView({ jobId }) {
           py: 2,
           bgcolor: "rgba(250,248,255,0.95)",
           backdropFilter: "blur(8px)",
-          borderTop: "1px solid rgba(80, 20, 210, 0.1)",
+          borderTop: "1px solid rgba(29, 87, 88, 0.1)",
           zIndex: 2,
         }}
       >
@@ -330,7 +330,7 @@ export default function JobView({ jobId }) {
             href={`/careers/${form.slug}`}
             target="_blank"
             startIcon={<OpenInNewIcon />}
-            sx={{ textTransform: "none", fontWeight: 600, color: "#5014d2" }}
+            sx={{ textTransform: "none", fontWeight: 600, color: "#1D5758" }}
           >
             View on website
           </Button>

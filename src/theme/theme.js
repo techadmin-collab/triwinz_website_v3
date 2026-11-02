@@ -3,15 +3,15 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#5014D2",
-      dark: "#4310b3",
-      light: "#7a3df0",
+      main: "#1D5758",
+      dark: "#164546",
+      light: "#3E8A8B",
       contrastText: "#fff",
     },
     secondary: {
-      main: "#DD3CA7",
-      dark: "#c43393",
-      contrastText: "#fff",
+      main: "#2BD1C7",
+      dark: "#1A9E96",
+      contrastText: "#0F3536",
     },
   },
   typography: {
@@ -26,10 +26,10 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         containedPrimary: {
-          backgroundImage: "linear-gradient(96deg, #5014D2 0%, #DD3CA7 100%)",
+          backgroundImage: "linear-gradient(96deg, #1D5758 0%, #2BD1C7 100%)",
           boxShadow: "none",
           "&:hover": {
-            backgroundImage: "linear-gradient(96deg, #4310b3 0%, #c43393 100%)",
+            backgroundImage: "linear-gradient(96deg, #164546 0%, #1A9E96 100%)",
             boxShadow: "none",
           },
         },
