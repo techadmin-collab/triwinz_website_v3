@@ -17,15 +17,27 @@ const images = [
 ];
 
 export default function HeroSection() {
-  const [index, setIndex] = useState(0);
   const [current, setCurrent] = useState(0);
+  // Only the first slide loads straight away; the rest are fetched one by one
+  // after it, so they don't compete with the first paint.
+  const [loadedUpTo, setLoadedUpTo] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % images.length);
+      setCurrent((prev) => {
+        const next = (prev + 1) % images.length;
+        // Wait on the current slide until the next one has been fetched
+        return next <= loadedUpTo ? next : prev;
+      });
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [loadedUpTo]);
+
+  const handleLoaded = (i) => {
+    if (i === loadedUpTo && loadedUpTo < images.length - 1) {
+      setLoadedUpTo(loadedUpTo + 1);
+    }
+  };
 
   return (
     <Box
@@ -43,12 +55,19 @@ export default function HeroSection() {
         overflow: "hidden",
       }}
     >
-      {images?.map((img, index) => (
+      {images.slice(0, loadedUpTo + 1).map((img, index) => (
         <Box
-          key={index}
+          key={img}
           component="img"
           src={img}
           alt="Triwinz"
+          decoding="async"
+          fetchPriority={index === 0 ? "high" : "low"}
+          onLoad={() => handleLoaded(index)}
+          ref={(el) => {
+            // Cached images can finish before React attaches onLoad
+            if (el && el.complete && el.naturalWidth) handleLoaded(index);
+          }}
           sx={{
             position: "absolute",
             inset: 0,
