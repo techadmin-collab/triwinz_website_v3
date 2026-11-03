@@ -12,6 +12,18 @@ import {
 import { useState, useRef } from "react";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 
+/* ------------------ HELPERS ------------------ */
+
+// Photos uploaded from the admin live on Cloudinary, which can resize on the fly:
+// ask for an image just big enough for where it's shown (x2 for sharp screens).
+function sizedPhoto(url, width) {
+  if (!url) return undefined;
+  if (url.includes("res.cloudinary.com") && url.includes("/upload/")) {
+    return url.replace(/\/upload\/(f_auto,q_auto\/)?/, `/upload/f_auto,q_auto,w_${width}/`);
+  }
+  return url; // local /teams photos are already small (800px)
+}
+
 /* ------------------ COMPONENT ------------------ */
 
 // Team members come from the database (Admin -> Team), passed in by the About page.
@@ -47,7 +59,9 @@ export default function TeamSection({ members = [] }) {
           <Box>
             <Box
               component="img"
-              src={selectedMember.photoUrl || undefined}
+              src={sizedPhoto(selectedMember.photoUrl, 700)}
+              fetchPriority="high"
+              decoding="async"
               alt={selectedMember.name}
               sx={{
                 minWidth: 320,
@@ -154,8 +168,10 @@ export default function TeamSection({ members = [] }) {
               >
                 <Box textAlign="center">
                   <Avatar
-                    src={member.photoUrl || undefined}
+                    src={sizedPhoto(member.photoUrl, 420)}
                     alt={member.name}
+                    // the scrolling strip loads its photos only when needed
+                    imgProps={{ loading: "lazy", decoding: "async" }}
                     sx={{
                       width: 200,
                       height: 280,
