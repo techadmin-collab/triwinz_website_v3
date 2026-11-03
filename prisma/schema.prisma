@@ -143,3 +143,45 @@ model TeamMember {
   @@index([published])
   @@index([order])
 }
+
+// External interviewers (no admin login). Results are recorded by the admin team.
+model Interviewer {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String?
+  phone       String?
+  company     String?
+  designation String?
+  notes       String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active])
+}
+
+// One interview level (round) for a job application: Level 1, Level 2, ...
+model InterviewRound {
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId    String    @db.ObjectId
+  jobSlug          String
+  level            Int
+  title            String?   // optional name, e.g. Technical, HR
+  interviewerIds   String[]  @db.ObjectId
+  interviewerNames String[]  // copy of the names, kept even if an interviewer is removed
+  scheduledAt      DateTime?
+  mode             String?   // online | in_person | phone
+  location         String?   // meeting link or address
+  notes            String?
+  status           String    @default("scheduled") // scheduled | passed | rejected | on_hold | cancelled
+  feedback         String?
+  rating           Int?      // 1-5
+  decidedAt        DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([applicationId])
+  @@index([status])
+  @@index([jobSlug])
+  @@index([scheduledAt])
+}

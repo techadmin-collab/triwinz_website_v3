@@ -26,6 +26,7 @@ import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
 import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
+import EventNoteOutlinedIcon from "@mui/icons-material/EventNoteOutlined";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
@@ -56,6 +57,12 @@ const navItems = [
     href: "/admin/applications",
     icon: AssignmentIndOutlinedIcon,
     module: "applications",
+  },
+  {
+    label: "Interviews",
+    href: "/admin/interviews",
+    icon: EventNoteOutlinedIcon,
+    module: "interviews",
   },
   {
     label: "Training",

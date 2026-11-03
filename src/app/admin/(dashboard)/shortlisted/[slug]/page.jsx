@@ -33,18 +33,20 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import InboxOutlinedIcon from "@mui/icons-material/InboxOutlined";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import EventNoteOutlinedIcon from "@mui/icons-material/EventNoteOutlined";
 import { toast } from "react-hot-toast";
 import ConfirmDeleteDialog from "../../../components/ConfirmDeleteDialog";
 import ApplicationEditDialog from "../../../components/ApplicationEditDialog";
 import ResumePreviewDialog from "../../../components/ResumePreviewDialog";
 import AdminPageHeader from "../../../components/AdminPageHeader";
+import StageChip from "../../../components/interviews/StageChip";
 import { BRAND } from "../../../../../lib/brand";
 import { truncateText } from "../../../../../lib/resumeFile";
 
 const PAGE_SIZE_OPTIONS = [5, 10, 20];
 
 const TABLE_SX = {
-  minWidth: 860,
+  minWidth: 980,
   "& .MuiTableCell-root": {
     fontSize: "0.8125rem",
     color: "#374151",
@@ -109,6 +111,7 @@ export default function ShortlistedJobApplicationsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [from, setFrom] = useState(0);
   const [to, setTo] = useState(0);
+  const [stages, setStages] = useState({}); // interview stage per application id
 
   const load = useCallback(
     async (pageToLoad = page, size = pageSize) => {
@@ -136,6 +139,14 @@ export default function ShortlistedJobApplicationsPage() {
       setPageSize(data.pageSize || size);
       if (data.items?.[0]?.jobTitle) {
         setJobTitle(data.items[0].jobTitle);
+      }
+      // interview stage for the candidates on this page
+      const ids = (data.items || []).map((item) => item.id).join(",");
+      if (ids) {
+        fetch(`/api/admin/interviews/summary?ids=${ids}`)
+          .then((r) => (r.ok ? r.json() : {}))
+          .then(setStages)
+          .catch(() => {});
       }
       setLoading(false);
     },
@@ -302,6 +313,7 @@ export default function ShortlistedJobApplicationsPage() {
                       "Resume",
                       "Applied",
                       "Status",
+                      "Interview stage",
                       "Actions",
                     ].map((label) => (
                       <TableCell
@@ -435,12 +447,42 @@ export default function ShortlistedJobApplicationsPage() {
                           {getStatusLabel(row.status)}
                         </Typography>
                       </TableCell>
+                      <TableCell>
+                        {stages[row.id] ? (
+                          <StageChip
+                            label={stages[row.id].label}
+                            color={stages[row.id].color}
+                            bg={stages[row.id].bg}
+                            size="sm"
+                          />
+                        ) : (
+                          <Typography variant="inherit" sx={{ color: "#9ca3af" }}>
+                            —
+                          </Typography>
+                        )}
+                      </TableCell>
                       <TableCell align="right">
                         <Stack
                           direction="row"
                           spacing={0.75}
                           justifyContent="flex-end"
                         >
+                          <Tooltip title="Manage interviews">
+                            <IconButton
+                              component={Link}
+                              href={`/admin/interviews/${row.id}`}
+                              aria-label="Manage interviews"
+                              size="small"
+                              sx={{
+                                border: "1px solid rgba(29, 87, 88, 0.2)",
+                                borderRadius: 1.5,
+                                color: BRAND.primary,
+                                "&:hover": { bgcolor: "#E6F7F6" },
+                              }}
+                            >
+                              <EventNoteOutlinedIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
                           <Tooltip title="Edit application">
                             <IconButton
                               aria-label="Edit application"

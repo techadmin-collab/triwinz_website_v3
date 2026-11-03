@@ -90,6 +90,10 @@ export async function DELETE(_req, { params }) {
     }
 
     await prisma.jobApplication.delete({ where: { id } });
+    // remove the candidate's interview levels too
+    if (prisma.interviewRound) {
+      await prisma.interviewRound.deleteMany({ where: { applicationId: id } });
+    }
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Delete failed" }, { status: 400 });
