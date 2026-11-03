@@ -13,6 +13,8 @@ import {
   Typography,
 } from "@mui/material";
 import PhotoCameraOutlinedIcon from "@mui/icons-material/PhotoCameraOutlined";
+import CropIcon from "@mui/icons-material/Crop";
+import ImageCropDialog from "./ImageCropDialog";
 import { toast } from "react-hot-toast";
 import AdminFormShell, {
   AdminFormActions,
@@ -30,7 +32,11 @@ const empty = {
   published: true,
 };
 
-const MAX_PHOTO_MB = 5;
+// The original can be large: only the cropped result (about 0.2MB) is uploaded
+const MAX_PHOTO_MB = 15;
+// Same portrait shape as the team cards on the About page (200 x 280)
+const PHOTO_ASPECT = 5 / 7;
+const PHOTO_WIDTH = 900; // saved at 900 x 1260 px
 
 export default function TeamMemberForm({ memberId }) {
   const router = useRouter();
@@ -40,6 +46,7 @@ export default function TeamMemberForm({ memberId }) {
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [cropSrc, setCropSrc] = useState(null); // image being cropped
 
   useEffect(() => {
     if (!isEdit) return;
@@ -69,7 +76,8 @@ export default function TeamMemberForm({ memberId }) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
-  async function handlePhoto(e) {
+  // 1) pick a file -> open the cropper
+  function handlePhoto(e) {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
@@ -81,9 +89,29 @@ export default function TeamMemberForm({ memberId }) {
       toast.error(`Image too large. Max size is ${MAX_PHOTO_MB}MB.`);
       return;
     }
+    setCropSrc(URL.createObjectURL(file));
+  }
+
+  function closeCropper() {
+    if (cropSrc?.startsWith("blob:")) URL.revokeObjectURL(cropSrc);
+    setCropSrc(null);
+  }
+
+  // 2) cropped -> upload to Cloudinary
+  async function handleCropped(blob, err) {
+    if (!blob) {
+      toast.error(
+        err?.name === "SecurityError"
+          ? "This photo can't be re-cropped here. Please upload it again."
+          : "Could not crop the photo.",
+      );
+      return;
+    }
+    closeCropper();
     setUploading(true);
     const body = new FormData();
-    body.append("file", file);
+    const slug = (form.name || "team-member").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    body.append("file", new File([blob], `${slug}.jpg`, { type: "image/jpeg" }));
     const res = await fetch("/api/admin/team/upload", { method: "POST", body });
     setUploading(false);
     if (!res.ok) {
@@ -93,7 +121,7 @@ export default function TeamMemberForm({ memberId }) {
     }
     const data = await res.json();
     setForm((prev) => ({ ...prev, photoUrl: data.url, photoPublicId: data.publicId }));
-    toast.success("Photo uploaded");
+    toast.success("Photo cropped and uploaded");
   }
 
   async function handleSubmit(e) {
@@ -204,6 +232,21 @@ export default function TeamMemberForm({ memberId }) {
               </Button>
               {form.photoUrl ? (
                 <Button
+                  onClick={() => setCropSrc(form.photoUrl)}
+                  disabled={uploading}
+                  startIcon={<CropIcon sx={{ fontSize: 18 }} />}
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: 700,
+                    color: BRAND.primary,
+                    border: "1px solid rgba(29, 87, 88, 0.25)",
+                  }}
+                >
+                  Adjust crop
+                </Button>
+              ) : null}
+              {form.photoUrl ? (
+                <Button
                   onClick={() => setForm((prev) => ({ ...prev, photoUrl: "", photoPublicId: "" }))}
                   disabled={uploading}
                   sx={{ textTransform: "none", fontWeight: 600, color: "#6b7280" }}
@@ -212,7 +255,7 @@ export default function TeamMemberForm({ memberId }) {
                 </Button>
               ) : null}
               <Typography sx={{ fontSize: "0.75rem", color: "#9ca3af", textAlign: "center" }}>
-                Portrait works best (about 5:7). JPG, PNG or WebP, up to {MAX_PHOTO_MB}MB.
+                You can crop after choosing. Saved as a 5:7 portrait ({PHOTO_WIDTH} × {Math.round(PHOTO_WIDTH / PHOTO_ASPECT)} px). JPG, PNG or WebP, up to {MAX_PHOTO_MB}MB.
               </Typography>
             </Stack>
           </Box>
@@ -266,6 +309,17 @@ export default function TeamMemberForm({ memberId }) {
           />
         </Box>
       </Box>
+
+      <ImageCropDialog
+        open={Boolean(cropSrc)}
+        src={cropSrc}
+        aspect={PHOTO_ASPECT}
+        outputWidth={PHOTO_WIDTH}
+        title="Crop team photo"
+        hint="Drag to position the face in the frame. Zoom with the slider or mouse wheel."
+        onCancel={closeCropper}
+        onDone={handleCropped}
+      />
     </AdminFormShell>
   );
 }
