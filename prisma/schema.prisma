@@ -70,6 +70,8 @@ model JobApplication {
   resumePublicId String?
   resumeFileName String?
   status         String   @default("new") // new | shortlisted | on_hold | rejected | selected
+  hiringTerms    String?  // terms entered when the candidate is hired (Interviews)
+  hiredAt        DateTime?
   createdAt      DateTime @default(now())
 
   @@index([jobSlug])

@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Link from "next/link";
 import {
   Avatar,
   Box,
   Button,
   CircularProgress,
+  IconButton,
   InputAdornment,
   MenuItem,
   Paper,
@@ -22,6 +25,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import { toast } from "react-hot-toast";
 import AdminPageHeader from "../../components/AdminPageHeader";
+import ListPagination from "../../components/ListPagination";
 import StageChip from "../../components/interviews/StageChip";
 import { formatDateTime, levelLabel } from "../../../../lib/interviews";
 import { BRAND } from "../../../../lib/brand";
@@ -42,6 +46,16 @@ export default function InterviewsPage() {
   const [search, setSearch] = useState("");
   const [job, setJob] = useState("all");
   const [interviewer, setInterviewer] = useState("all");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [upcomingPage, setUpcomingPage] = useState(1);
+  const UPCOMING_PER_PAGE = 6;
+
+  // back to the first page whenever the list changes
+  useEffect(() => {
+    setPage(1);
+    setUpcomingPage(1);
+  }, [tab, search, job, interviewer, pageSize]);
 
   useEffect(() => {
     (async () => {
@@ -84,6 +98,7 @@ export default function InterviewsPage() {
   }, [filtered]);
 
   const visible = tab === "all" ? filtered : filtered.filter((i) => i.stage.key === tab);
+  const pageRows = visible.slice((page - 1) * pageSize, page * pageSize);
 
   const upcoming = useMemo(() => {
     const now = Date.now() - 60 * 60 * 1000; // include ones that started in the last hour
@@ -95,9 +110,13 @@ export default function InterviewsPage() {
           i.latest?.scheduledAt &&
           new Date(i.latest.scheduledAt).getTime() >= now,
       )
-      .sort((a, b) => new Date(a.latest.scheduledAt) - new Date(b.latest.scheduledAt))
-      .slice(0, 6);
+      .sort((a, b) => new Date(a.latest.scheduledAt) - new Date(b.latest.scheduledAt));
   }, [filtered]);
+  const upcomingPages = Math.max(1, Math.ceil(upcoming.length / UPCOMING_PER_PAGE));
+  const upcomingRows = upcoming.slice(
+    (upcomingPage - 1) * UPCOMING_PER_PAGE,
+    upcomingPage * UPCOMING_PER_PAGE,
+  );
 
   return (
     <Box>
@@ -118,7 +137,7 @@ export default function InterviewsPage() {
               "&:hover": { bgcolor: "#E6F7F6" },
             }}
           >
-            Interviewers
+            Interview panel
           </Button>
         }
       />
@@ -132,7 +151,36 @@ export default function InterviewsPage() {
           {/* Upcoming interviews */}
           {upcoming.length ? (
             <Box sx={{ mb: 3 }}>
-              <Typography sx={{ fontWeight: 800, color: "#111", mb: 1.25 }}>Upcoming interviews</Typography>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1, mb: 1.25 }}>
+                <Typography sx={{ fontWeight: 800, color: "#111" }}>
+                  Upcoming interviews ({upcoming.length})
+                </Typography>
+                {upcomingPages > 1 ? (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <Typography sx={{ fontSize: "0.75rem", color: "#6b7280", mr: 0.5 }}>
+                      {upcomingPage} / {upcomingPages}
+                    </Typography>
+                    <IconButton
+                      size="small"
+                      aria-label="Previous"
+                      disabled={upcomingPage === 1}
+                      onClick={() => setUpcomingPage((p) => p - 1)}
+                      sx={{ border: "1px solid #e5e7eb", borderRadius: 1.5 }}
+                    >
+                      <ChevronLeftIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      aria-label="Next"
+                      disabled={upcomingPage === upcomingPages}
+                      onClick={() => setUpcomingPage((p) => p + 1)}
+                      sx={{ border: "1px solid #e5e7eb", borderRadius: 1.5 }}
+                    >
+                      <ChevronRightIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                ) : null}
+              </Box>
               <Box
                 sx={{
                   display: "grid",
@@ -140,12 +188,12 @@ export default function InterviewsPage() {
                   gap: 1.5,
                 }}
               >
-                {upcoming.map((i) => (
+                {upcomingRows.map((i) => (
                   <Link key={i.id} href={`/admin/interviews/${i.id}`} style={{ textDecoration: "none", color: "inherit", minWidth: 0 }}>
                     <Paper
                       elevation={0}
                       sx={{
-                        p: 1.75,
+                        p: 1.4,
                         borderRadius: 2,
                         border: "1px solid rgba(29, 87, 88, 0.15)",
                         borderLeft: `4px solid ${BRAND.primary}`,
@@ -153,14 +201,14 @@ export default function InterviewsPage() {
                         "&:hover": { bgcolor: "#F5FCFB" },
                       }}
                     >
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, color: BRAND.primary, fontWeight: 800, fontSize: "0.82rem" }}>
-                        <EventOutlinedIcon sx={{ fontSize: 16 }} />
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, color: BRAND.primary, fontWeight: 800, fontSize: "0.74rem" }}>
+                        <EventOutlinedIcon sx={{ fontSize: 14 }} />
                         {formatDateTime(i.latest.scheduledAt)}
                       </Box>
-                      <Typography sx={{ mt: 0.5, fontWeight: 700, color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      <Typography sx={{ mt: 0.4, fontWeight: 700, fontSize: "0.86rem", color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         {i.fullName}
                       </Typography>
-                      <Typography sx={{ fontSize: "0.8rem", color: "#6b7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      <Typography sx={{ fontSize: "0.74rem", color: "#6b7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         {levelLabel(i.latest)} · {i.latest.interviewerNames.join(", ")}
                       </Typography>
                     </Paper>
@@ -233,7 +281,7 @@ export default function InterviewsPage() {
             </Paper>
           ) : (
             <Paper elevation={0} sx={{ borderRadius: 2, border: "1px solid #e8eaed", bgcolor: "#fff", overflow: "hidden" }}>
-              {visible.map((i, index) => (
+              {pageRows.map((i, index) => (
                 <Link key={i.id} href={`/admin/interviews/${i.id}`} style={{ textDecoration: "none", color: "inherit", display: "block" }}>
                   <Box
                     sx={{
@@ -243,44 +291,54 @@ export default function InterviewsPage() {
                       columnGap: { xs: 1.5, md: 2 },
                       rowGap: 0.75,
                       px: { xs: 1.5, sm: 2.25 },
-                      py: 1.5,
-                      borderBottom: index === visible.length - 1 ? 0 : "1px solid #f1f2f4",
+                      py: 1.1,
+                      borderBottom: index === pageRows.length - 1 ? 0 : "1px solid #f1f2f4",
                       "&:hover": { bgcolor: "#F5FCFB" },
                       "&:hover .row-arrow": { transform: "translateX(3px)", color: BRAND.primary },
                     }}
                   >
-                    <Avatar sx={{ width: 38, height: 38, bgcolor: "#E6F7F6", color: BRAND.primary, fontWeight: 800, fontSize: "0.95rem" }}>
+                    <Avatar sx={{ width: 32, height: 32, bgcolor: "#E6F7F6", color: BRAND.primary, fontWeight: 800, fontSize: "0.82rem" }}>
                       {i.fullName?.[0]?.toUpperCase()}
                     </Avatar>
                     <Box sx={{ minWidth: 0 }}>
-                      <Typography sx={{ fontWeight: 700, color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      <Typography sx={{ fontWeight: 700, fontSize: "0.86rem", color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         {i.fullName}
                       </Typography>
-                      <Typography sx={{ fontSize: "0.8rem", color: "#6b7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      <Typography sx={{ fontSize: "0.74rem", color: "#6b7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         {i.jobTitle}
                       </Typography>
                     </Box>
                     <Box sx={{ display: { xs: "none", md: "block" }, minWidth: 0 }}>
                       {i.latest ? (
                         <>
-                          <Typography sx={{ fontSize: "0.82rem", fontWeight: 600, color: "#374151", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          <Typography sx={{ fontSize: "0.76rem", fontWeight: 600, color: "#374151", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {levelLabel(i.latest)} · {i.latest.interviewerNames.join(", ")}
                           </Typography>
-                          <Typography sx={{ fontSize: "0.76rem", color: "#9ca3af" }}>
+                          <Typography sx={{ fontSize: "0.7rem", color: "#9ca3af" }}>
                             {i.latest.scheduledAt ? formatDateTime(i.latest.scheduledAt) : "Date not set"}
                           </Typography>
                         </>
                       ) : (
-                        <Typography sx={{ fontSize: "0.8rem", color: "#9ca3af" }}>No interviews scheduled</Typography>
+                        <Typography sx={{ fontSize: "0.74rem", color: "#9ca3af" }}>No interviews scheduled</Typography>
                       )}
                     </Box>
                     <Box sx={{ justifySelf: "end" }}>
                       <StageChip label={i.stage.label} color={i.stage.color} bg={i.stage.bg} size="sm" />
                     </Box>
-                    <ArrowForwardIcon className="row-arrow" sx={{ display: { xs: "none", md: "block" }, fontSize: 18, color: "#9ca3af", transition: "transform 0.2s ease" }} />
+                    <ArrowForwardIcon className="row-arrow" sx={{ display: { xs: "none", md: "block" }, fontSize: 16, color: "#9ca3af", transition: "transform 0.2s ease" }} />
                   </Box>
                 </Link>
               ))}
+              <ListPagination
+                count={visible.length}
+                page={page}
+                pageSize={pageSize}
+                onPageChange={(p) => {
+                  setPage(p);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                onPageSizeChange={setPageSize}
+              />
             </Paper>
           )}
         </>

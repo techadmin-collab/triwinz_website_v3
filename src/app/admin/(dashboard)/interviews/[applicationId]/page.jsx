@@ -8,7 +8,12 @@ import {
   Box,
   Button,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
+  TextField,
   Paper,
   Rating,
   Stack,
@@ -64,6 +69,8 @@ export default function CandidateInterviewsPage() {
   const [deleteRound, setDeleteRound] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [hiring, setHiring] = useState(false);
+  const [hireDialog, setHireDialog] = useState(null); // { editing: bool }
+  const [hiringTerms, setHiringTerms] = useState("");
   const [resumeView, setResumeView] = useState(null);
 
   const load = useCallback(async () => {
@@ -147,16 +154,28 @@ export default function CandidateInterviewsPage() {
     return true;
   }
 
+  function openHire(editing = false) {
+    setHiringTerms(editing ? application.hiringTerms || "" : "");
+    setHireDialog({ editing });
+  }
+
   async function hire() {
     setHiring(true);
-    const res = await fetch(`/api/admin/interviews/${applicationId}/hire`, { method: "POST" });
+    const res = await fetch(`/api/admin/interviews/${applicationId}/hire`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ hiringTerms }),
+    });
     setHiring(false);
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
       toast.error(body.error || "Could not hire");
       return;
     }
-    toast.success(`${application.fullName} marked as hired`);
+    toast.success(
+      hireDialog?.editing ? "Hiring terms updated" : `${application.fullName} marked as hired`,
+    );
+    setHireDialog(null);
     load();
   }
 
@@ -425,7 +444,7 @@ export default function CandidateInterviewsPage() {
                   </Button>
                   <Button
                     startIcon={<EmojiEventsOutlinedIcon />}
-                    onClick={hire}
+                    onClick={() => openHire(false)}
                     disabled={hiring}
                     sx={{ ...outlineBtn, color: "#047857", borderColor: "#6EE7B7", "&:hover": { bgcolor: "#ECFDF5" } }}
                   >
@@ -442,8 +461,29 @@ export default function CandidateInterviewsPage() {
                 Hired after {rounds.length} level{rounds.length === 1 ? "" : "s"}.
               </Typography>
               <Typography sx={{ fontSize: "0.85rem", color: "#065F46" }}>
+                {application.hiredAt
+                  ? `Hired on ${new Date(application.hiredAt).toLocaleDateString()}. `
+                  : ""}
                 The application is marked as Selected. Remove the last level to reopen the process.
               </Typography>
+              <Box sx={{ mt: 1.5, p: 1.5, borderRadius: 1.5, bgcolor: "#fff", border: "1px solid #A7F3D0" }}>
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1, mb: 0.5 }}>
+                  <Typography sx={{ fontWeight: 800, fontSize: "0.82rem", color: "#047857", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                    Hiring terms
+                  </Typography>
+                  <Button
+                    size="small"
+                    startIcon={<EditOutlinedIcon sx={{ fontSize: 16 }} />}
+                    onClick={() => openHire(true)}
+                    sx={{ textTransform: "none", fontWeight: 700, color: "#047857" }}
+                  >
+                    {application.hiringTerms ? "Edit" : "Add"}
+                  </Button>
+                </Box>
+                <Typography sx={{ fontSize: "0.88rem", color: application.hiringTerms ? "#374151" : "#9ca3af", whiteSpace: "pre-line" }}>
+                  {application.hiringTerms || "No terms added."}
+                </Typography>
+              </Box>
             </Paper>
           ) : null}
         </Box>
@@ -474,6 +514,50 @@ export default function CandidateInterviewsPage() {
         onClose={() => !deleting && setDeleteRound(null)}
         onConfirm={confirmDeleteRound}
       />
+      <Dialog
+        open={Boolean(hireDialog)}
+        onClose={hiring ? undefined : () => setHireDialog(null)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 3 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 800, pb: 0.5 }}>
+          {hireDialog?.editing ? "Hiring terms" : `Hire ${application.fullName}`}
+        </DialogTitle>
+        <DialogContent>
+          {!hireDialog?.editing ? (
+            <Typography sx={{ color: "#6b7280", fontSize: "0.88rem", mb: 2 }}>
+              The application will be marked as Selected for {application.jobTitle}.
+            </Typography>
+          ) : null}
+          <TextField
+            label="Hiring terms"
+            multiline
+            minRows={5}
+            fullWidth
+            autoFocus
+            value={hiringTerms}
+            onChange={(e) => setHiringTerms(e.target.value)}
+            placeholder="e.g. Salary / CTC, joining date, probation period, notice period, other conditions"
+            sx={{ mt: hireDialog?.editing ? 1 : 0 }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2.5 }}>
+          <Button onClick={() => setHireDialog(null)} disabled={hiring} sx={{ textTransform: "none", fontWeight: 600, color: "#4b5563" }}>
+            Cancel
+          </Button>
+          <Button
+            onClick={hire}
+            variant="contained"
+            disableElevation
+            disabled={hiring}
+            startIcon={hireDialog?.editing ? null : <EmojiEventsOutlinedIcon />}
+            sx={{ ...brandButtonSx, fontWeight: 700, px: 2.5 }}
+          >
+            {hiring ? "Saving..." : hireDialog?.editing ? "Save terms" : "Hire candidate"}
+          </Button>
+        </DialogActions>
+      </Dialog>
       <ResumePreviewDialog
         open={Boolean(resumeView)}
         resume={resumeView}

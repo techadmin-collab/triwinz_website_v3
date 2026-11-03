@@ -28,6 +28,7 @@ import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
 import { toast } from "react-hot-toast";
 import AdminPageHeader from "../../../components/AdminPageHeader";
 import ConfirmDeleteDialog from "../../../components/ConfirmDeleteDialog";
+import ListPagination from "../../../components/ListPagination";
 import { brandButtonSx, BRAND } from "../../../../../lib/brand";
 
 const empty = { name: "", designation: "", company: "", email: "", phone: "", notes: "", active: true };
@@ -40,12 +41,14 @@ export default function InterviewersPage() {
   const [saving, setSaving] = useState(false);
   const [pendingDelete, setPendingDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   async function load() {
     const res = await fetch("/api/admin/interviewers");
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      toast.error(body.error || "Failed to load interviewers", { duration: 8000 });
+      toast.error(body.error || "Failed to load the interview panel", { duration: 8000 });
       setLoading(false);
       return;
     }
@@ -56,6 +59,12 @@ export default function InterviewersPage() {
   useEffect(() => {
     load();
   }, []);
+
+  // stay on a valid page after deleting someone
+  useEffect(() => {
+    const pages = Math.max(1, Math.ceil(rows.length / pageSize));
+    if (page > pages) setPage(pages);
+  }, [rows.length, pageSize, page]);
 
   function openEditor(row) {
     setEditing(row || {});
@@ -89,7 +98,7 @@ export default function InterviewersPage() {
       toast.error(body.error || "Save failed");
       return;
     }
-    toast.success(isEdit ? "Interviewer updated" : "Interviewer added");
+    toast.success(isEdit ? "Panel member updated" : "Panel member added");
     setEditing(null);
     load();
   }
@@ -103,7 +112,7 @@ export default function InterviewersPage() {
       toast.error(body.error || "Delete failed", { duration: 6000 });
       return;
     }
-    toast.success("Interviewer deleted");
+    toast.success("Panel member removed");
     setPendingDelete(null);
     load();
   }
@@ -121,8 +130,8 @@ export default function InterviewersPage() {
         Interviews
       </Button>
       <AdminPageHeader
-        title="Interviewers"
-        description="Outside interviewers you assign to interview levels. They don’t need an admin login."
+        title="Interview panel"
+        description="Outside panel members you assign to interview levels. They don’t need an admin login."
         action={
           <Button
             startIcon={<AddIcon />}
@@ -131,7 +140,7 @@ export default function InterviewersPage() {
             onClick={() => openEditor(null)}
             sx={{ ...brandButtonSx, fontWeight: 700, px: 2 }}
           >
-            Add interviewer
+            Add panel member
           </Button>
         }
       />
@@ -144,13 +153,14 @@ export default function InterviewersPage() {
         ) : rows.length === 0 ? (
           <Box sx={{ p: 6, textAlign: "center" }}>
             <BadgeOutlinedIcon sx={{ color: BRAND.primary, fontSize: 32, mb: 1 }} />
-            <Typography sx={{ fontWeight: 700, color: "#111" }}>No interviewers yet</Typography>
+            <Typography sx={{ fontWeight: 700, color: "#111" }}>No panel members yet</Typography>
             <Typography sx={{ color: "#6b7280", fontSize: "0.9rem" }}>
               Add them here, or just type a new name while scheduling a level.
             </Typography>
           </Box>
         ) : (
-          rows.map((row, index) => (
+          <>
+          {rows.slice((page - 1) * pageSize, page * pageSize).map((row, index, pageRows) => (
             <Box
               key={row.id}
               sx={{
@@ -158,30 +168,30 @@ export default function InterviewersPage() {
                 alignItems: "center",
                 gap: { xs: 1.5, sm: 2 },
                 px: { xs: 1.5, sm: 2.25 },
-                py: 1.5,
-                borderBottom: index === rows.length - 1 ? 0 : "1px solid #f1f2f4",
+                py: 1.1,
+                borderBottom: index === pageRows.length - 1 ? 0 : "1px solid #f1f2f4",
                 opacity: row.active ? 1 : 0.55,
               }}
             >
-              <Avatar sx={{ width: 40, height: 40, bgcolor: "#E6F7F6", color: BRAND.primary, fontWeight: 800 }}>
+              <Avatar sx={{ width: 32, height: 32, fontSize: "0.82rem", bgcolor: "#E6F7F6", color: BRAND.primary, fontWeight: 800 }}>
                 {row.name?.[0]?.toUpperCase()}
               </Avatar>
               <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
-                  <Typography sx={{ fontWeight: 700, color: "#111" }}>{row.name}</Typography>
+                  <Typography sx={{ fontWeight: 700, fontSize: "0.86rem", color: "#111" }}>{row.name}</Typography>
                   {!row.active ? (
-                    <Typography component="span" sx={{ fontSize: "0.7rem", fontWeight: 800, color: "#6b7280", bgcolor: "#f3f4f6", px: 0.8, borderRadius: 999 }}>
+                    <Typography component="span" sx={{ fontSize: "0.64rem", fontWeight: 800, color: "#6b7280", bgcolor: "#f3f4f6", px: 0.8, borderRadius: 999 }}>
                       INACTIVE
                     </Typography>
                   ) : null}
                 </Box>
-                <Typography sx={{ fontSize: "0.8rem", color: "#6b7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <Typography sx={{ fontSize: "0.74rem", color: "#6b7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {[row.designation, row.company].filter(Boolean).join(" · ") || "No details"}
                   {row.email ? ` · ${row.email}` : ""}
                   {row.phone ? ` · ${row.phone}` : ""}
                 </Typography>
               </Box>
-              <Typography sx={{ display: { xs: "none", sm: "block" }, fontSize: "0.8rem", color: "#6b7280", whiteSpace: "nowrap" }}>
+              <Typography sx={{ display: { xs: "none", sm: "block" }, fontSize: "0.74rem", color: "#6b7280", whiteSpace: "nowrap" }}>
                 {row.interviewCount} level{row.interviewCount === 1 ? "" : "s"}
               </Typography>
               <Stack direction="row" spacing={0.5}>
@@ -201,13 +211,24 @@ export default function InterviewersPage() {
                 </Tooltip>
               </Stack>
             </Box>
-          ))
+          ))}
+          <ListPagination
+            count={rows.length}
+            page={page}
+            pageSize={pageSize}
+            onPageChange={setPage}
+            onPageSizeChange={(n) => {
+              setPageSize(n);
+              setPage(1);
+            }}
+          />
+          </>
         )}
       </Paper>
 
       <Dialog open={Boolean(editing)} onClose={saving ? undefined : () => setEditing(null)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
         <Box component="form" onSubmit={save}>
-          <DialogTitle sx={{ fontWeight: 800 }}>{editing?.id ? "Edit interviewer" : "Add interviewer"}</DialogTitle>
+          <DialogTitle sx={{ fontWeight: 800 }}>{editing?.id ? "Edit panel member" : "Add panel member"}</DialogTitle>
           <DialogContent>
             <Stack spacing={2} sx={{ pt: 1 }}>
               <TextField label="Full name" required value={form.name} onChange={(e) => set("name", e.target.value)} />
@@ -239,7 +260,7 @@ export default function InterviewersPage() {
 
       <ConfirmDeleteDialog
         open={Boolean(pendingDelete)}
-        title="Delete this interviewer?"
+        title="Remove this panel member?"
         description={
           pendingDelete?.interviewCount
             ? "They are part of interview history, so they can’t be deleted. Edit them and switch off Active instead."

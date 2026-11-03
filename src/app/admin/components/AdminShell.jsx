@@ -34,7 +34,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ConfirmDeleteDialog from "./ConfirmDeleteDialog";
 import { BRAND } from "../../../lib/brand";
 import { hasModuleAccess } from "../../../lib/permissions";
@@ -98,7 +98,24 @@ export default function AdminShell({ children }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  // Expanded by default; if someone collapses it, remember that on this browser
+  const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem("admin-sidebar-expanded") === "false") {
+        setSidebarExpanded(false);
+      }
+    } catch {}
+  }, []);
+  function toggleSidebar() {
+    setSidebarExpanded((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem("admin-sidebar-expanded", String(next));
+      } catch {}
+      return next;
+    });
+  }
   const [signOutOpen, setSignOutOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const { data: session } = useSession();
@@ -194,7 +211,7 @@ export default function AdminShell({ children }) {
         {!isMobile ? (
           <IconButton
             aria-label={collapsed ? "Expand sidebar" : "Minimize sidebar"}
-            onClick={() => setSidebarExpanded((prev) => !prev)}
+            onClick={toggleSidebar}
             size="small"
             sx={{
               color: "#fff",
