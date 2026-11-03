@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { Box, Button, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
 import FiberNewOutlinedIcon from "@mui/icons-material/FiberNewOutlined";
@@ -151,11 +151,10 @@ export default async function AdminDashboardPage() {
         sx={{
           display: "grid",
           gridTemplateColumns: {
-            xs: "1fr",
-            sm: "repeat(2, 1fr)",
-            lg: "repeat(4, 1fr)",
+            xs: "repeat(2, minmax(0, 1fr))",
+            lg: "repeat(4, minmax(0, 1fr))",
           },
-          gap: 2,
+          gap: { xs: 1.25, sm: 2 },
           mb: 3,
         }}
       >
@@ -167,7 +166,7 @@ export default async function AdminDashboardPage() {
             <Link
               key={card.label}
               href={card.href}
-              style={{ textDecoration: "none", color: "inherit" }}
+              style={{ textDecoration: "none", color: "inherit", display: "block", minWidth: 0 }}
             >
               <Box
                 sx={{
@@ -175,8 +174,8 @@ export default async function AdminDashboardPage() {
                   overflow: "hidden",
                   isolation: "isolate",
                   height: "100%",
-                  p: 2.5,
-                  borderRadius: 3,
+                  p: { xs: 1.75, sm: 2.5 },
+                  borderRadius: { xs: 2.5, sm: 3 },
                   display: "flex",
                   flexDirection: "column",
                   color: hero ? "#fff" : "#111",
@@ -220,15 +219,17 @@ export default async function AdminDashboardPage() {
                 <Box
                   sx={{
                     display: "flex",
-                    alignItems: "center",
+                    alignItems: "flex-start",
                     justifyContent: "space-between",
                     gap: 1,
-                    mb: 2,
+                    mb: { xs: 1.25, sm: 2 },
                   }}
                 >
                   <Typography
                     sx={{
-                      fontSize: "0.78rem",
+                      minWidth: 0,
+                      lineHeight: 1.35,
+                      fontSize: { xs: "0.68rem", sm: "0.78rem" },
                       fontWeight: 700,
                       letterSpacing: "0.06em",
                       textTransform: "uppercase",
@@ -239,8 +240,8 @@ export default async function AdminDashboardPage() {
                   </Typography>
                   <Box
                     sx={{
-                      width: 38,
-                      height: 38,
+                      width: { xs: 32, sm: 38 },
+                      height: { xs: 32, sm: 38 },
                       borderRadius: 2,
                       display: "grid",
                       placeItems: "center",
@@ -254,14 +255,14 @@ export default async function AdminDashboardPage() {
                         : { bgcolor: accent, color: "#fff", boxShadow: `0 6px 14px ${accent}40` }),
                     }}
                   >
-                    <Icon sx={{ fontSize: 20 }} />
+                    <Icon sx={{ fontSize: { xs: 17, sm: 20 } }} />
                   </Box>
                 </Box>
 
                 {/* Big number */}
                 <Typography
                   sx={{
-                    fontSize: { xs: "2.2rem", md: "2.5rem" },
+                    fontSize: { xs: "1.9rem", sm: "2.2rem", md: "2.5rem" },
                     fontWeight: 800,
                     lineHeight: 1,
                     letterSpacing: "-0.02em",
@@ -273,7 +274,8 @@ export default async function AdminDashboardPage() {
                 <Typography
                   sx={{
                     mt: 0.75,
-                    fontSize: "0.8rem",
+                    fontSize: { xs: "0.72rem", sm: "0.8rem" },
+                    lineHeight: 1.4,
                     fontWeight: 500,
                     color: hero ? "rgba(255,255,255,0.78)" : "#6b7280",
                   }}
@@ -308,11 +310,11 @@ export default async function AdminDashboardPage() {
                 <Box
                   sx={{
                     mt: "auto",
-                    pt: 2,
+                    pt: { xs: 1.5, sm: 2 },
                     display: "flex",
                     alignItems: "center",
                     gap: 0.5,
-                    fontSize: "0.8rem",
+                    fontSize: { xs: "0.74rem", sm: "0.8rem" },
                     fontWeight: 700,
                     color: hero ? "#fff" : accent,
                   }}
@@ -333,7 +335,7 @@ export default async function AdminDashboardPage() {
         <Paper
           elevation={0}
           sx={{
-            p: 2.5,
+            p: { xs: 2, sm: 2.5 },
             borderRadius: 2,
             border: "1px solid rgba(29, 87, 88, 0.1)",
             bgcolor: "#fff",
@@ -349,7 +351,7 @@ export default async function AdminDashboardPage() {
               mb: 2,
             }}
           >
-            <Box>
+            <Box sx={{ minWidth: 0 }}>
               <Typography sx={{ fontWeight: 800, mb: 0.5, color: "#111" }}>
                 Applications by job
               </Typography>
@@ -400,12 +402,14 @@ export default async function AdminDashboardPage() {
                 .filter((group) => group.rows.length > 0)
                 .map((group, groupIndex) => (
                   <Box key={group.key} sx={{ mt: groupIndex === 0 ? 0 : 3 }}>
-                    {/* Group heading */}
+                    {/* Group heading: label + hint wrap onto two lines on phones */}
                     <Box
                       sx={{
                         display: "flex",
                         alignItems: "center",
-                        gap: 1,
+                        flexWrap: "wrap",
+                        columnGap: 1,
+                        rowGap: 0.25,
                         mb: 1.25,
                       }}
                     >
@@ -429,111 +433,153 @@ export default async function AdminDashboardPage() {
                       >
                         {group.label} ({group.rows.length})
                       </Typography>
-                      <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af" }}>
-                        · {group.hint}
+                      <Typography
+                        sx={{
+                          fontSize: "0.78rem",
+                          color: "#9ca3af",
+                          flexBasis: { xs: "100%", sm: "auto" },
+                          pl: { xs: 2, sm: 0 },
+                        }}
+                      >
+                        <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+                          ·{" "}
+                        </Box>
+                        {group.hint}
                       </Typography>
-                      <Box sx={{ flex: 1, height: "1px", bgcolor: "#eef0f3", ml: 1 }} />
+                      <Box
+                        sx={{
+                          display: { xs: "none", sm: "block" },
+                          flex: 1,
+                          height: "1px",
+                          bgcolor: "#eef0f3",
+                          ml: 1,
+                        }}
+                      />
                     </Box>
 
                     <Box
                       sx={{
                         display: "grid",
+                        // minmax(0, 1fr) lets cards shrink to the screen width (no sideways overflow)
                         gridTemplateColumns: {
-                          xs: "1fr",
-                          sm: "repeat(2, 1fr)",
-                          lg: "repeat(3, 1fr)",
+                          xs: "minmax(0, 1fr)",
+                          sm: "repeat(2, minmax(0, 1fr))",
+                          lg: "repeat(3, minmax(0, 1fr))",
                         },
-                        gap: 1.5,
+                        gap: { xs: 1.25, sm: 1.5 },
                       }}
                     >
                       {group.rows.map((job) => (
-                          <Link
-                            key={job.jobSlug}
-                            href={`/admin/applications?jobSlug=${encodeURIComponent(job.jobSlug)}`}
-                            style={{ textDecoration: "none", color: "inherit" }}
+                        <Link
+                          key={job.jobSlug}
+                          href={`/admin/applications?jobSlug=${encodeURIComponent(job.jobSlug)}`}
+                          style={{
+                            textDecoration: "none",
+                            color: "inherit",
+                            display: "block",
+                            minWidth: 0,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              height: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1.5,
+                              p: { xs: 1.5, sm: 1.75 },
+                              borderRadius: 1.5,
+                              transition:
+                                "border-color 0.15s ease, background-color 0.15s ease",
+                              // Published: soft green card. Draft: warm amber card.
+                              ...(job.published
+                                ? {
+                                    border: "1px solid #A7F3D0",
+                                    borderLeft: "4px solid #10B981",
+                                    bgcolor: "#F0FDF7",
+                                    "&:hover": {
+                                      borderColor: "#10B981",
+                                      bgcolor: "#DCFCE7",
+                                    },
+                                  }
+                                : {
+                                    border: "1px dashed #F5B94A",
+                                    borderLeft: "4px solid #F59E0B",
+                                    bgcolor: "#FFFBEB",
+                                    "&:hover": {
+                                      borderColor: "#F59E0B",
+                                      bgcolor: "#FEF3C7",
+                                    },
+                                  }),
+                            }}
                           >
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                gap: 1.5,
-                                p: 1.75,
-                                borderRadius: 1.5,
-                                transition:
-                                  "border-color 0.15s ease, background-color 0.15s ease",
-                                // Draft (unpublished) jobs get a warm amber card so they stand out
-                                // Published jobs get a soft green card (same green as the Jobs table chip)
-                                ...(job.published
-                                  ? {
-                                      border: "1px solid #A7F3D0",
-                                      borderLeft: "4px solid #10B981",
-                                      bgcolor: "#F0FDF7",
-                                      "&:hover": {
-                                        borderColor: "#10B981",
-                                        bgcolor: "#DCFCE7",
-                                      },
-                                    }
-                                  : {
-                                      border: "1px dashed #F5B94A",
-                                      borderLeft: "4px solid #F59E0B",
-                                      bgcolor: "#FFFBEB",
-                                      "&:hover": {
-                                        borderColor: "#F59E0B",
-                                        bgcolor: "#FEF3C7",
-                                      },
-                                    }),
-                              }}
-                            >
-                              <Box sx={{ minWidth: 0 }}>
-                                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, minWidth: 0 }}>
+                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                              {/* Title: up to 2 lines instead of being cut off */}
+                              <Typography
+                                title={job.jobTitle}
+                                sx={{
+                                  fontWeight: 700,
+                                  color: "#111",
+                                  fontSize: "0.9rem",
+                                  lineHeight: 1.35,
+                                  display: "-webkit-box",
+                                  WebkitLineClamp: 2,
+                                  WebkitBoxOrient: "vertical",
+                                  overflow: "hidden",
+                                  wordBreak: "break-word",
+                                }}
+                              >
+                                {job.jobTitle}
+                              </Typography>
+                              <Box
+                                sx={{
+                                  mt: 0.6,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 0.75,
+                                  minWidth: 0,
+                                }}
+                              >
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    flexShrink: 0,
+                                    px: 0.8,
+                                    py: 0.1,
+                                    borderRadius: 999,
+                                    fontSize: "0.64rem",
+                                    fontWeight: 800,
+                                    letterSpacing: "0.04em",
+                                    textTransform: "uppercase",
+                                    ...(job.published
+                                      ? { bgcolor: "#D1FAE5", border: "1px solid #6EE7B7", color: "#047857" }
+                                      : { bgcolor: "#FEF3C7", border: "1px solid #FCD34D", color: "#B45309" }),
+                                  }}
+                                >
+                                  {job.published ? "Published" : "Draft"}
+                                </Box>
+                                {job.department ? (
                                   <Typography
                                     sx={{
-                                      fontWeight: 700,
-                                      color: "#111",
-                                      fontSize: "0.9rem",
+                                      fontSize: "0.75rem",
+                                      color: "#6b7280",
                                       overflow: "hidden",
                                       textOverflow: "ellipsis",
                                       whiteSpace: "nowrap",
+                                      minWidth: 0,
                                     }}
                                   >
-                                    {job.jobTitle}
+                                    {job.department}
                                   </Typography>
-                                  <Box
-                                    component="span"
-                                    sx={{
-                                      flexShrink: 0,
-                                      px: 0.9,
-                                      py: 0.15,
-                                      borderRadius: 999,
-                                      fontSize: "0.68rem",
-                                      fontWeight: 800,
-                                      letterSpacing: "0.04em",
-                                      textTransform: "uppercase",
-                                      ...(job.published
-                                        ? { bgcolor: "#D1FAE5", border: "1px solid #6EE7B7", color: "#047857" }
-                                        : { bgcolor: "#FEF3C7", border: "1px solid #FCD34D", color: "#B45309" }),
-                                    }}
-                                  >
-                                    {job.published ? "Published" : "Draft"}
-                                  </Box>
-                                </Box>
-                                <Typography
-                                  sx={{
-                                    mt: 0.25,
-                                    fontSize: "0.75rem",
-                                    color: job.published ? "#047857" : "#B45309",
-                                  }}
-                                >
-                                  {`${job.department ? `${job.department} · ` : ""}${
-                                    job.published ? "Live on careers page" : "Not visible on careers page"
-                                  }`}
-                                </Typography>
+                                ) : null}
                               </Box>
+                            </Box>
+
+                            {/* Application count */}
+                            <Box sx={{ flexShrink: 0, textAlign: "center" }}>
                               <Box
                                 sx={{
-                                  minWidth: 36,
-                                  height: 36,
+                                  minWidth: 38,
+                                  height: 38,
                                   px: 1,
                                   borderRadius: 999,
                                   display: "grid",
@@ -541,17 +587,29 @@ export default async function AdminDashboardPage() {
                                   bgcolor:
                                     job.count > 0
                                       ? "rgba(29, 87, 88, 0.1)"
-                                      : "#f3f4f6",
+                                      : "rgba(15, 17, 21, 0.05)",
                                   color: job.count > 0 ? BRAND.primary : "#6b7280",
                                   fontWeight: 800,
-                                  fontSize: "0.9rem",
-                                  flexShrink: 0,
+                                  fontSize: "0.92rem",
                                 }}
                               >
                                 {job.count}
                               </Box>
+                              <Typography
+                                sx={{
+                                  mt: 0.25,
+                                  fontSize: "0.62rem",
+                                  fontWeight: 600,
+                                  color: "#9ca3af",
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.04em",
+                                }}
+                              >
+                                {job.count === 1 ? "App" : "Apps"}
+                              </Typography>
                             </Box>
-                          </Link>
+                          </Box>
+                        </Link>
                       ))}
                     </Box>
                   </Box>
@@ -564,7 +622,7 @@ export default async function AdminDashboardPage() {
       <Paper
         elevation={0}
         sx={{
-          p: 2.5,
+          p: { xs: 2, sm: 2.5 },
           borderRadius: 2,
           border: "1px solid rgba(29, 87, 88, 0.1)",
           bgcolor: "#fff",
@@ -576,12 +634,22 @@ export default async function AdminDashboardPage() {
         <Typography sx={{ color: "#6b7280", fontSize: "0.875rem", mb: 2 }}>
           Jump into common admin tasks.
         </Typography>
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25}>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "minmax(0, 1fr)",
+              sm: "repeat(2, minmax(0, 1fr))",
+              lg: "repeat(4, minmax(0, 1fr))",
+            },
+            gap: 1.25,
+          }}
+        >
           {quickLinks.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              style={{ textDecoration: "none", flex: 1 }}
+              style={{ textDecoration: "none", display: "block", minWidth: 0 }}
             >
               <Button
                 fullWidth
@@ -615,7 +683,7 @@ export default async function AdminDashboardPage() {
               </Button>
             </Link>
           ))}
-        </Stack>
+        </Box>
       </Paper>
     </Box>
   );

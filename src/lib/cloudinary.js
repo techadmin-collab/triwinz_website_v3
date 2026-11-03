@@ -42,3 +42,34 @@ export async function deleteRawFile(publicId) {
     invalidate: true,
   });
 }
+
+/**
+ * Upload an image (e.g. team photo) to Cloudinary.
+ * Cloudinary resizes it to max 900px wide and serves it in a modern format.
+ * @returns {{ url: string, publicId: string }}
+ */
+export async function uploadImage(file, folder = "triwinz/team") {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const dataUri = `data:${file.type || "image/jpeg"};base64,${buffer.toString("base64")}`;
+
+  const result = await cloudinary.uploader.upload(dataUri, {
+    folder,
+    resource_type: "image",
+    transformation: [{ width: 900, crop: "limit" }],
+  });
+
+  // f_auto,q_auto: deliver WebP/AVIF at a sensible quality
+  const url = result.secure_url.replace("/upload/", "/upload/f_auto,q_auto/");
+  return { url, publicId: result.public_id };
+}
+
+/**
+ * Delete an image from Cloudinary.
+ */
+export async function deleteImage(publicId) {
+  if (!publicId) return null;
+  return cloudinary.uploader.destroy(publicId, {
+    resource_type: "image",
+    invalidate: true,
+  });
+}

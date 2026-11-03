@@ -27,6 +27,7 @@ import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -67,6 +68,12 @@ const navItems = [
     href: "/admin/contacts",
     icon: MailOutlineIcon,
     module: "contacts",
+  },
+  {
+    label: "Team",
+    href: "/admin/team",
+    icon: GroupsOutlinedIcon,
+    module: "team",
   },
   {
     label: "Users",

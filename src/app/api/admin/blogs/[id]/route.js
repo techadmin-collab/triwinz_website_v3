@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../../lib/prisma";
-import { requireAdmin } from "../../../../../lib/requireAdmin";
+import { requireModule } from "../../../../../lib/requireAdmin";
 
 export async function GET(_req, { params }) {
-  const { error } = await requireAdmin();
+  const { error } = await requireModule("content");
   if (error) return error;
 
   const { id } = await params;
@@ -15,7 +15,7 @@ export async function GET(_req, { params }) {
 }
 
 export async function PUT(req, { params }) {
-  const { error } = await requireAdmin();
+  const { error } = await requireModule("content");
   if (error) return error;
 
   const { id } = await params;
@@ -42,7 +42,7 @@ export async function PUT(req, { params }) {
 }
 
 export async function DELETE(_req, { params }) {
-  const { error } = await requireAdmin();
+  const { error } = await requireModule("content");
   if (error) return error;
 
   const { id } = await params;

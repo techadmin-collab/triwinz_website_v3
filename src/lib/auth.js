@@ -78,7 +78,7 @@ export const authOptions = {
       if (token.id) {
         const dbUser = await prisma.adminUser.findUnique({
           where: { id: String(token.id) },
-          select: { active: true, passwordHash: true },
+          select: { active: true, passwordHash: true, role: true, permissions: true },
         });
 
         if (!dbUser || !dbUser.active) {
@@ -94,6 +94,11 @@ export const authOptions = {
         if (!token.pwdVer) {
           token.pwdVer = currentVer;
         }
+
+        // Keep role and module access in sync with the database, so changes made in
+        // Admin -> Users apply straight away instead of only after the user logs in again.
+        token.role = dbUser.role;
+        token.permissions = resolvePermissions(dbUser.role, dbUser.permissions);
       }
 
       return token;

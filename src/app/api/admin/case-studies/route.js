@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
-import { requireAdmin } from "../../../../lib/requireAdmin";
+import { requireModule } from "../../../../lib/requireAdmin";
 
 export async function GET() {
-  const { error } = await requireAdmin();
+  const { error } = await requireModule("content");
   if (error) return error;
 
   const items = await prisma.caseStudy.findMany({
@@ -13,7 +13,7 @@ export async function GET() {
 }
 
 export async function POST(req) {
-  const { error } = await requireAdmin();
+  const { error } = await requireModule("content");
   if (error) return error;
 
   const body = await req.json();

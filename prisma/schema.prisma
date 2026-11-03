@@ -126,3 +126,20 @@ model AdminUser {
   @@index([role])
   @@index([active])
 }
+
+model TeamMember {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  role          String
+  bio           String[] // one entry per paragraph
+  photoUrl      String?
+  photoPublicId String?  // Cloudinary id, so the photo can be deleted with the member
+  linkedin      String?
+  order         Int      @default(0)
+  published     Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([published])
+  @@index([order])
+}

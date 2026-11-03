@@ -4,6 +4,7 @@ export const ALL_MODULE_KEYS = [
   "applications",
   "training",
   "contacts",
+  "team",
   "users",
 ];
 
@@ -38,6 +39,12 @@ export const ADMIN_MODULES = [
     label: "Contacts",
     href: "/admin/contacts",
     pathPrefixes: ["/admin/contacts"],
+  },
+  {
+    key: "team",
+    label: "Team",
+    href: "/admin/team",
+    pathPrefixes: ["/admin/team"],
   },
   {
     key: "users",
@@ -91,6 +98,15 @@ export function getModuleKeyForPath(pathname) {
   }
   if (pathname.startsWith("/admin/training")) return "training";
   if (pathname.startsWith("/admin/contacts")) return "contacts";
+  if (pathname.startsWith("/admin/team")) return "team";
+  // Blogs and case studies are not in the sidebar or the staff permission list:
+  // "content" is never granted to staff, so only admins can open them.
+  if (
+    pathname.startsWith("/admin/blogs") ||
+    pathname.startsWith("/admin/case-studies")
+  ) {
+    return "content";
+  }
   return null;
 }
 
