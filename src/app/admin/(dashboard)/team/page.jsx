@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Avatar,
   Box,
@@ -18,6 +18,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
@@ -68,12 +69,7 @@ export default function AdminTeamPage() {
     load();
   }
 
-  async function move(index, delta) {
-    const target = index + delta;
-    if (target < 0 || target >= rows.length) return;
-    const next = [...rows];
-    [next[index], next[target]] = [next[target], next[index]];
-    setRows(next); // move straight away, save in the background
+  async function saveOrder(next) {
     setSavingOrder(true);
     const res = await fetch("/api/admin/team/reorder", {
       method: "PUT",
@@ -84,7 +80,91 @@ export default function AdminTeamPage() {
     if (!res.ok) {
       toast.error("Could not save the new order");
       load();
+      return;
     }
+    toast.success("Order saved");
+  }
+
+  async function move(index, delta) {
+    const target = index + delta;
+    if (target < 0 || target >= rows.length) return;
+    const next = [...rows];
+    [next[index], next[target]] = [next[target], next[index]];
+    setRows(next); // move straight away, save in the background
+    saveOrder(next);
+  }
+
+  /* ---------- Drag & drop (pointer events: works with mouse and touch) ---------- */
+  const rowRefs = useRef(new Map());
+  const dragRef = useRef(null); // { id, startOrder }
+  const rowsRef = useRef(rows); // latest order, read when the drag ends
+  rowsRef.current = rows;
+  const [draggingId, setDraggingId] = useState(null);
+
+  // Move/up are tracked on the window, not the handle: rows get re-ordered in the page
+  // while dragging, and moving an element cancels its pointer capture.
+  function onHandlePointerDown(e, member) {
+    if (savingOrder || dragRef.current) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    e.preventDefault();
+    dragRef.current = {
+      id: member.id,
+      startOrder: rows.map((m) => m.id).join(","),
+    };
+    setDraggingId(member.id);
+
+    const onMove = (ev) => handleDragMove(ev.clientY);
+    const onUp = () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+      handleDragEnd();
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
+  }
+
+  function handleDragMove(y) {
+    const drag = dragRef.current;
+    if (!drag) return;
+
+    // keep scrolling while dragging near the top / bottom of the window
+    if (y < 80) window.scrollBy(0, -12);
+    else if (y > window.innerHeight - 80) window.scrollBy(0, 12);
+
+    setRows((prev) => {
+      const from = prev.findIndex((m) => m.id === drag.id);
+      if (from === -1) return prev;
+      // new position = how many other rows have their middle above the pointer
+      let to = 0;
+      prev.forEach((m) => {
+        if (m.id === drag.id) return;
+        const el = rowRefs.current.get(m.id);
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        if (r.top + r.height / 2 < y) to += 1;
+      });
+      if (to === from) return prev;
+      const next = [...prev];
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item);
+      return next;
+    });
+  }
+
+  function handleDragEnd() {
+    const drag = dragRef.current;
+    if (!drag) return;
+    dragRef.current = null;
+    setDraggingId(null);
+    // wait one frame so rowsRef has the final order
+    requestAnimationFrame(() => {
+      const current = rowsRef.current;
+      if (current.map((m) => m.id).join(",") !== drag.startOrder) {
+        saveOrder(current);
+      }
+    });
   }
 
   async function toggleVisible(member) {
@@ -241,8 +321,9 @@ export default function AdminTeamPage() {
               }}
             >
               <Typography sx={{ fontSize: "0.85rem", color: "#4b5563", fontWeight: 600 }}>
-                {visibleCount} of {rows.length} shown on the About page · use the
-                arrows to change the order
+                {visibleCount} of {rows.length} shown on the About page · drag{" "}
+                <DragIndicatorIcon sx={{ fontSize: 16, verticalAlign: "-3px", color: "#9ca3af" }} />{" "}
+                to change the order
               </Typography>
               {savingOrder ? (
                 <Typography sx={{ fontSize: "0.8rem", color: BRAND.primary }}>
@@ -254,23 +335,65 @@ export default function AdminTeamPage() {
             {rows.map((member, index) => (
               <Box
                 key={member.id}
+                ref={(el) => {
+                  if (el) rowRefs.current.set(member.id, el);
+                  else rowRefs.current.delete(member.id);
+                }}
                 sx={{
+                  position: "relative",
                   display: "flex",
                   alignItems: "center",
-                  gap: 2,
-                  px: 2.5,
+                  gap: { xs: 1.25, sm: 2 },
+                  px: { xs: 1.5, sm: 2.5 },
                   py: 1.5,
                   borderBottom: index === rows.length - 1 ? 0 : "1px solid #f1f2f4",
                   opacity: member.published ? 1 : 0.6,
+                  transition: "box-shadow 0.15s ease, background-color 0.15s ease",
                   "&:hover": { bgcolor: "#F5FCFB" },
+                  ...(draggingId === member.id
+                    ? {
+                        zIndex: 2,
+                        opacity: 1,
+                        bgcolor: "#E6F7F6",
+                        boxShadow: "0 12px 28px rgba(29, 87, 88, 0.22)",
+                        outline: `2px solid ${BRAND.primary}`,
+                        outlineOffset: -2,
+                        borderRadius: 1.5,
+                        "&:hover": { bgcolor: "#E6F7F6" },
+                      }
+                    : {}),
                 }}
               >
-                {/* Order arrows */}
-                <Stack spacing={0.25} sx={{ flexShrink: 0 }}>
+                {/* Drag handle */}
+                <Tooltip title={draggingId ? "" : "Drag to reorder"} placement="left">
+                  <Box
+                    role="button"
+                    aria-label={`Drag to reorder ${member.name}`}
+                    onPointerDown={(e) => onHandlePointerDown(e, member)}
+                    sx={{
+                      flexShrink: 0,
+                      display: "grid",
+                      placeItems: "center",
+                      width: 30,
+                      height: 44,
+                      borderRadius: 1,
+                      color: draggingId === member.id ? BRAND.primary : "#9ca3af",
+                      cursor: draggingId ? "grabbing" : "grab",
+                      touchAction: "none",
+                      userSelect: "none",
+                      "&:hover": { bgcolor: "rgba(29, 87, 88, 0.08)", color: BRAND.primary },
+                    }}
+                  >
+                    <DragIndicatorIcon />
+                  </Box>
+                </Tooltip>
+
+                {/* Order arrows (keyboard / fallback) */}
+                <Stack spacing={0.25} sx={{ flexShrink: 0, display: { xs: "none", sm: "flex" } }}>
                   <IconButton
                     size="small"
                     aria-label="Move up"
-                    disabled={index === 0 || savingOrder}
+                    disabled={index === 0 || savingOrder || Boolean(draggingId)}
                     onClick={() => move(index, -1)}
                     sx={{ p: 0.25 }}
                   >
@@ -279,7 +402,7 @@ export default function AdminTeamPage() {
                   <IconButton
                     size="small"
                     aria-label="Move down"
-                    disabled={index === rows.length - 1 || savingOrder}
+                    disabled={index === rows.length - 1 || savingOrder || Boolean(draggingId)}
                     onClick={() => move(index, 1)}
                     sx={{ p: 0.25 }}
                   >
