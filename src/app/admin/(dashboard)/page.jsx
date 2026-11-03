@@ -25,6 +25,8 @@ export default async function AdminDashboardPage() {
     selectedApplications,
     jobsList,
     applicationsByJob,
+    totalApplications,
+    publishedJobs,
   ] = await Promise.all([
     prisma.job.count(),
     prisma.jobApplication.count({ where: { status: "new" } }),
@@ -49,6 +51,8 @@ export default async function AdminDashboardPage() {
           _count: { _all: true },
         })
       : Promise.resolve([]),
+    prisma.jobApplication.count(),
+    prisma.job.count({ where: { published: true } }),
   ]);
 
   const countBySlug = new Map(
@@ -65,32 +69,41 @@ export default async function AdminDashboardPage() {
     }))
     .sort((a, b) => b.count - a.count || a.jobTitle.localeCompare(b.jobTitle));
 
+  const pct = (value) =>
+    totalApplications > 0 ? Math.round((value / totalApplications) * 100) : 0;
+  const draftJobs = Math.max(jobs - publishedJobs, 0);
+
   const cards = [
     {
       label: "New applications",
       count: newApplications,
       href: "/admin/applications?status=new",
       icon: FiberNewOutlinedIcon,
-      tone: "#E6F7F6",
-      iconColor: BRAND.primary,
+      hero: true, // solid teal card that leads the row
+      caption: `${pct(newApplications)}% of ${totalApplications} applications`,
+      bars: [{ value: pct(newApplications), color: "#2BD1C7" }],
       module: "applications",
     },
     {
-      label: "Shortlisted applications",
+      label: "Shortlisted",
       count: shortlistedApplications,
       href: "/admin/shortlisted",
       icon: StarOutlineIcon,
-      tone: "#E6FAF8",
-      iconColor: BRAND.accentDark,
+      accent: "#1A9E96",
+      soft: "#E6FAF8",
+      caption: `${pct(shortlistedApplications)}% of all applications`,
+      bars: [{ value: pct(shortlistedApplications), color: "#2BD1C7" }],
       module: "applications",
     },
     {
-      label: "Selected applications",
+      label: "Selected",
       count: selectedApplications,
       href: "/admin/applications?status=selected",
       icon: CheckCircleOutlineIcon,
-      tone: "#ecfdf5",
-      iconColor: "#047857",
+      accent: "#059669",
+      soft: "#ECFDF5",
+      caption: `${pct(selectedApplications)}% of all applications`,
+      bars: [{ value: pct(selectedApplications), color: "#10B981" }],
       module: "applications",
     },
     {
@@ -98,8 +111,16 @@ export default async function AdminDashboardPage() {
       count: jobs,
       href: "/admin/jobs",
       icon: WorkOutlineIcon,
-      tone: "#EEF4F4",
-      iconColor: "#2E7D7E",
+      accent: BRAND.primary,
+      soft: "#E6F7F6",
+      caption: `${publishedJobs} published · ${draftJobs} draft${draftJobs === 1 ? "" : "s"}`,
+      bars:
+        jobs > 0
+          ? [
+              { value: (publishedJobs / jobs) * 100, color: "#10B981" },
+              { value: (draftJobs / jobs) * 100, color: "#F59E0B" },
+            ]
+          : [],
       module: "jobs",
     },
   ].filter((card) => hasModuleAccess(session, card.module));
@@ -140,61 +161,169 @@ export default async function AdminDashboardPage() {
       >
         {cards.map((card) => {
           const Icon = card.icon;
+          const hero = Boolean(card.hero);
+          const accent = hero ? "#2BD1C7" : card.accent;
           return (
             <Link
               key={card.label}
               href={card.href}
               style={{ textDecoration: "none", color: "inherit" }}
             >
-              <Paper
-                elevation={0}
+              <Box
                 sx={{
+                  position: "relative",
+                  overflow: "hidden",
+                  isolation: "isolate",
                   height: "100%",
                   p: 2.5,
-                  borderRadius: 2,
-                  border: "1px solid rgba(29, 87, 88, 0.1)",
-                  bgcolor: "#fff",
-                  transition: "border-color 0.15s ease, box-shadow 0.15s ease",
+                  borderRadius: 3,
+                  display: "flex",
+                  flexDirection: "column",
+                  color: hero ? "#fff" : "#111",
+                  transition: "transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
+                  ...(hero
+                    ? {
+                        background: "linear-gradient(135deg, #164546 0%, #1D5758 45%, #1F8C86 100%)",
+                        boxShadow: "0 14px 32px rgba(29, 87, 88, 0.28)",
+                      }
+                    : {
+                        bgcolor: "#fff",
+                        border: "1px solid #eef0f3",
+                        // soft accent glow in the top-right corner
+                        backgroundImage: `radial-gradient(circle at 100% 0%, ${card.soft} 0%, rgba(255,255,255,0) 55%)`,
+                        boxShadow: "0 1px 2px rgba(15, 17, 21, 0.04)",
+                      }),
                   "&:hover": {
-                    borderColor: "rgba(29, 87, 88, 0.28)",
-                    boxShadow: "0 8px 24px rgba(29, 87, 88, 0.08)",
+                    transform: "translateY(-3px)",
+                    boxShadow: hero
+                      ? "0 20px 40px rgba(29, 87, 88, 0.35)"
+                      : "0 14px 30px rgba(15, 17, 21, 0.08)",
+                    ...(hero ? {} : { borderColor: accent }),
                   },
+                  "&:hover .card-arrow": { transform: "translateX(4px)" },
                 }}
               >
+                {/* Large faded icon in the corner */}
+                <Icon
+                  sx={{
+                    position: "absolute",
+                    right: -18,
+                    bottom: -18,
+                    fontSize: 120,
+                    zIndex: -1,
+                    color: hero ? "rgba(255,255,255,0.08)" : accent,
+                    opacity: hero ? 1 : 0.07,
+                  }}
+                />
+
+                {/* Top row: label + icon badge */}
                 <Box
                   sx={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 1.5,
-                    display: "grid",
-                    placeItems: "center",
-                    bgcolor: card.tone,
-                    color: card.iconColor,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 1,
                     mb: 2,
                   }}
                 >
-                  <Icon sx={{ fontSize: 20 }} />
+                  <Typography
+                    sx={{
+                      fontSize: "0.78rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                      color: hero ? "rgba(255,255,255,0.82)" : "#6b7280",
+                    }}
+                  >
+                    {card.label}
+                  </Typography>
+                  <Box
+                    sx={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: 2,
+                      display: "grid",
+                      placeItems: "center",
+                      flexShrink: 0,
+                      ...(hero
+                        ? {
+                            bgcolor: "rgba(255,255,255,0.16)",
+                            border: "1px solid rgba(255,255,255,0.25)",
+                            color: "#fff",
+                          }
+                        : { bgcolor: accent, color: "#fff", boxShadow: `0 6px 14px ${accent}40` }),
+                    }}
+                  >
+                    <Icon sx={{ fontSize: 20 }} />
+                  </Box>
                 </Box>
-                <Typography
-                  sx={{ color: "#6b7280", fontSize: "0.85rem", fontWeight: 600 }}
-                >
-                  {card.label}
-                </Typography>
+
+                {/* Big number */}
                 <Typography
                   sx={{
-                    mt: 0.5,
-                    fontSize: "2rem",
+                    fontSize: { xs: "2.2rem", md: "2.5rem" },
                     fontWeight: 800,
-                    color: "#111",
-                    lineHeight: 1.1,
+                    lineHeight: 1,
+                    letterSpacing: "-0.02em",
+                    color: hero ? "#fff" : "#111",
                   }}
                 >
                   {card.count}
                 </Typography>
-                <Typography sx={{ mt: 1, fontSize: "0.8rem", color: "#9ca3af" }}>
-                  View
+                <Typography
+                  sx={{
+                    mt: 0.75,
+                    fontSize: "0.8rem",
+                    fontWeight: 500,
+                    color: hero ? "rgba(255,255,255,0.78)" : "#6b7280",
+                  }}
+                >
+                  {card.caption}
                 </Typography>
-              </Paper>
+
+                {/* Progress / split bar */}
+                <Box
+                  sx={{
+                    mt: 1.75,
+                    height: 6,
+                    borderRadius: 999,
+                    overflow: "hidden",
+                    display: "flex",
+                    bgcolor: hero ? "rgba(255,255,255,0.18)" : "#eef0f3",
+                  }}
+                >
+                  {card.bars.map((bar, i) => (
+                    <Box
+                      key={i}
+                      sx={{
+                        width: `${Math.min(Math.max(bar.value, 0), 100)}%`,
+                        bgcolor: bar.color,
+                        height: "100%",
+                      }}
+                    />
+                  ))}
+                </Box>
+
+                {/* Footer link */}
+                <Box
+                  sx={{
+                    mt: "auto",
+                    pt: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    color: hero ? "#fff" : accent,
+                  }}
+                >
+                  View details
+                  <ArrowForwardIcon
+                    className="card-arrow"
+                    sx={{ fontSize: 15, transition: "transform 0.25s ease" }}
+                  />
+                </Box>
+              </Box>
             </Link>
           );
         })}
@@ -249,88 +378,184 @@ export default async function AdminDashboardPage() {
               No jobs listed yet.
             </Typography>
           ) : (
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "1fr",
-                  sm: "repeat(2, 1fr)",
-                  lg: "repeat(3, 1fr)",
+            <Box>
+              {[
+                {
+                  key: "published",
+                  label: "Published",
+                  hint: "Live on the careers page",
+                  color: "#047857",
+                  dot: "#10B981",
+                  rows: jobApplicationRows.filter((job) => job.published),
                 },
-                gap: 1.5,
-              }}
-            >
-              {jobApplicationRows.map((job) => (
-                <Link
-                  key={job.jobSlug}
-                  href={`/admin/applications?jobSlug=${encodeURIComponent(job.jobSlug)}`}
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: 1.5,
-                      p: 1.75,
-                      borderRadius: 1.5,
-                      border: "1px solid #eef0f3",
-                      bgcolor: "#fafafa",
-                      transition:
-                        "border-color 0.15s ease, background-color 0.15s ease",
-                      "&:hover": {
-                        borderColor: "rgba(29, 87, 88, 0.25)",
-                        bgcolor: "#F5FCFB",
-                      },
-                    }}
-                  >
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography
-                        sx={{
-                          fontWeight: 700,
-                          color: "#111",
-                          fontSize: "0.9rem",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {job.jobTitle}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          mt: 0.25,
-                          fontSize: "0.75rem",
-                          color: "#9ca3af",
-                        }}
-                      >
-                        {job.department}
-                        {job.published ? "" : " · Draft"}
-                      </Typography>
-                    </Box>
+                {
+                  key: "draft",
+                  label: "Draft",
+                  hint: "Not visible on the careers page",
+                  color: "#B45309",
+                  dot: "#F59E0B",
+                  rows: jobApplicationRows.filter((job) => !job.published),
+                },
+              ]
+                .filter((group) => group.rows.length > 0)
+                .map((group, groupIndex) => (
+                  <Box key={group.key} sx={{ mt: groupIndex === 0 ? 0 : 3 }}>
+                    {/* Group heading */}
                     <Box
                       sx={{
-                        minWidth: 36,
-                        height: 36,
-                        px: 1,
-                        borderRadius: 999,
-                        display: "grid",
-                        placeItems: "center",
-                        bgcolor:
-                          job.count > 0
-                            ? "rgba(29, 87, 88, 0.1)"
-                            : "#f3f4f6",
-                        color: job.count > 0 ? BRAND.primary : "#6b7280",
-                        fontWeight: 800,
-                        fontSize: "0.9rem",
-                        flexShrink: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        mb: 1.25,
                       }}
                     >
-                      {job.count}
+                      <Box
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: "50%",
+                          bgcolor: group.dot,
+                          flexShrink: 0,
+                        }}
+                      />
+                      <Typography
+                        sx={{
+                          fontWeight: 800,
+                          fontSize: "0.82rem",
+                          letterSpacing: "0.05em",
+                          textTransform: "uppercase",
+                          color: group.color,
+                        }}
+                      >
+                        {group.label} ({group.rows.length})
+                      </Typography>
+                      <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af" }}>
+                        · {group.hint}
+                      </Typography>
+                      <Box sx={{ flex: 1, height: "1px", bgcolor: "#eef0f3", ml: 1 }} />
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "grid",
+                        gridTemplateColumns: {
+                          xs: "1fr",
+                          sm: "repeat(2, 1fr)",
+                          lg: "repeat(3, 1fr)",
+                        },
+                        gap: 1.5,
+                      }}
+                    >
+                      {group.rows.map((job) => (
+                          <Link
+                            key={job.jobSlug}
+                            href={`/admin/applications?jobSlug=${encodeURIComponent(job.jobSlug)}`}
+                            style={{ textDecoration: "none", color: "inherit" }}
+                          >
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                gap: 1.5,
+                                p: 1.75,
+                                borderRadius: 1.5,
+                                transition:
+                                  "border-color 0.15s ease, background-color 0.15s ease",
+                                // Draft (unpublished) jobs get a warm amber card so they stand out
+                                // Published jobs get a soft green card (same green as the Jobs table chip)
+                                ...(job.published
+                                  ? {
+                                      border: "1px solid #A7F3D0",
+                                      borderLeft: "4px solid #10B981",
+                                      bgcolor: "#F0FDF7",
+                                      "&:hover": {
+                                        borderColor: "#10B981",
+                                        bgcolor: "#DCFCE7",
+                                      },
+                                    }
+                                  : {
+                                      border: "1px dashed #F5B94A",
+                                      borderLeft: "4px solid #F59E0B",
+                                      bgcolor: "#FFFBEB",
+                                      "&:hover": {
+                                        borderColor: "#F59E0B",
+                                        bgcolor: "#FEF3C7",
+                                      },
+                                    }),
+                              }}
+                            >
+                              <Box sx={{ minWidth: 0 }}>
+                                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, minWidth: 0 }}>
+                                  <Typography
+                                    sx={{
+                                      fontWeight: 700,
+                                      color: "#111",
+                                      fontSize: "0.9rem",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap",
+                                    }}
+                                  >
+                                    {job.jobTitle}
+                                  </Typography>
+                                  <Box
+                                    component="span"
+                                    sx={{
+                                      flexShrink: 0,
+                                      px: 0.9,
+                                      py: 0.15,
+                                      borderRadius: 999,
+                                      fontSize: "0.68rem",
+                                      fontWeight: 800,
+                                      letterSpacing: "0.04em",
+                                      textTransform: "uppercase",
+                                      ...(job.published
+                                        ? { bgcolor: "#D1FAE5", border: "1px solid #6EE7B7", color: "#047857" }
+                                        : { bgcolor: "#FEF3C7", border: "1px solid #FCD34D", color: "#B45309" }),
+                                    }}
+                                  >
+                                    {job.published ? "Published" : "Draft"}
+                                  </Box>
+                                </Box>
+                                <Typography
+                                  sx={{
+                                    mt: 0.25,
+                                    fontSize: "0.75rem",
+                                    color: job.published ? "#047857" : "#B45309",
+                                  }}
+                                >
+                                  {`${job.department ? `${job.department} · ` : ""}${
+                                    job.published ? "Live on careers page" : "Not visible on careers page"
+                                  }`}
+                                </Typography>
+                              </Box>
+                              <Box
+                                sx={{
+                                  minWidth: 36,
+                                  height: 36,
+                                  px: 1,
+                                  borderRadius: 999,
+                                  display: "grid",
+                                  placeItems: "center",
+                                  bgcolor:
+                                    job.count > 0
+                                      ? "rgba(29, 87, 88, 0.1)"
+                                      : "#f3f4f6",
+                                  color: job.count > 0 ? BRAND.primary : "#6b7280",
+                                  fontWeight: 800,
+                                  fontSize: "0.9rem",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                {job.count}
+                              </Box>
+                            </Box>
+                          </Link>
+                      ))}
                     </Box>
                   </Box>
-                </Link>
-              ))}
+                ))}
             </Box>
           )}
         </Paper>

@@ -40,6 +40,7 @@ export default function AdminResourceList({
   emptyText = "No items yet.",
   deleteTitle,
   getDeleteDescription,
+  toolbar = null,
 }) {
   const [pendingDelete, setPendingDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
@@ -77,6 +78,8 @@ export default function AdminResourceList({
           </Button>
         }
       />
+
+      {toolbar}
 
       <Paper
         elevation={0}
