@@ -10,12 +10,12 @@ export const metadata = {
 
   title: {
     default:
-      "Border Management System | Immigration & Visa Solutions, PoE Automation - TRIWINZ",
-    template: "%s | TRIWINZ",
+      "Border Management System | Immigration & Visa Solutions, PoE Automation - TriWinz",
+    template: "%s | TriWinz",
   },
 
   description:
-    "Transform your business with Triwinz's expert solutions. We provide tailored services that empower growth and streamline operations for lasting success.",
+    "Transform your business with TriWinz's expert solutions. We provide tailored services that empower growth and streamline operations for lasting success.",
 
   keywords: [
     "IT and Digital Transformation",
@@ -25,7 +25,7 @@ export const metadata = {
     "eGovernance and Visa Platform Solutions",
   ],
 
-  authors: [{ name: "Triwinz Team", url: "https://triwinz.com" }],
+  authors: [{ name: "TriWinz Team", url: "https://triwinz.com" }],
 
   alternates: {
     canonical: "https://triwinz.com",
@@ -56,7 +56,7 @@ export const metadata = {
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Triwinz",
+  name: "TriWinz",
   url: "https://triwinz.com",
   logo: `https://triwinz.com${OG_IMAGE.url.split("?")[0]}`,
   sameAs: [

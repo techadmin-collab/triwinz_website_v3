@@ -170,7 +170,7 @@ function AdminLoginForm() {
             >
               <Image
                 src="/og-image.webp"
-                alt="Triwinz logo"
+                alt="TriWinz logo"
                 fill
                 priority
                 style={{ objectFit: "contain" }}

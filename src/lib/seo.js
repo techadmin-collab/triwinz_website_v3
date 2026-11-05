@@ -3,11 +3,11 @@ export const OG_IMAGE = {
   url: "/og-share.png?v=3",
   width: 1200,
   height: 630,
-  alt: "Triwinz Technologies",
+  alt: "TriWinz Technologies",
 };
 
 export const defaultOpenGraph = {
-  siteName: "Triwinz",
+  siteName: "TriWinz",
   locale: "en_US",
   type: "website",
   images: [OG_IMAGE],

@@ -216,7 +216,7 @@ const page = () => {
             fontWeight={600}
             sx={{ color: "#111827", fontFamily: "montserrat, inter" }}
           >
-            Triwinz Technologies Pvt Ltd.
+            TriWinz Technologies Pvt Ltd.
           </Typography>
           <Typography
             sx={{ color: "#374151", fontFamily: "montserrat, inter" }}

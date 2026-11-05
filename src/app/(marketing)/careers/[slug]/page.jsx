@@ -396,7 +396,7 @@ export default async function CareerDetailPage({ params }) {
               Other open roles
             </Typography>
             <Typography color="text.secondary" sx={{ mb: 4 }}>
-              Explore more opportunities at Triwinz
+              Explore more opportunities at TriWinz
             </Typography>
 
             <Box

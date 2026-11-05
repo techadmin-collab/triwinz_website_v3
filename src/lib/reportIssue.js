@@ -61,7 +61,7 @@ async function sendAlertEmail(issue, context) {
   await withTimeout(
     sendMail({
       to,
-      subject: `[Triwinz site alert] ${sourceLabel(issue.source)}: ${issue.title}`,
+      subject: `[TriWinz site alert] ${sourceLabel(issue.source)}: ${issue.title}`,
       text: lines.join("\n"),
       html: `<div style="font-family:Arial,sans-serif;font-size:14px;color:#1f2937">${lines
         .map((l) => (l ? `<p style="margin:0 0 8px">${escapeHtml(l)}</p>` : "<br/>"))

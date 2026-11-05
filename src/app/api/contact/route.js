@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 import { sendMail } from "../../../lib/mail";
-import { contactNotificationTemplate } from "../../../lib/emailTemplates";
+import {
+  contactNotificationTemplate,
+  contactReceivedTemplate,
+} from "../../../lib/emailTemplates";
 import { reportIssue } from "../../../lib/reportIssue";
 
 export async function POST(req) {
@@ -51,6 +54,28 @@ export async function POST(req) {
       console.error("Contact email failed:", error);
     }
 
+    // Automatic reply to the person who filled in the form (best-effort)
+    let replySent = false;
+    try {
+      const reply = contactReceivedTemplate({ fullName });
+      await sendMail({
+        to: email,
+        subject: reply.subject,
+        text: reply.text,
+        html: reply.html,
+      });
+      replySent = true;
+    } catch (error) {
+      console.error("Contact auto-reply failed:", error);
+      await reportIssue({
+        source: "contact",
+        code: "reply_email_failed",
+        title: "Contact message was received, but the automatic reply to the visitor could not be sent.",
+        error,
+        context,
+      });
+    }
+
     if (!emailSent) {
       await reportIssue({
         source: "contact",
@@ -78,6 +103,7 @@ export async function POST(req) {
       ok: true,
       id: saved.id,
       emailSent,
+      replySent,
     });
   } catch (error) {
     console.error("Contact API error:", error);

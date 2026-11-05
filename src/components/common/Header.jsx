@@ -233,7 +233,7 @@ export default function Header() {
             >
               <Image
                 src="/og-image.webp"
-                alt="Triwinz logo"
+                alt="TriWinz logo"
                 fill
                 priority
                 style={{
@@ -576,7 +576,7 @@ export default function Header() {
               >
                 <Image
                   src="/og-image.webp"
-                  alt="Triwinz logo"
+                  alt="TriWinz logo"
                   fill
                   priority
                   style={{
@@ -688,7 +688,7 @@ export default function Header() {
                 }}
                 onClick={() => setMobileOpen(false)}
               >
-                Triwinz CloudKart
+                TriWinz CloudKart
               </Button>
               <Button
                 component={Link}

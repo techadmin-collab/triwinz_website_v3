@@ -77,7 +77,7 @@ export default function ServiceCards() {
                 >
                   <Image
                     src={logo.src}
-                    alt={`${logo.name} — Triwinz client`}
+                    alt={`${logo.name} — TriWinz client`}
                     width={200}
                     height={60}
                     style={{ objectFit: "contain" }}

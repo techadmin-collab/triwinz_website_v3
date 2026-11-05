@@ -15,9 +15,9 @@ const tealIcons = {
 
 export const metadata = {
   title:
-    "eVisa Suite | Immigration & Electronic Visa Processing Platform - TRIWINZ",
+    "eVisa Suite | Immigration & Electronic Visa Processing Platform - TriWinz",
   description:
-    "Navigate the visa application process with Triwinz eVisa Suite. Enjoy a seamless experience and quick approvals for your international travels and convenience",
+    "Navigate the visa application process with TriWinz eVisa Suite. Enjoy a seamless experience and quick approvals for your international travels and convenience",
   alternates: {
     canonical: "https://triwinz.com/evisa-suite",
   },

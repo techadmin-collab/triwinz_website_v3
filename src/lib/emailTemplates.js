@@ -82,7 +82,7 @@ function baseLayout({
                     <a href="${escapeHtml(siteUrl)}" style="text-decoration:none;">
                       <img
                         src="${escapeHtml(logoUrl)}"
-                        alt="Triwinz Technologies"
+                        alt="TriWinz Technologies"
                         width="240"
                         style="display:block;width:240px;max-width:85%;height:auto;border:0;outline:none;text-decoration:none;"
                       />
@@ -125,7 +125,7 @@ function baseLayout({
           <tr>
             <td style="padding:22px 8px 0;text-align:center;">
               <p style="margin:0 0 8px;font-size:13px;line-height:1.5;color:${BRAND.muted};">
-                ${footerNote || "This email was sent by Triwinz Technologies."}
+                ${footerNote || "This email was sent by TriWinz Technologies."}
               </p>
               <p style="margin:0 0 10px;font-size:13px;line-height:1.5;">
                 <a href="${escapeHtml(siteUrl)}" style="color:${BRAND.cyan};text-decoration:none;font-weight:700;">triwinz.com</a>
@@ -135,7 +135,7 @@ function baseLayout({
                 <a href="${escapeHtml(siteUrl)}/contact-us" style="color:${BRAND.cyan};text-decoration:none;font-weight:700;">Contact</a>
               </p>
               <p style="margin:0;font-size:12px;line-height:1.5;color:#9ca3af;">
-                © ${new Date().getFullYear()} Triwinz Technologies. All rights reserved.
+                © ${new Date().getFullYear()} TriWinz Technologies. All rights reserved.
               </p>
             </td>
           </tr>
@@ -171,9 +171,9 @@ export function contactNotificationTemplate({
   const html = baseLayout({
     title: "New website enquiry",
     eyebrow: "Contact form",
-    preview: `${fullName} sent a message via the Triwinz website`,
+    preview: `${fullName} sent a message via the TriWinz website`,
     footerNote:
-      "This is an internal notification from the Triwinz website contact form.",
+      "This is an internal notification from the TriWinz website contact form.",
     bodyHtml: `
       <p style="margin:0 0 18px;">
         A new enquiry was submitted through the website. Details are below for follow-up.
@@ -210,32 +210,32 @@ export function applicationReceivedTemplate({ fullName, jobTitle }) {
   const text = [
     `Dear ${fullName},`,
     "",
-    `Thank you for submitting your application for the position ${jobTitle} at Triwinz Technologies Pvt. Ltd.`,
+    `Thank you for submitting your application for the position ${jobTitle} at TriWinz Technologies Pvt. Ltd.`,
     "",
     "We are pleased to confirm that your application has been successfully received through our Careers Portal. Our Talent Acquisition team will review your profile against the requirements of the position.",
     "",
     "If your qualifications and experience match our current requirements, we will contact you regarding the next steps in the selection process.",
     "",
-    "We appreciate your interest in building your career with Triwinz Technologies and thank you for taking the time to apply.",
+    "We appreciate your interest in building your career with TriWinz Technologies and thank you for taking the time to apply.",
     "",
     "Best regards,",
     "Talent Acquisition Team",
-    "Triwinz Technologies Pvt. Ltd.",
+    "TriWinz Technologies Pvt. Ltd.",
     "Thiruvananthapuram, Kerala",
   ].join("\n");
 
   const html = baseLayout({
     title: "Application received",
     eyebrow: "Careers Portal",
-    preview: `Thank you for applying for ${jobTitle} at Triwinz Technologies`,
+    preview: `Thank you for applying for ${jobTitle} at TriWinz Technologies`,
     footerNote:
-      "This is an automated confirmation from Triwinz Careers. Please do not reply to this email.",
+      "This is an automated confirmation from TriWinz Careers. Please do not reply to this email.",
     bodyHtml: `
       <p style="margin:0 0 14px;">Dear <strong style="color:#111827;">${escapeHtml(fullName)}</strong>,</p>
       <p style="margin:0 0 14px;">
         Thank you for submitting your application for the position
         <strong style="color:#111827;">${escapeHtml(jobTitle)}</strong>
-        at Triwinz Technologies Pvt. Ltd.
+        at TriWinz Technologies Pvt. Ltd.
       </p>
       <p style="margin:0 0 14px;">
         We are pleased to confirm that your application has been successfully received through our Careers Portal.
@@ -245,12 +245,12 @@ export function applicationReceivedTemplate({ fullName, jobTitle }) {
         If your qualifications and experience match our current requirements, we will contact you regarding the next steps in the selection process.
       </p>
       <p style="margin:0 0 22px;">
-        We appreciate your interest in building your career with Triwinz Technologies and thank you for taking the time to apply.
+        We appreciate your interest in building your career with TriWinz Technologies and thank you for taking the time to apply.
       </p>
       <p style="margin:0;color:#111827;line-height:1.7;">
         Best regards,<br />
         <strong>Talent Acquisition Team</strong><br />
-        Triwinz Technologies Pvt. Ltd.<br />
+        TriWinz Technologies Pvt. Ltd.<br />
         <span style="color:#6b7280;">Thiruvananthapuram, Kerala</span>
       </p>
     `,
@@ -265,14 +265,14 @@ export function applicationRejectedTemplate({ fullName, jobTitle }) {
   const text = [
     `Dear ${fullName},`,
     "",
-    `Thank you for your interest in the ${jobTitle} role at Triwinz Technologies Pvt. Ltd. and for taking the time to apply.`,
+    `Thank you for your interest in the ${jobTitle} role at TriWinz Technologies Pvt. Ltd. and for taking the time to apply.`,
     "",
     "After careful review, we will not be moving forward with your application at this time.",
-    "We truly appreciate your interest in joining Triwinz and wish you all the best in your career.",
+    "We truly appreciate your interest in joining TriWinz and wish you all the best in your career.",
     "",
     "Best regards,",
     "Talent Acquisition Team",
-    "Triwinz Technologies Pvt. Ltd.",
+    "TriWinz Technologies Pvt. Ltd.",
     "Thiruvananthapuram, Kerala",
   ].join("\n");
 
@@ -281,13 +281,13 @@ export function applicationRejectedTemplate({ fullName, jobTitle }) {
     eyebrow: "Careers Portal",
     preview: `Update on your application for ${jobTitle}`,
     footerNote:
-      "This is an automated update from Triwinz Careers. Please do not reply to this email.",
+      "This is an automated update from TriWinz Careers. Please do not reply to this email.",
     bodyHtml: `
       <p style="margin:0 0 14px;">Dear <strong style="color:#111827;">${escapeHtml(fullName)}</strong>,</p>
       <p style="margin:0 0 14px;">
         Thank you for your interest in the
         <strong style="color:#111827;">${escapeHtml(jobTitle)}</strong>
-        role at Triwinz Technologies Pvt. Ltd., and for the time you took to apply.
+        role at TriWinz Technologies Pvt. Ltd., and for the time you took to apply.
       </p>
       <p style="margin:0 0 14px;">
         After careful review, we will not be progressing with your application for this role.
@@ -295,12 +295,50 @@ export function applicationRejectedTemplate({ fullName, jobTitle }) {
         explore future openings that may be a stronger match.
       </p>
       <p style="margin:0 0 22px;">
-        We sincerely appreciate your interest in Triwinz and wish you every success ahead.
+        We sincerely appreciate your interest in TriWinz and wish you every success ahead.
       </p>
       <p style="margin:0;color:#111827;line-height:1.7;">
         Best regards,<br />
         <strong>Talent Acquisition Team</strong><br />
-        Triwinz Technologies Pvt. Ltd.<br />
+        TriWinz Technologies Pvt. Ltd.<br />
+        <span style="color:#6b7280;">Thiruvananthapuram, Kerala</span>
+      </p>
+    `,
+  });
+
+  return { subject, text, html };
+}
+
+/** Contact form → acknowledgement to the person who wrote to us */
+export function contactReceivedTemplate({ fullName }) {
+  const subject = "Thank you for contacting TriWinz";
+  const text = [
+    `Dear ${fullName},`,
+    "",
+    "Thank you for reaching out to TriWinz. We have received your message and our team will get back to you shortly.",
+    "",
+    "Best regards,",
+    "Team TriWinz",
+    "TriWinz Technologies Pvt. Ltd.",
+    "Thiruvananthapuram, Kerala",
+  ].join("\n");
+
+  const html = baseLayout({
+    title: "We received your message",
+    eyebrow: "Contact TriWinz",
+    preview: "Thank you for contacting TriWinz. Our team will get back to you shortly.",
+    footerNote:
+      "This is an automated confirmation from TriWinz. Please do not reply to this email.",
+    bodyHtml: `
+      <p style="margin:0 0 14px;">Dear <strong style="color:#111827;">${escapeHtml(fullName)}</strong>,</p>
+      <p style="margin:0 0 22px;">
+        Thank you for reaching out to <strong style="color:#111827;">TriWinz</strong>.
+        We have received your message and our team will get back to you shortly.
+      </p>
+      <p style="margin:0;color:#111827;line-height:1.7;">
+        Best regards,<br />
+        <strong>Team TriWinz</strong><br />
+        TriWinz Technologies Pvt. Ltd.<br />
         <span style="color:#6b7280;">Thiruvananthapuram, Kerala</span>
       </p>
     `,
@@ -321,7 +359,7 @@ export function trainingApplicationReceivedTemplate({ fullName }) {
     "",
     "Best regards,",
     "Training Team",
-    "Triwinz Technologies Pvt. Ltd.",
+    "TriWinz Technologies Pvt. Ltd.",
     "Thiruvananthapuram, Kerala",
   ].join("\n");
 
@@ -330,7 +368,7 @@ export function trainingApplicationReceivedTemplate({ fullName }) {
     eyebrow: "Corporate Training Programme",
     preview: "Thank you for applying to the TriWinz Intensive Corporate Training Programme",
     footerNote:
-      "This is an automated confirmation from Triwinz Careers. Please do not reply to this email.",
+      "This is an automated confirmation from TriWinz Careers. Please do not reply to this email.",
     bodyHtml: `
       <p style="margin:0 0 14px;">Dear <strong style="color:#111827;">${escapeHtml(fullName)}</strong>,</p>
       <p style="margin:0 0 14px;">
@@ -344,7 +382,7 @@ export function trainingApplicationReceivedTemplate({ fullName }) {
       <p style="margin:0;color:#111827;line-height:1.7;">
         Best regards,<br />
         <strong>Training Team</strong><br />
-        Triwinz Technologies Pvt. Ltd.<br />
+        TriWinz Technologies Pvt. Ltd.<br />
         <span style="color:#6b7280;">Thiruvananthapuram, Kerala</span>
       </p>
     `,
@@ -381,7 +419,7 @@ export function trainingApplicationNotificationTemplate({
     eyebrow: "Corporate Training Programme",
     preview: `${fullName} applied for the Intensive Corporate Training Programme`,
     footerNote:
-      "This is an internal notification from the Triwinz website training form.",
+      "This is an internal notification from the TriWinz website training form.",
     bodyHtml: `
       <p style="margin:0 0 18px;">
         A new application for the Intensive Corporate Training Programme was submitted through the website.

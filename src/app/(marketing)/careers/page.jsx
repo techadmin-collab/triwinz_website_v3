@@ -11,22 +11,22 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Careers",
   description:
-    "Join Triwinz Technologies. Explore open roles in engineering, design, consulting, and more.",
+    "Join TriWinz Technologies. Explore open roles in engineering, design, consulting, and more.",
   alternates: {
     canonical: "/careers",
   },
   openGraph: {
     ...defaultOpenGraph,
-    title: "Careers at Triwinz",
+    title: "Careers at TriWinz",
     description:
-      "Join Triwinz Technologies. Explore open roles in engineering, design, consulting, and more.",
+      "Join TriWinz Technologies. Explore open roles in engineering, design, consulting, and more.",
     url: "/careers",
   },
   twitter: {
     ...defaultTwitter,
-    title: "Careers at Triwinz",
+    title: "Careers at TriWinz",
     description:
-      "Join Triwinz Technologies. Explore open roles in engineering, design, consulting, and more.",
+      "Join TriWinz Technologies. Explore open roles in engineering, design, consulting, and more.",
   },
 };
 

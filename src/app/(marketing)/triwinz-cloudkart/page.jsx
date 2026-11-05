@@ -15,9 +15,9 @@ const tealIcons = {
 
 export const metadata = {
   title:
-    "TriWinz CloudKart | Secure Cloud & Web Infrastructure Management Services - TRIWINZ",
+    "TriWinz CloudKart | Secure Cloud & Web Infrastructure Management Services - TriWinz",
   description:
-    "Experience the future of data management with Triwinz CloudKart. Secure, efficient, and tailored cloud solutions in order to elevate your business operations",
+    "Experience the future of data management with TriWinz CloudKart. Secure, efficient, and tailored cloud solutions in order to elevate your business operations",
   alternates: {
     canonical: "https://triwinz.com/triwinz-cloudkart",
   },

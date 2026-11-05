@@ -9,7 +9,7 @@ import CoCreateCTA from "./sections/CoCreateCTA";
 
 export const metadata = {
   title:
-    "IT & Digital Transformation | Digital Border Control & Consulting Services - TRIWINZ",
+    "IT & Digital Transformation | Digital Border Control & Consulting Services - TriWinz",
   description:
     "Navigate the complexities of IT digital transformation. Access valuable insights and tools to streamline and enhance your organization's digital capabilities",
   alternates: {

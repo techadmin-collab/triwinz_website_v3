@@ -14,7 +14,7 @@ const tealIcons = {
 
 export const metadata = {
   title:
-    "SAP Consulting & Support Services | S/4HANA Migration & Integration - TRIWINZ",
+    "SAP Consulting & Support Services | S/4HANA Migration & Integration - TriWinz",
   description:
     "Unlock the full potential of your SAP systems with our specialized consulting and support services. Experience seamless integration and the expert guidance",
   alternates: {

@@ -57,7 +57,7 @@ const ICONS = {
 /* ── SEO ───────────────────────────────────────────────────── */
 
 export const metadata = {
-  // "absolute" skips the site-wide "%s | TRIWINZ" title template.
+  // "absolute" skips the site-wide "%s | TriWinz" title template.
   title: { absolute: p.seo.title },
   description: p.seo.description,
   alternates: { canonical: TRAINING_PROGRAM_PATH },

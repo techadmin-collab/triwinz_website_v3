@@ -6,9 +6,9 @@ import ServicesSection from "./(marketing)/home/ServiceSection";
 import { defaultOpenGraph, defaultTwitter } from "../lib/seo";
 
 export const metadata = {
-  title: "Triwinz | Global IT Solution Provider",
+  title: "TriWinz | Global IT Solution Provider",
   description:
-    "Triwinz is a technology company striving to accelerate business outcomes for its clients through expert information technology consulting and build simple and powerful products for people and business.",
+    "TriWinz is a technology company striving to accelerate business outcomes for its clients through expert information technology consulting and build simple and powerful products for people and business.",
 
   alternates: {
     canonical: "/",
@@ -16,17 +16,17 @@ export const metadata = {
 
   openGraph: {
     ...defaultOpenGraph,
-    title: "Triwinz | Global IT Solution Provider",
+    title: "TriWinz | Global IT Solution Provider",
     description:
-      "Triwinz is a technology company striving to accelerate business outcomes for its clients through expert information technology consulting and build simple and powerful products for people and business.",
+      "TriWinz is a technology company striving to accelerate business outcomes for its clients through expert information technology consulting and build simple and powerful products for people and business.",
     url: "/",
   },
 
   twitter: {
     ...defaultTwitter,
-    title: "Triwinz | Global IT Solution Provider",
+    title: "TriWinz | Global IT Solution Provider",
     description:
-      "Triwinz is a technology company striving to accelerate business outcomes for its clients through expert information technology consulting and build simple and powerful products for people and business.",
+      "TriWinz is a technology company striving to accelerate business outcomes for its clients through expert information technology consulting and build simple and powerful products for people and business.",
   },
 };
 

@@ -60,7 +60,7 @@ export default function HeroSection() {
           key={img}
           component="img"
           src={img}
-          alt="Triwinz"
+          alt="TriWinz"
           decoding="async"
           fetchPriority={index === 0 ? "high" : "low"}
           onLoad={() => handleLoaded(index)}

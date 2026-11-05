@@ -5,9 +5,9 @@ import ServicesDetailSection from "./sections/ServicesDetailSection";
 import DevelopmentCTA from "./sections/DevelopmentCTA";
 
 export const metadata = {
-  title: "Custom Software & ERP Development | Business ERP Solutions - TRIWINZ",
+  title: "Custom Software & ERP Development | Business ERP Solutions - TriWinz",
   description:
-    "Maximize efficiency with Triwinz's custom ERP development services. Custom tailored solutions to fit your business needs and drive success in your industry",
+    "Maximize efficiency with TriWinz's custom ERP development services. Custom tailored solutions to fit your business needs and drive success in your industry",
   alternates: {
     canonical: "https://triwinz.com/custom-software-erp-development",
   },

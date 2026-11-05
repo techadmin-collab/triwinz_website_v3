@@ -64,7 +64,7 @@ const page = () => {
             underline="none"
             sx={{ fontWeight: 600, color: "#6B7280" }}
           >
-            Triwinz Technologies Pvt Ltd
+            TriWinz Technologies Pvt Ltd
           </Link>{" "}
           grants you a limited, non-exclusive, and revocable license to access
           and use the Website for informational and non-commercial purposes.
@@ -92,7 +92,7 @@ const page = () => {
 
         <Typography sx={paragraphStyle}>
           <strong>3.1 Copyright:</strong> All content on the Website, including
-          text, graphics, logos, and software, is the property of Triwinz
+          text, graphics, logos, and software, is the property of TriWinz
           Technologies and is protected by copyright laws.
         </Typography>
 
@@ -104,7 +104,7 @@ const page = () => {
             underline="hover"
             sx={{ fontWeight: 600, color: "#6B7280" }}
           >
-            Triwinz Technologies
+            TriWinz Technologies
           </Link>{" "}
           or their respective owners.
         </Typography>
@@ -128,7 +128,7 @@ const page = () => {
             underline="hover"
             sx={{ fontWeight: 600, color: "#6B7280" }}
           >
-            Triwinz Technologies
+            TriWinz Technologies
           </Link>{" "}
           is not responsible for the content or practices of these websites. You
           access them at your own risk.
@@ -153,7 +153,7 @@ const page = () => {
             underline="hover"
             sx={{ fontWeight: 600, color: "#6B7280" }}
           >
-            Triwinz Technologies
+            TriWinz Technologies
           </Link>{" "}
           does not guarantee the accuracy, completeness, or reliability of any
           information on the Website.
@@ -170,7 +170,7 @@ const page = () => {
             underline="hover"
             sx={{ fontWeight: 600, color: "#6B7280" }}
           >
-            Triwinz Technologies
+            TriWinz Technologies
           </Link>{" "}
           be liable for any direct, indirect, special, incidental, or
           consequential damages arising out of or in connection with your use or
@@ -178,7 +178,7 @@ const page = () => {
         </Typography>
 
         <Typography sx={paragraphStyle}>
-          Triwinz Technologies reserves the right to modify these Terms and
+          TriWinz Technologies reserves the right to modify these Terms and
           Conditions at any time.
         </Typography>
 

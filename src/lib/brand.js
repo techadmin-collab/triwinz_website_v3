@@ -1,4 +1,4 @@
-/** Shared Triwinz brand tokens for admin + site CTAs */
+/** Shared TriWinz brand tokens for admin + site CTAs */
 export const BRAND = {
   primary: "#1D5758",
   primaryDark: "#164546",
