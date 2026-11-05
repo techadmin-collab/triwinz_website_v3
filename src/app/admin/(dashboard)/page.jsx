@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { Box, Button, Paper, Typography } from "@mui/material";
+import { Alert, Box, Button, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
 import FiberNewOutlinedIcon from "@mui/icons-material/FiberNewOutlined";
@@ -17,6 +17,18 @@ import { hasModuleAccess } from "../../../lib/permissions";
 export default async function AdminDashboardPage() {
   const session = await requirePageModule("/admin");
   const canViewApplications = hasModuleAccess(session, "applications");
+
+  // Problems visitors hit on the website forms (admins only). Never breaks the dashboard.
+  let openIssueErrors = 0;
+  let openIssueTotal = 0;
+  if (hasModuleAccess(session, "system")) {
+    try {
+      [openIssueErrors, openIssueTotal] = await Promise.all([
+        prisma.systemIssue.count({ where: { resolved: false, severity: "error" } }),
+        prisma.systemIssue.count({ where: { resolved: false } }),
+      ]);
+    } catch {}
+  }
 
   const [
     jobs,
@@ -146,6 +158,27 @@ export default async function AdminDashboardPage() {
         title="Dashboard"
         description="Overview of jobs and career applications."
       />
+
+      {openIssueTotal > 0 ? (
+        <Alert
+          severity={openIssueErrors > 0 ? "error" : "warning"}
+          sx={{ mb: 2.5, borderRadius: 2, alignItems: "center" }}
+          action={
+            <Button
+              component={Link}
+              href="/admin/system-issues"
+              size="small"
+              sx={{ textTransform: "none", fontWeight: 700, color: "inherit", whiteSpace: "nowrap" }}
+            >
+              Review
+            </Button>
+          }
+        >
+          {openIssueErrors > 0
+            ? `${openIssueErrors} website problem${openIssueErrors === 1 ? "" : "s"} may be stopping visitors from submitting forms.`
+            : `${openIssueTotal} minor website issue${openIssueTotal === 1 ? "" : "s"} recorded on the forms.`}
+        </Alert>
+      ) : null}
 
       <Box
         sx={{

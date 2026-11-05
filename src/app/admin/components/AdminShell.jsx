@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
+  Badge,
   Box,
   Button,
   Divider,
@@ -30,6 +31,7 @@ import EventNoteOutlinedIcon from "@mui/icons-material/EventNoteOutlined";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
+import ReportProblemOutlinedIcon from "@mui/icons-material/ReportProblemOutlined";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -88,6 +90,12 @@ const navItems = [
     icon: PeopleOutlineIcon,
     module: "users",
   },
+  {
+    label: "System issues",
+    href: "/admin/system-issues",
+    icon: ReportProblemOutlinedIcon,
+    module: "system", // admins only
+  },
 ];
 
 const drawerWidthExpanded = 264;
@@ -123,6 +131,30 @@ export default function AdminShell({ children }) {
   const visibleNavItems = navItems.filter((item) =>
     hasModuleAccess(session, item.module),
   );
+
+  // Open System issues count for the sidebar badge (admins only)
+  const canSeeIssues = hasModuleAccess(session, "system");
+  const [openIssues, setOpenIssues] = useState(0);
+  useEffect(() => {
+    if (!canSeeIssues) return undefined;
+    let cancelled = false;
+    async function loadIssues() {
+      try {
+        const res = await fetch("/api/admin/system-issues?summary=1", { cache: "no-store" });
+        if (!res.ok) return;
+        const json = await res.json();
+        if (!cancelled) setOpenIssues(json?.counts?.open || 0);
+      } catch {}
+    }
+    loadIssues();
+    const timer = setInterval(loadIssues, 120000);
+    window.addEventListener("system-issues-changed", loadIssues);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+      window.removeEventListener("system-issues-changed", loadIssues);
+    };
+  }, [canSeeIssues, pathname]);
 
   const desktopWidth = sidebarExpanded
     ? drawerWidthExpanded
@@ -271,7 +303,26 @@ export default function AdminShell({ children }) {
                   justifyContent: "center",
                 }}
               >
-                <Icon sx={{ fontSize: 20 }} />
+                {item.module === "system" && openIssues > 0 ? (
+                  <Badge
+                    badgeContent={openIssues}
+                    max={99}
+                    sx={{
+                      "& .MuiBadge-badge": {
+                        bgcolor: "#ef4444",
+                        color: "#fff",
+                        fontSize: "0.62rem",
+                        height: 16,
+                        minWidth: 16,
+                        fontWeight: 700,
+                      },
+                    }}
+                  >
+                    <Icon sx={{ fontSize: 20 }} />
+                  </Badge>
+                ) : (
+                  <Icon sx={{ fontSize: 20 }} />
+                )}
               </ListItemIcon>
               {!collapsed ? (
                 <ListItemText

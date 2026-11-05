@@ -187,3 +187,27 @@ model InterviewRound {
   @@index([jobSlug])
   @@index([scheduledAt])
 }
+
+// Problems users hit on the public site (captcha, resume upload, saving, emails).
+// One row per kind of problem; repeats only bump the count. Shown in Admin -> System issues.
+model SystemIssue {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  fingerprint    String    @unique // source:code, e.g. "job-application:resume_upload_failed"
+  source         String    // job-application | training-application | contact
+  code           String
+  severity       String    @default("error") // error | warning
+  title          String
+  message        String?   // latest technical message
+  recent         String[]  // last few occurrences (JSON text), newest first
+  count          Int       @default(1)
+  firstSeenAt    DateTime  @default(now())
+  lastSeenAt     DateTime  @default(now())
+  resolved       Boolean   @default(false)
+  resolvedAt     DateTime?
+  resolvedBy     String?
+  lastNotifiedAt DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([resolved, lastSeenAt])
+}

@@ -115,6 +115,8 @@ export function getModuleKeyForPath(pathname) {
   ) {
     return "content";
   }
+  // System issues: same rule as "content", admins only.
+  if (pathname.startsWith("/admin/system-issues")) return "system";
   return null;
 }
 

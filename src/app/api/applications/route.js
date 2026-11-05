@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
 import { sendApplicationEmails } from "../../../lib/sendApplicationEmails";
 import { prisma } from "../../../lib/prisma";
-import { verifyTurnstileToken } from "../../../lib/turnstile";
+import { checkRecaptcha } from "../../../lib/recaptcha";
+import { reportIssue } from "../../../lib/reportIssue";
 import { uploadRawFile } from "../../../lib/cloudinary";
 import {
   getResumeFileNameError,
   RESUME_FILENAME_ERROR,
 } from "../../../lib/resumeFile";
+
+const SOURCE = "job-application";
+const CAPTCHA_ACTION = "job_application";
 
 const ALLOWED_TYPES = [
   "application/pdf",
@@ -23,7 +27,16 @@ function parseYesNo(value) {
   return null;
 }
 
+function isFileNameError(error) {
+  const message = String(error?.message || "");
+  return message.includes("public_id") && message.includes("invalid");
+}
+
 export async function POST(req) {
+  // Who was affected — shown in System issues so the team can follow up.
+  const context = {};
+  let step = "reading the form";
+
   try {
     const contentType = req.headers.get("content-type") || "";
     let fullName;
@@ -34,7 +47,7 @@ export async function POST(req) {
     let coverLetter;
     let referralSource;
     let availableToJoinAndRelocate;
-    let turnstileToken;
+    let captchaToken;
     let resumeUrl;
     let resumePublicId;
     let resumeFileName;
@@ -52,7 +65,8 @@ export async function POST(req) {
       availableToJoinAndRelocate = parseYesNo(
         formData.get("availableToJoinAndRelocate"),
       );
-      turnstileToken = String(formData.get("turnstileToken") || "");
+      captchaToken = String(formData.get("recaptchaToken") || "");
+      Object.assign(context, { applicantName: fullName, applicantEmail: email, jobTitle });
 
       const file = formData.get("resume");
       if (!file || typeof file === "string") {
@@ -81,19 +95,37 @@ export async function POST(req) {
         return NextResponse.json({ error: fileNameError }, { status: 400 });
       }
 
-      const turnstileOk = await verifyTurnstileToken(
-        turnstileToken,
-        req.headers.get("x-forwarded-for")?.split(",")[0]?.trim(),
-      );
-
-      if (!turnstileOk) {
-        return NextResponse.json(
-          { error: "Captcha verification failed. Please try again." },
-          { status: 400 },
-        );
+      step = "checking the captcha";
+      const captchaFail = await checkRecaptcha(req, {
+        token: captchaToken,
+        action: CAPTCHA_ACTION,
+        source: SOURCE,
+        context,
+      });
+      if (captchaFail) {
+        return NextResponse.json({ error: captchaFail.error }, { status: captchaFail.status });
       }
 
-      const uploaded = await uploadRawFile(file, "triwinz/resumes");
+      step = "uploading the resume";
+      let uploaded;
+      try {
+        uploaded = await uploadRawFile(file, "triwinz/resumes");
+      } catch (uploadError) {
+        if (isFileNameError(uploadError)) {
+          return NextResponse.json({ error: RESUME_FILENAME_ERROR }, { status: 400 });
+        }
+        await reportIssue({
+          source: SOURCE,
+          code: "resume_upload_failed",
+          title: "Resume upload to Cloudinary failed, so the application was not saved.",
+          error: uploadError,
+          context: { ...context, fileName: file.name, fileSize: file.size },
+        });
+        return NextResponse.json(
+          { error: "We couldn't upload your resume. Please try again in a few minutes." },
+          { status: 502 },
+        );
+      }
       resumeUrl = uploaded.url;
       resumePublicId = uploaded.publicId;
       resumeFileName = file.name;
@@ -109,21 +141,21 @@ export async function POST(req) {
         ? String(body.referralSource).trim()
         : null;
       availableToJoinAndRelocate = parseYesNo(body.availableToJoinAndRelocate);
-      turnstileToken = String(body.turnstileToken || "");
+      captchaToken = String(body.recaptchaToken || "");
       resumeUrl = String(body.resumeUrl || "").trim();
       resumePublicId = body.resumePublicId || null;
       resumeFileName = body.resumeFileName || null;
+      Object.assign(context, { applicantName: fullName, applicantEmail: email, jobTitle });
 
-      const turnstileOk = await verifyTurnstileToken(
-        turnstileToken,
-        req.headers.get("x-forwarded-for")?.split(",")[0]?.trim(),
-      );
-
-      if (!turnstileOk) {
-        return NextResponse.json(
-          { error: "Captcha verification failed. Please try again." },
-          { status: 400 },
-        );
+      step = "checking the captcha";
+      const captchaFail = await checkRecaptcha(req, {
+        token: captchaToken,
+        action: CAPTCHA_ACTION,
+        source: SOURCE,
+        context,
+      });
+      if (captchaFail) {
+        return NextResponse.json({ error: captchaFail.error }, { status: captchaFail.status });
       }
     }
 
@@ -143,6 +175,7 @@ export async function POST(req) {
       );
     }
 
+    step = "saving the application";
     const application = await prisma.jobApplication.create({
       data: {
         fullName,
@@ -160,24 +193,44 @@ export async function POST(req) {
       },
     });
 
-    await sendApplicationEmails({
+    step = "sending the confirmation email";
+    const mailResult = await sendApplicationEmails({
       fullName,
       email,
       jobTitle,
     });
+    if (!mailResult?.applicant) {
+      // The application is saved; only the thank-you email failed.
+      await reportIssue({
+        source: SOURCE,
+        code: "email_failed",
+        title: "Application was saved, but the confirmation email to the applicant could not be sent.",
+        error: mailResult?.error,
+        context,
+      });
+    }
 
     return NextResponse.json(application, { status: 201 });
   } catch (error) {
     console.error("Application create failed:", error);
-    const message = String(error?.message || "");
-    if (message.includes("public_id") && message.includes("invalid")) {
+    if (isFileNameError(error)) {
       return NextResponse.json(
         { error: RESUME_FILENAME_ERROR },
         { status: 400 },
       );
     }
+    await reportIssue({
+      source: SOURCE,
+      code: step === "saving the application" ? "save_failed" : "unexpected_error",
+      title:
+        step === "saving the application"
+          ? "Application could not be saved to the database."
+          : `Application failed while ${step}.`,
+      error,
+      context,
+    });
     return NextResponse.json(
-      { error: "Failed to submit application" },
+      { error: "Failed to submit application. Please try again in a few minutes." },
       { status: 500 },
     );
   }

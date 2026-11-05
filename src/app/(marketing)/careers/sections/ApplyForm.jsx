@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -12,9 +12,16 @@ import {
 } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import { Turnstile } from "@marsidev/react-turnstile";
+import GlobalStyles from "@mui/material/GlobalStyles";
 import { toast } from "react-hot-toast";
 import { getResumeFileNameError } from "../../../../lib/resumeFile";
+import {
+  RECAPTCHA_SITE_KEY,
+  getRecaptchaToken,
+  handleCaptchaError,
+  preloadRecaptcha,
+  reportClientIssue,
+} from "../../../../lib/recaptchaClient";
 
 const inputStyle = {
   mb: 1.75,
@@ -37,21 +44,17 @@ const inputStyle = {
   },
 };
 
-const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
-
 export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSuccess }) {
   const [resumeFile, setResumeFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [availableToJoinAndRelocate, setAvailableToJoinAndRelocate] =
     useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState("");
-  const turnstileRef = useRef(null);
 
-  const resetTurnstile = () => {
-    setTurnstileToken("");
-    turnstileRef.current?.reset();
-  };
+  // Load Google's invisible captcha in the background while the visitor fills the form
+  useEffect(() => {
+    preloadRecaptcha();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,20 +70,19 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
       return;
     }
 
-    if (!TURNSTILE_SITE_KEY) {
-      toast.error("Captcha is not configured");
-      return;
-    }
-
-    if (!turnstileToken) {
-      toast.error("Please complete the captcha");
-      return;
-    }
-
     const form = e.currentTarget;
     const formData = new FormData(form);
 
     setSubmitting(true);
+
+    let recaptchaToken;
+    try {
+      recaptchaToken = await getRecaptchaToken("job_application");
+    } catch (captchaError) {
+      toast.error(handleCaptchaError(captchaError, "job-application"));
+      setSubmitting(false);
+      return;
+    }
 
     try {
       const applyData = new FormData();
@@ -98,17 +100,29 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
       );
       applyData.append("jobSlug", jobSlug);
       applyData.append("jobTitle", jobTitle);
-      applyData.append("turnstileToken", turnstileToken);
+      applyData.append("recaptchaToken", recaptchaToken);
       applyData.append("resume", resumeFile);
 
-      const applyRes = await fetch("/api/applications", {
-        method: "POST",
-        body: applyData,
-      });
+      let applyRes;
+      try {
+        applyRes = await fetch("/api/applications", {
+          method: "POST",
+          body: applyData,
+        });
+      } catch (networkError) {
+        reportClientIssue("job-application", "network_error", networkError?.message);
+        throw new Error(
+          "We couldn't reach our server. Please check your internet connection and try again.",
+        );
+      }
 
       if (!applyRes.ok) {
-        const err = await applyRes.json().catch(() => ({}));
-        throw new Error(err.error || "Failed to submit application");
+        const err = await applyRes.json().catch(() => null);
+        if (!err) {
+          // Not our API's JSON (e.g. the hosting platform timed out) — the server couldn't report it itself
+          reportClientIssue("job-application", "server_error", `HTTP ${applyRes.status} from the server`);
+        }
+        throw new Error(err?.error || "Failed to submit application");
       }
 
       toast.success("Application submitted successfully!");
@@ -116,11 +130,9 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
       setResumeFile(null);
       setFileName("");
       setAvailableToJoinAndRelocate(false);
-      resetTurnstile();
       onSuccess?.();
     } catch (err) {
       toast.error(err.message || "Something went wrong");
-      resetTurnstile();
     } finally {
       setSubmitting(false);
     }
@@ -350,32 +362,12 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
           </Button>
         </Box>
 
-        {TURNSTILE_SITE_KEY ? (
-          <Box
-            sx={{
-              mb: 2.5,
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <Turnstile
-              ref={turnstileRef}
-              siteKey={TURNSTILE_SITE_KEY}
-              onSuccess={setTurnstileToken}
-              onExpire={() => setTurnstileToken("")}
-              onError={() => {
-                setTurnstileToken("");
-                toast.error("Captcha failed to load. Please refresh and try again.");
-              }}
-              options={{ theme: "light" }}
-            />
-          </Box>
-        ) : null}
+        {RECAPTCHA_SITE_KEY ? <GlobalStyles styles={{ ".grecaptcha-badge": { visibility: "hidden" } }} /> : null}
 
         <Button
           type="submit"
           fullWidth
-          disabled={submitting || (Boolean(TURNSTILE_SITE_KEY) && !turnstileToken)}
+          disabled={submitting}
           sx={{
             py: 1.6,
             borderRadius: 2.5,
@@ -397,6 +389,19 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
             "Submit application"
           )}
         </Button>
+        <Typography
+          sx={{ mt: 1.25, fontSize: "0.72rem", color: "#9ca3af", textAlign: "center", lineHeight: 1.5 }}
+        >
+          This site is protected by reCAPTCHA and the Google{" "}
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "inherit" }}>
+            Privacy Policy
+          </a>{" "}
+          and{" "}
+          <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" style={{ color: "inherit" }}>
+            Terms of Service
+          </a>{" "}
+          apply.
+        </Typography>
 
         <Typography
           variant="caption"

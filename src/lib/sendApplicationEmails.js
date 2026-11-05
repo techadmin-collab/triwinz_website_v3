@@ -16,7 +16,7 @@ export async function sendApplicationEmails({ fullName, email, jobTitle }) {
     return { applicant: true };
   } catch (error) {
     console.error("Applicant thank-you email failed:", error);
-    return { applicant: false };
+    return { applicant: false, error: error?.message || "Email send failed" };
   }
 }
 
