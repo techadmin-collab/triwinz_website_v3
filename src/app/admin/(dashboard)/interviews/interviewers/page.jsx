@@ -220,10 +220,10 @@ export default function InterviewersPage() {
                 <Tooltip
                   title={
                     !row.portalUrl
-                      ? "Share availability link"
+                      ? "Share panel page link"
                       : row.portalSeenAt
-                        ? "Availability link (opened)"
-                        : "Availability link (not opened yet)"
+                        ? "Panel page link (opened)"
+                        : "Panel page link (not opened yet)"
                   }
                 >
                   <IconButton

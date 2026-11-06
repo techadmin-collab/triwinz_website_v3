@@ -16,14 +16,22 @@ export async function GET(_req, { params }) {
   const application = await prisma.jobApplication.findUnique({ where: { id: applicationId } });
   if (!application) return badRequest("Not found", 404);
 
-  const [rounds, interviewers] = await Promise.all([
+  const [rounds, interviewers, feedback] = await Promise.all([
     roundsFor(applicationId),
     prisma.interviewer.findMany({ orderBy: [{ active: "desc" }, { name: "asc" }] }),
+    prisma.interviewFeedback
+      ? prisma.interviewFeedback.findMany({ where: { applicationId }, orderBy: { submittedAt: "asc" } })
+      : Promise.resolve([]),
   ]);
+  const feedbackByRound = new Map();
+  feedback.forEach((f) => {
+    if (!feedbackByRound.has(f.roundId)) feedbackByRound.set(f.roundId, []);
+    feedbackByRound.get(f.roundId).push(f);
+  });
 
   return NextResponse.json({
     application,
-    rounds,
+    rounds: rounds.map((r) => ({ ...r, panelFeedback: feedbackByRound.get(r.id) || [] })),
     interviewers,
     stage: getStage(application, rounds),
   });

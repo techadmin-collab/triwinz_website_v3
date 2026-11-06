@@ -349,13 +349,13 @@ export function contactReceivedTemplate({ fullName }) {
 
 /** Interview panel → private link to share their availability */
 export function interviewerAvailabilityTemplate({ name, url }) {
-  const subject = "Share your interview availability with TriWinz";
+  const subject = "Your TriWinz interview panel page";
   const text = [
     `Dear ${name},`,
     "",
     "Thank you for being part of the TriWinz interview panel.",
     "",
-    "Please use the link below to mark the dates and times you are available to take interviews. You can come back to the same link at any time to update your availability.",
+    "Your personal page is ready. Use the link below to see the interviews scheduled with you, view candidate resumes, share your feedback and mark the dates and times you are available. You can come back to the same link at any time.",
     "",
     url,
     "",
@@ -368,9 +368,9 @@ export function interviewerAvailabilityTemplate({ name, url }) {
   ].join("\n");
 
   const html = baseLayout({
-    title: "Share your availability",
+    title: "Your interview panel page",
     eyebrow: "Interview panel",
-    preview: "Mark the dates and times you are available to take interviews",
+    preview: "See your interviews, share feedback and mark your availability",
     footerNote:
       "This link is personal to you. Please don't forward this email.",
     bodyHtml: `
@@ -379,12 +379,13 @@ export function interviewerAvailabilityTemplate({ name, url }) {
         Thank you for being part of the <strong style="color:#111827;">TriWinz</strong> interview panel.
       </p>
       <p style="margin:0 0 22px;">
-        Please use the button below to mark the dates and times you are available to take interviews.
-        You can come back to the same link at any time to update your availability.
+        Your personal page is ready. Use it to see the interviews scheduled with you, view candidate
+        resumes, share your feedback and mark the dates and times you are available.
+        You can come back to the same link at any time.
       </p>
       <p style="margin:0 0 22px;">
         <a href="${escapeHtml(url)}" style="display:inline-block;background:#1D5758;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:8px;">
-          Share my availability
+          Open my panel page
         </a>
       </p>
       <p style="margin:0 0 22px;color:#6b7280;font-size:13px;line-height:1.6;">

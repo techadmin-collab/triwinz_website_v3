@@ -232,3 +232,24 @@ model SystemIssue {
 
   @@index([resolved, lastSeenAt])
 }
+
+// A panel member's own feedback on an interview level (from their private link).
+// The admin team still records the level's result themselves.
+model InterviewFeedback {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  roundId         String   @db.ObjectId
+  applicationId   String   @db.ObjectId
+  interviewerId   String   @db.ObjectId
+  interviewerName String
+  rating          Int      // 1-5
+  recommendation  String   // strong_yes | yes | no | strong_no
+  strengths       String?
+  concerns        String?
+  comments        String
+  submittedAt     DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([roundId, interviewerId])
+  @@index([applicationId])
+  @@index([interviewerId])
+}

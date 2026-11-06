@@ -111,6 +111,9 @@ export async function DELETE(_req, { params }) {
   }
 
   await prisma.interviewRound.delete({ where: { id: roundId } });
+  if (prisma.interviewFeedback) {
+    await prisma.interviewFeedback.deleteMany({ where: { roundId } }).catch(() => {});
+  }
 
   // Undo the effect of a rejection / hire that came from this level
   const application = await prisma.jobApplication.findUnique({ where: { id: round.applicationId } });

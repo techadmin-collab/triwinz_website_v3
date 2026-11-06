@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PanelFeedbackList from "./PanelFeedbackList";
 import {
   Alert,
   Box,
@@ -68,6 +69,12 @@ export default function ResultDialog({ open, round, candidateName, onClose, onSu
           {candidateName}
           {round?.interviewerNames?.length ? ` · interviewed by ${round.interviewerNames.join(", ")}` : ""}
         </Typography>
+
+        {round?.panelFeedback?.length ? (
+          <Box sx={{ mt: -1, mb: 2.5 }}>
+            <PanelFeedbackList feedback={round.panelFeedback} interviewerNames={round.interviewerNames || []} compact />
+          </Box>
+        ) : null}
 
         <ToggleButtonGroup
           exclusive

@@ -100,3 +100,35 @@ export function formatDateTime(iso) {
     minute: "2-digit",
   });
 }
+
+// Panel member feedback (from their private link)
+export const FEEDBACK_RECOMMENDATIONS = [
+  { value: "strong_yes", label: "Strong yes", color: "#047857", bg: "#D1FAE5" },
+  { value: "yes", label: "Yes", color: "#0F766E", bg: "#E6F7F6" },
+  { value: "no", label: "No", color: "#B45309", bg: "#FEF3C7" },
+  { value: "strong_no", label: "Strong no", color: "#B91C1C", bg: "#FEE2E2" },
+];
+
+export function recommendationMeta(value) {
+  return FEEDBACK_RECOMMENDATIONS.find((r) => r.value === value) || null;
+}
+
+// Levels whose feedback can still be changed by the panel
+export const FEEDBACK_OPEN_STATUSES = ["scheduled", "on_hold"];
+
+/** "Thu, 12 Nov 2026, 10:30 AM IST" */
+export function formatIST(value) {
+  if (!value) return "";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  return `${d.toLocaleString("en-GB", {
+    timeZone: "Asia/Kolkata",
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  })} IST`;
+}

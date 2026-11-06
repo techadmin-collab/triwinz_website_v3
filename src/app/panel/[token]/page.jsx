@@ -1,12 +1,7 @@
-import PanelAvailability from "./PanelAvailability";
+import PanelOverview from "./PanelOverview";
 
-// Private page for an interview panel member (opened from the link the admin shares).
-export const metadata = {
-  title: "Share your availability",
-  robots: { index: false, follow: false },
-};
+export const metadata = { title: "Overview" };
 
-export default async function PanelPage({ params }) {
-  const { token } = await params;
-  return <PanelAvailability token={token} />;
+export default function PanelHome() {
+  return <PanelOverview />;
 }
