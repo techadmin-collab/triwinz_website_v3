@@ -15,6 +15,7 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import { toast } from "react-hot-toast";
 import { getResumeFileNameError } from "../../../../lib/resumeFile";
+import HrEmailFallback from "./HrEmailFallback";
 import {
   FILE_UNREADABLE_MESSAGE,
   NETWORK_FAILED_MESSAGE,
@@ -60,6 +61,17 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
     useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [readingFile, setReadingFile] = useState(false);
+  // When the form can't be submitted, offer emailing the resume to HR instead
+  const [fallback, setFallback] = useState(null); // { fullName, email, phone } | null
+
+  function showHrFallback(formEl) {
+    const fd = formEl ? new FormData(formEl) : null;
+    setFallback({
+      fullName: String(fd?.get("full_name") || "").trim(),
+      email: String(fd?.get("email") || "").trim(),
+      phone: String(fd?.get("phone") || "").trim(),
+    });
+  }
 
   // Load Google's invisible captcha in the background while the visitor fills the form
   useEffect(() => {
@@ -90,6 +102,7 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
       recaptchaToken = await getRecaptchaToken("job_application");
     } catch (captchaError) {
       toast.error(handleCaptchaError(captchaError, "job-application"));
+      showHrFallback(form);
       setSubmitting(false);
       return;
     }
@@ -145,9 +158,11 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
       setResumeFile(null);
       setFileName("");
       setAvailableToJoinAndRelocate(false);
+      setFallback(null);
       onSuccess?.();
     } catch (err) {
       toast.error(err.message || "Something went wrong");
+      showHrFallback(form);
     } finally {
       setSubmitting(false);
     }
@@ -379,6 +394,7 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
                   setFileName(copy.name);
                 } catch (readError) {
                   toast.error(FILE_UNREADABLE_MESSAGE, { duration: 8000 });
+                  showHrFallback(input.form);
                   reportClientIssue(
                     "job-application",
                     "file_unreadable",
@@ -394,6 +410,8 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
             />
           </Button>
         </Box>
+
+        {fallback ? <HrEmailFallback jobTitle={jobTitle} details={fallback} /> : null}
 
         {RECAPTCHA_SITE_KEY ? <GlobalStyles styles={{ ".grecaptcha-badge": { visibility: "hidden" } }} /> : null}
 
