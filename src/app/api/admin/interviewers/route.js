@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { requireModule } from "../../../../lib/requireAdmin";
 import { clientOutdated, str, badRequest } from "../interviews/_server";
+import { portalUrl } from "../../../../lib/interviewerPortal";
 
 export async function GET() {
   const { error } = await requireModule("interviews");
@@ -17,7 +18,11 @@ export async function GET() {
   rounds.forEach((r) => r.interviewerIds.forEach((id) => counts.set(id, (counts.get(id) || 0) + 1)));
 
   return NextResponse.json(
-    interviewers.map((i) => ({ ...i, interviewCount: counts.get(i.id) || 0 })),
+    interviewers.map((i) => ({
+      ...i,
+      portalUrl: i.portalToken ? portalUrl(i.portalToken) : null,
+      interviewCount: counts.get(i.id) || 0,
+    })),
   );
 }
 
@@ -42,5 +47,5 @@ export async function POST(req) {
       active: body.active !== false,
     },
   });
-  return NextResponse.json({ ...interviewer, interviewCount: 0 }, { status: 201 });
+  return NextResponse.json({ ...interviewer, portalUrl: null, interviewCount: 0 }, { status: 201 });
 }

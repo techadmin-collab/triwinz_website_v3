@@ -25,10 +25,13 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
+import LinkIcon from "@mui/icons-material/Link";
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import { toast } from "react-hot-toast";
 import AdminPageHeader from "../../../components/AdminPageHeader";
 import ConfirmDeleteDialog from "../../../components/ConfirmDeleteDialog";
 import ListPagination from "../../../components/ListPagination";
+import AvailabilityLinkDialog from "../../../components/interviews/AvailabilityLinkDialog";
 import { brandButtonSx, BRAND } from "../../../../../lib/brand";
 
 const empty = { name: "", designation: "", company: "", email: "", phone: "", notes: "", active: true };
@@ -43,6 +46,8 @@ export default function InterviewersPage() {
   const [deleting, setDeleting] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [linkForId, setLinkForId] = useState(null);
+  const linkFor = rows.find((r) => r.id === linkForId) || null;
 
   async function load() {
     const res = await fetch("/api/admin/interviewers");
@@ -133,15 +138,32 @@ export default function InterviewersPage() {
         title="Interview panel"
         description="Outside panel members you assign to interview levels. They don’t need an admin login."
         action={
-          <Button
-            startIcon={<AddIcon />}
-            variant="contained"
-            disableElevation
-            onClick={() => openEditor(null)}
-            sx={{ ...brandButtonSx, fontWeight: 700, px: 2 }}
-          >
-            Add panel member
-          </Button>
+          <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", rowGap: 1 }}>
+            <Button
+              component={Link}
+              href="/admin/interviews/availability"
+              startIcon={<CalendarMonthOutlinedIcon />}
+              sx={{
+                textTransform: "none",
+                fontWeight: 700,
+                color: BRAND.primary,
+                border: "1px solid rgba(29, 87, 88, 0.25)",
+                px: 2,
+                "&:hover": { bgcolor: "#E6F7F6" },
+              }}
+            >
+              Availability
+            </Button>
+            <Button
+              startIcon={<AddIcon />}
+              variant="contained"
+              disableElevation
+              onClick={() => openEditor(null)}
+              sx={{ ...brandButtonSx, fontWeight: 700, px: 2 }}
+            >
+              Add panel member
+            </Button>
+          </Stack>
         }
       />
 
@@ -195,6 +217,29 @@ export default function InterviewersPage() {
                 {row.interviewCount} level{row.interviewCount === 1 ? "" : "s"}
               </Typography>
               <Stack direction="row" spacing={0.5}>
+                <Tooltip
+                  title={
+                    !row.portalUrl
+                      ? "Share availability link"
+                      : row.portalSeenAt
+                        ? "Availability link (opened)"
+                        : "Availability link (not opened yet)"
+                  }
+                >
+                  <IconButton
+                    size="small"
+                    onClick={() => setLinkForId(row.id)}
+                    sx={{
+                      border: "1px solid",
+                      borderColor: row.portalUrl ? "rgba(29, 87, 88, 0.35)" : "#e5e7eb",
+                      borderRadius: 1.5,
+                      color: row.portalUrl ? BRAND.primary : undefined,
+                      bgcolor: row.portalSeenAt ? "#E6F7F6" : undefined,
+                    }}
+                  >
+                    <LinkIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
                 <Tooltip title="Edit">
                   <IconButton size="small" onClick={() => openEditor(row)} sx={{ border: "1px solid #e5e7eb", borderRadius: 1.5 }}>
                     <EditOutlinedIcon fontSize="small" />
@@ -257,6 +302,12 @@ export default function InterviewersPage() {
           </DialogActions>
         </Box>
       </Dialog>
+
+      <AvailabilityLinkDialog
+        interviewer={linkFor}
+        onClose={() => setLinkForId(null)}
+        onChange={(info) => setRows((prev) => prev.map((r) => (r.id === info.id ? { ...r, ...info } : r)))}
+      />
 
       <ConfirmDeleteDialog
         open={Boolean(pendingDelete)}

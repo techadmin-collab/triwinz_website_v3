@@ -156,10 +156,31 @@ model Interviewer {
   designation String?
   notes       String?
   active      Boolean  @default(true)
+  // Private availability link (no login): /panel/<portalToken>
+  portalToken     String?
+  portalCreatedAt DateTime?
+  portalSentAt    DateTime?
+  portalSeenAt    DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([active])
+  @@index([portalToken])
+}
+
+// Times a panel member says they're free, entered from their private link.
+// date is the calendar day (YYYY-MM-DD) and minutes are from midnight, India time (IST).
+model InterviewerSlot {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  interviewerId String   @db.ObjectId
+  date          String
+  startMin      Int
+  endMin        Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([interviewerId, date])
+  @@index([date])
 }
 
 // One interview level (round) for a job application: Level 1, Level 2, ...

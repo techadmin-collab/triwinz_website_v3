@@ -347,6 +347,62 @@ export function contactReceivedTemplate({ fullName }) {
   return { subject, text, html };
 }
 
+/** Interview panel → private link to share their availability */
+export function interviewerAvailabilityTemplate({ name, url }) {
+  const subject = "Share your interview availability with TriWinz";
+  const text = [
+    `Dear ${name},`,
+    "",
+    "Thank you for being part of the TriWinz interview panel.",
+    "",
+    "Please use the link below to mark the dates and times you are available to take interviews. You can come back to the same link at any time to update your availability.",
+    "",
+    url,
+    "",
+    "This link is personal to you, so please don't share it.",
+    "",
+    "Best regards,",
+    "Talent Acquisition Team",
+    "TriWinz Technologies Pvt. Ltd.",
+    "Thiruvananthapuram, Kerala",
+  ].join("\n");
+
+  const html = baseLayout({
+    title: "Share your availability",
+    eyebrow: "Interview panel",
+    preview: "Mark the dates and times you are available to take interviews",
+    footerNote:
+      "This link is personal to you. Please don't forward this email.",
+    bodyHtml: `
+      <p style="margin:0 0 14px;">Dear <strong style="color:#111827;">${escapeHtml(name)}</strong>,</p>
+      <p style="margin:0 0 14px;">
+        Thank you for being part of the <strong style="color:#111827;">TriWinz</strong> interview panel.
+      </p>
+      <p style="margin:0 0 22px;">
+        Please use the button below to mark the dates and times you are available to take interviews.
+        You can come back to the same link at any time to update your availability.
+      </p>
+      <p style="margin:0 0 22px;">
+        <a href="${escapeHtml(url)}" style="display:inline-block;background:#1D5758;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:8px;">
+          Share my availability
+        </a>
+      </p>
+      <p style="margin:0 0 22px;color:#6b7280;font-size:13px;line-height:1.6;">
+        If the button doesn't work, copy this link into your browser:<br />
+        <span style="color:#1D5758;word-break:break-all;">${escapeHtml(url)}</span>
+      </p>
+      <p style="margin:0;color:#111827;line-height:1.7;">
+        Best regards,<br />
+        <strong>Talent Acquisition Team</strong><br />
+        TriWinz Technologies Pvt. Ltd.<br />
+        <span style="color:#6b7280;">Thiruvananthapuram, Kerala</span>
+      </p>
+    `,
+  });
+
+  return { subject, text, html };
+}
+
 /** Training program application → confirmation to applicant */
 export function trainingApplicationReceivedTemplate({ fullName }) {
   const subject = "We received your application: Intensive Corporate Training Programme";

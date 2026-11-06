@@ -26,7 +26,8 @@ import {
 
 export default function Footer() {
   const pathname = usePathname();
-  if (pathname?.startsWith("/admin")) {
+  // Admin and the interview panel's private page have their own layout
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/panel")) {
     return null;
   }
 

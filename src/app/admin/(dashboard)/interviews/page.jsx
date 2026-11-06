@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
@@ -124,21 +125,38 @@ export default function InterviewsPage() {
         title="Interviews"
         description="Track shortlisted candidates through each interview level, from Level 1 to hire."
         action={
-          <Button
-            component={Link}
-            href="/admin/interviews/interviewers"
-            startIcon={<BadgeOutlinedIcon />}
-            sx={{
-              textTransform: "none",
-              fontWeight: 700,
-              color: BRAND.primary,
-              border: "1px solid rgba(29, 87, 88, 0.25)",
-              px: 2,
-              "&:hover": { bgcolor: "#E6F7F6" },
-            }}
-          >
-            Interview panel
-          </Button>
+          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+            <Button
+              component={Link}
+              href="/admin/interviews/availability"
+              startIcon={<CalendarMonthOutlinedIcon />}
+              sx={{
+                textTransform: "none",
+                fontWeight: 700,
+                color: BRAND.primary,
+                border: "1px solid rgba(29, 87, 88, 0.25)",
+                px: 2,
+                "&:hover": { bgcolor: "#E6F7F6" },
+              }}
+            >
+              Availability
+            </Button>
+            <Button
+              component={Link}
+              href="/admin/interviews/interviewers"
+              startIcon={<BadgeOutlinedIcon />}
+              sx={{
+                textTransform: "none",
+                fontWeight: 700,
+                color: BRAND.primary,
+                border: "1px solid rgba(29, 87, 88, 0.25)",
+                px: 2,
+                "&:hover": { bgcolor: "#E6F7F6" },
+              }}
+            >
+              Interview panel
+            </Button>
+          </Box>
         }
       />
 

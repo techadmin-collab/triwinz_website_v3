@@ -21,6 +21,7 @@ export async function PUT(req, { params }) {
     if (key in body) data[key] = str(body[key]);
   }
   if ("active" in body) data.active = Boolean(body.active);
+  // an inactive panel member's availability link stops working (see interviewerForToken)
 
   try {
     const interviewer = await prisma.interviewer.update({ where: { id }, data });
@@ -64,6 +65,10 @@ export async function DELETE(_req, { params }) {
   }
   try {
     await prisma.interviewer.delete({ where: { id } });
+    // their availability goes with them
+    if (prisma.interviewerSlot) {
+      await prisma.interviewerSlot.deleteMany({ where: { interviewerId: id } }).catch(() => {});
+    }
     return NextResponse.json({ ok: true });
   } catch {
     return badRequest("Delete failed");
