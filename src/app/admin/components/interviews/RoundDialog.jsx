@@ -14,6 +14,7 @@ import {
   TextField,
 } from "@mui/material";
 import InterviewerPicker from "./InterviewerPicker";
+import AvailabilityAssist from "./AvailabilityAssist";
 import {
   INTERVIEW_MODES,
   LEVEL_TITLE_SUGGESTIONS,
@@ -132,7 +133,7 @@ export default function RoundDialog({
                 value={form.scheduledAt}
                 onChange={(e) => set("scheduledAt", e.target.value)}
                 InputLabelProps={{ shrink: true }}
-                helperText="Optional. You can add it later."
+                helperText="Optional. You can add it later. Times from the panel are in IST."
               />
               <TextField
                 select
@@ -148,6 +149,24 @@ export default function RoundDialog({
                 ))}
               </TextField>
             </Stack>
+
+            {open ? (
+              <AvailabilityAssist
+                interviewers={interviewers}
+                selectedIds={form.interviewerIds}
+                scheduledAt={form.scheduledAt}
+                onToggle={(id) => {
+                  setError("");
+                  set(
+                    "interviewerIds",
+                    form.interviewerIds.includes(id)
+                      ? form.interviewerIds.filter((x) => x !== id)
+                      : [...form.interviewerIds, id],
+                  );
+                }}
+                onPickTime={(value) => set("scheduledAt", value)}
+              />
+            ) : null}
 
             <TextField
               label={locationLabel}
