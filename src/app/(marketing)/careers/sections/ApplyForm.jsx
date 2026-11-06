@@ -16,6 +16,15 @@ import GlobalStyles from "@mui/material/GlobalStyles";
 import { toast } from "react-hot-toast";
 import { getResumeFileNameError } from "../../../../lib/resumeFile";
 import {
+  FILE_UNREADABLE_MESSAGE,
+  NETWORK_FAILED_MESSAGE,
+  NetworkFailedError,
+  connectionInfo,
+  describeFile,
+  postWithRetry,
+  readFileIntoMemory,
+} from "../../../../lib/formUpload";
+import {
   RECAPTCHA_SITE_KEY,
   getRecaptchaToken,
   handleCaptchaError,
@@ -50,6 +59,7 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
   const [availableToJoinAndRelocate, setAvailableToJoinAndRelocate] =
     useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [readingFile, setReadingFile] = useState(false);
 
   // Load Google's invisible captcha in the background while the visitor fills the form
   useEffect(() => {
@@ -105,15 +115,20 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
 
       let applyRes;
       try {
-        applyRes = await fetch("/api/applications", {
-          method: "POST",
-          body: applyData,
-        });
+        // the same FormData can be sent again; the resume is already a copy in memory
+        applyRes = await postWithRetry("/api/applications", () => applyData);
       } catch (networkError) {
-        reportClientIssue("job-application", "network_error", networkError?.message);
-        throw new Error(
-          "We couldn't reach our server. Please check your internet connection and try again.",
+        reportClientIssue(
+          "job-application",
+          "network_error",
+          [
+            `step: sending application (${networkError?.attempts || 1} tries)`,
+            `error: ${networkError?.message}`,
+            `file: ${describeFile(resumeFile)}`,
+            `connection: ${connectionInfo()}`,
+          ].join(" | "),
         );
+        throw new Error(networkError instanceof NetworkFailedError ? NETWORK_FAILED_MESSAGE : networkError?.message);
       }
 
       if (!applyRes.ok) {
@@ -327,14 +342,15 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
               },
             }}
           >
-            {fileName ? "Change file" : "Upload resume"}
+            {readingFile ? "Checking file..." : fileName ? "Change file" : "Upload resume"}
             <input
               type="file"
               name="resume"
               hidden
               accept=".pdf,.doc,.docx"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
+              onChange={async (e) => {
+                const input = e.target;
+                const file = input.files?.[0];
                 if (!file) {
                   setResumeFile(null);
                   setFileName("");
@@ -355,8 +371,25 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
                   setFileName("");
                   return;
                 }
-                setResumeFile(file);
-                setFileName(file.name);
+                // Read it now, so a file Chrome can't access fails here and not on submit
+                setReadingFile(true);
+                try {
+                  const copy = await readFileIntoMemory(file);
+                  setResumeFile(copy);
+                  setFileName(copy.name);
+                } catch (readError) {
+                  toast.error(FILE_UNREADABLE_MESSAGE, { duration: 8000 });
+                  reportClientIssue(
+                    "job-application",
+                    "file_unreadable",
+                    `error: ${readError?.message} | file: ${describeFile(file)} | connection: ${connectionInfo()}`,
+                  );
+                  input.value = "";
+                  setResumeFile(null);
+                  setFileName("");
+                } finally {
+                  setReadingFile(false);
+                }
               }}
             />
           </Button>
@@ -367,7 +400,7 @@ export default function ApplyForm({ jobTitle, jobSlug, showHeader = true, onSucc
         <Button
           type="submit"
           fullWidth
-          disabled={submitting}
+          disabled={submitting || readingFile}
           sx={{
             py: 1.6,
             borderRadius: 2.5,

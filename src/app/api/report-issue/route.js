@@ -26,7 +26,11 @@ const CODES = {
   },
   network_error: {
     severity: "warning",
-    title: "A visitor's submission didn't reach the server (network error or timeout).",
+    title: "A visitor's submission didn't reach the server, even after retrying (network error or the phone couldn't send the file).",
+  },
+  file_unreadable: {
+    severity: "warning",
+    title: "A visitor's browser couldn't read the resume they picked (often a file from Google Drive or WhatsApp on Android). They were asked to save it and choose it again.",
   },
 };
 
@@ -45,7 +49,7 @@ export async function POST(req) {
       severity: def.severity,
       title: def.title,
       context: {
-        message: String(body.detail || "").slice(0, 300),
+        message: String(body.detail || "").slice(0, 500),
         page: String(body.path || "").slice(0, 200),
         browser: String(req.headers.get("user-agent") || "").slice(0, 200),
       },

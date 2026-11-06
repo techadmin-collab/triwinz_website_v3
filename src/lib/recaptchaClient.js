@@ -75,7 +75,7 @@ export function reportClientIssue(source, code, detail) {
     const body = JSON.stringify({
       source,
       code,
-      detail: String(detail || "").slice(0, 300),
+      detail: String(detail || "").slice(0, 500),
       path: window.location.pathname,
     });
     if (navigator.sendBeacon) {

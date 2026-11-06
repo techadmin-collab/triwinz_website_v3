@@ -15,6 +15,15 @@ import GlobalStyles from "@mui/material/GlobalStyles";
 import { toast } from "react-hot-toast";
 import { getResumeFileNameError } from "../../../../lib/resumeFile";
 import {
+  FILE_UNREADABLE_MESSAGE,
+  NETWORK_FAILED_MESSAGE,
+  NetworkFailedError,
+  connectionInfo,
+  describeFile,
+  postWithRetry,
+  readFileIntoMemory,
+} from "../../../../lib/formUpload";
+import {
   RECAPTCHA_SITE_KEY,
   getRecaptchaToken,
   handleCaptchaError,
@@ -68,6 +77,7 @@ export default function TrainingApplyForm({ onSuccess }) {
   const [resumeFile, setResumeFile] = useState(null);
   const [resumeError, setResumeError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [readingFile, setReadingFile] = useState(false);
   const fieldRefs = useRef({});
 
   // Load Google's invisible captcha in the background while the visitor fills the form
@@ -120,8 +130,9 @@ export default function TrainingApplyForm({ onSuccess }) {
     setResumeFile(null);
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
+  const handleFileChange = async (e) => {
+    const input = e.target;
+    const file = input.files?.[0];
     if (!file) {
       clearFile(e.target);
       setResumeError("Please upload your resume");
@@ -134,8 +145,23 @@ export default function TrainingApplyForm({ onSuccess }) {
       clearFile(e.target);
       return;
     }
-    setResumeError("");
-    setResumeFile(file);
+    // Read it now, so a file Chrome can't access fails here and not on submit
+    setReadingFile(true);
+    try {
+      const copy = await readFileIntoMemory(file);
+      setResumeError("");
+      setResumeFile(copy);
+    } catch (readError) {
+      setResumeError(FILE_UNREADABLE_MESSAGE);
+      reportClientIssue(
+        "training-application",
+        "file_unreadable",
+        `error: ${readError?.message} | file: ${describeFile(file)} | connection: ${connectionInfo()}`,
+      );
+      clearFile(input);
+    } finally {
+      setReadingFile(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -183,15 +209,19 @@ export default function TrainingApplyForm({ onSuccess }) {
 
       let res;
       try {
-        res = await fetch("/api/training-applications", {
-          method: "POST",
-          body: data,
-        });
+        res = await postWithRetry("/api/training-applications", () => data);
       } catch (networkError) {
-        reportClientIssue("training-application", "network_error", networkError?.message);
-        throw new Error(
-          "We couldn't reach our server. Please check your internet connection and try again.",
+        reportClientIssue(
+          "training-application",
+          "network_error",
+          [
+            `step: sending application (${networkError?.attempts || 1} tries)`,
+            `error: ${networkError?.message}`,
+            `file: ${describeFile(resumeFile)}`,
+            `connection: ${connectionInfo()}`,
+          ].join(" | "),
         );
+        throw new Error(networkError instanceof NetworkFailedError ? NETWORK_FAILED_MESSAGE : networkError?.message);
       }
 
       if (!res.ok) {
@@ -356,7 +386,7 @@ export default function TrainingApplyForm({ onSuccess }) {
               "&:hover": { backgroundColor: "rgba(29, 87, 88, 0.06)" },
             }}
           >
-            {resumeFile ? "Change file" : "Upload resume"}
+            {readingFile ? "Checking file..." : resumeFile ? "Change file" : "Upload resume"}
             <input
               type="file"
               hidden
@@ -393,7 +423,7 @@ export default function TrainingApplyForm({ onSuccess }) {
       <Button
         type="submit"
         fullWidth
-        disabled={submitting}
+        disabled={submitting || readingFile}
         sx={{
           py: 1.6,
           borderRadius: 2.5,
