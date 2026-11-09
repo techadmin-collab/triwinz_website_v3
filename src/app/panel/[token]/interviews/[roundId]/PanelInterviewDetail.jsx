@@ -30,6 +30,7 @@ import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 import VideocamOutlinedIcon from "@mui/icons-material/VideocamOutlined";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import StickyNote2OutlinedIcon from "@mui/icons-material/StickyNote2Outlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
@@ -51,9 +52,45 @@ import {
 } from "../../../../../lib/interviews";
 import { usePanel } from "../../PanelShell";
 
-const EMPTY = { rating: 0, recommendation: "", strengths: "", concerns: "", comments: "" };
+/** Form state for the job's assessment questions, filled with any saved answers */
+function buildForm(json) {
+  const criteria = json?.job?.assessmentCriteria || [];
+  const questions = json?.job?.overallQuestions || [];
+  const fb = json?.feedback;
+  const savedScore = (q) => (fb?.scores || []).find((x) => x.question === q) || {};
+  const savedOverall = (q) => (fb?.overall || []).find((x) => x.question === q) || {};
+  return {
+    scores: Object.fromEntries(
+      criteria.map((q) => [q, { rating: savedScore(q).rating || 0, remarks: savedScore(q).remarks || "" }]),
+    ),
+    overall: Object.fromEntries(
+      questions.map((q) => [q, { details: savedOverall(q).details || "", remarks: savedOverall(q).remarks || "" }]),
+    ),
+    recommendation: fb?.recommendation || "",
+    comments: fb?.comments || "",
+  };
+}
+
+const EMPTY = buildForm(null);
 
 const RATING_LABELS = { 1: "Poor", 2: "Below expectations", 3: "Meets expectations", 4: "Good", 5: "Excellent" };
+
+function SectionTitle({ children }) {
+  return (
+    <Typography
+      sx={{
+        fontSize: "0.75rem",
+        fontWeight: 800,
+        letterSpacing: "0.08em",
+        textTransform: "uppercase",
+        color: "#1D5758",
+        mb: 1,
+      }}
+    >
+      {children}
+    </Typography>
+  );
+}
 
 function Card({ title, icon: Icon, children, sx }) {
   return (
@@ -80,6 +117,7 @@ function Line({ icon: Icon, children }) {
 
 function modeIcon(mode) {
   if (mode === "online") return VideocamOutlinedIcon;
+  if (mode === "hybrid") return GroupsOutlinedIcon;
   if (mode === "phone") return PhoneOutlinedIcon;
   return PlaceOutlinedIcon;
 }
@@ -90,6 +128,7 @@ export default function PanelInterviewDetail({ roundId }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [form, setForm] = useState(EMPTY);
+  const [baseline, setBaseline] = useState(EMPTY); // last saved answers
   const [saving, setSaving] = useState(false);
   const [resumeOpen, setResumeOpen] = useState(false);
   const [showCover, setShowCover] = useState(false);
@@ -108,17 +147,9 @@ export default function PanelInterviewDetail({ roundId }) {
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || "Could not load this interview");
       setData(json);
-      setForm(
-        json.feedback
-          ? {
-              rating: json.feedback.rating,
-              recommendation: json.feedback.recommendation,
-              strengths: json.feedback.strengths || "",
-              concerns: json.feedback.concerns || "",
-              comments: json.feedback.comments || "",
-            }
-          : EMPTY,
-      );
+      const initial = buildForm(json);
+      setForm(initial);
+      setBaseline(initial);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -131,23 +162,31 @@ export default function PanelInterviewDetail({ roundId }) {
   }, [load]);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const setScore = (q, k, v) => setForm((f) => ({ ...f, scores: { ...f.scores, [q]: { ...f.scores[q], [k]: v } } }));
+  const setOverall = (q, k, v) => setForm((f) => ({ ...f, overall: { ...f.overall, [q]: { ...f.overall[q], [k]: v } } }));
 
   async function submit(e) {
     e.preventDefault();
-    if (!form.rating) return toast.error("Please give a star rating");
-    if (!form.recommendation) return toast.error("Please choose a recommendation");
-    if (!form.comments.trim()) return toast.error("Please add your overall comments");
+    const unrated = Object.entries(form.scores).find(([, v]) => !v.rating);
+    if (unrated) return toast.error(`Please rate “${unrated[0]}”`);
+    if (!form.recommendation) return toast.error("Please answer “Would you recommend this candidate?”");
     setSaving(true);
     try {
       const res = await fetch(api, {
         method: "PUT",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          scores: Object.entries(form.scores).map(([question, v]) => ({ question, rating: v.rating, remarks: v.remarks })),
+          overall: Object.entries(form.overall).map(([question, v]) => ({ question, details: v.details, remarks: v.remarks })),
+          recommendation: form.recommendation,
+          comments: form.comments,
+        }),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || "Could not save your assessment");
       const first = !data.feedback;
       setData((d) => ({ ...d, feedback: json.feedback }));
+      setBaseline(form);
       toast.success(first ? "Assessment submitted. Thank you!" : "Assessment updated");
       setSheetOpen(false);
       refresh();
@@ -190,22 +229,15 @@ export default function PanelInterviewDetail({ roundId }) {
   const ModeIcon = modeIcon(interview.mode);
   const isLink = interview.location && /^https?:\/\//i.test(interview.location);
   const upcoming = interview.scheduledAt && new Date(interview.scheduledAt) > new Date();
-  const savedSame =
-    feedback &&
-    form.rating === feedback.rating &&
-    form.recommendation === feedback.recommendation &&
-    form.strengths === (feedback.strengths || "") &&
-    form.concerns === (feedback.concerns || "") &&
-    form.comments === (feedback.comments || "");
+  const sameAsSaved = JSON.stringify(form) === JSON.stringify(baseline);
+  const savedSame = Boolean(feedback) && sameAsSaved;
   const cover = candidate.coverLetter || "";
   const checklistItems = liveChecklist || checklist || [];
   const checklistTotal = checklistItems.length;
   const checklistDone = checklistItems.filter((i) => i.done).length;
-  const unsaved =
-    canEditFeedback &&
-    (feedback
-      ? !savedSame
-      : Boolean(form.rating || form.recommendation || form.comments.trim() || form.strengths.trim() || form.concerns.trim()));
+  const unsaved = canEditFeedback && !sameAsSaved;
+  const criteriaList = job?.assessmentCriteria || [];
+  const overallList = job?.overallQuestions || [];
 
   function closeSheet() {
     if (saving) return;
@@ -303,7 +335,26 @@ export default function PanelInterviewDetail({ roundId }) {
               <Line icon={EventOutlinedIcon}>
                 {interview.scheduledAt ? formatIST(interview.scheduledAt) : "Date and time to be confirmed"}
               </Line>
-              {interview.mode || interview.location ? (
+              {interview.mode === "hybrid" ? (
+                <>
+                  <Line icon={ModeIcon}>
+                    <strong>Hybrid</strong> · join online or attend in person
+                  </Line>
+                  {interview.meetingLink ? (
+                    <Line icon={VideocamOutlinedIcon}>
+                      Online:{" "}
+                      {/^https?:\/\//i.test(interview.meetingLink) ? (
+                        <a href={interview.meetingLink} target="_blank" rel="noopener noreferrer" style={{ color: BRAND.primary, fontWeight: 700 }}>
+                          Join Google Meet
+                        </a>
+                      ) : (
+                        interview.meetingLink
+                      )}
+                    </Line>
+                  ) : null}
+                  {interview.location ? <Line icon={PlaceOutlinedIcon}>In person: {interview.location}</Line> : null}
+                </>
+              ) : interview.mode || interview.location ? (
                 <Line icon={ModeIcon}>
                   {interview.mode ? <strong>{modeLabel(interview.mode)}</strong> : null}
                   {interview.mode && interview.location ? " · " : null}
@@ -481,25 +532,104 @@ export default function PanelInterviewDetail({ roundId }) {
 
           <Box component="form" onSubmit={submit}>
             <fieldset disabled={!canEditFeedback || saving} style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}>
-              <Typography sx={{ fontSize: "0.82rem", fontWeight: 700, color: "#374151", mb: 0.5 }}>Overall rating *</Typography>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, mb: 2.25 }}>
-                <Rating
-                  value={form.rating || null}
-                  onChange={(_, v) => set("rating", v || 0)}
-                  size="large"
-                  readOnly={!canEditFeedback}
-                  sx={{ "& .MuiRating-iconFilled": { color: "#F59E0B" } }}
-                />
-                <Typography sx={{ fontSize: "0.82rem", color: "#6b7280" }}>{RATING_LABELS[form.rating] || "Choose 1–5 stars"}</Typography>
-              </Box>
+              {criteriaList.length ? (
+                <Box sx={{ mb: 3 }}>
+                  <SectionTitle>Assessment</SectionTitle>
+                  <Stack spacing={1.5}>
+                    {criteriaList.map((q, i) => (
+                      <Box key={q} sx={{ p: 1.5, borderRadius: 2, border: "1px solid #e8eaed", bgcolor: "#fff" }}>
+                        <Typography sx={{ fontWeight: 700, fontSize: "0.88rem", color: "#111", mb: 0.5 }}>
+                          {i + 1}. {q} <Box component="span" sx={{ color: "#dc2626" }}>*</Box>
+                        </Typography>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, mb: 1, flexWrap: "wrap" }}>
+                          <Rating
+                            value={form.scores[q]?.rating || null}
+                            onChange={(_, v) => setScore(q, "rating", v || 0)}
+                            readOnly={!canEditFeedback}
+                            sx={{ "& .MuiRating-iconFilled": { color: "#F59E0B" } }}
+                          />
+                          <Typography sx={{ fontSize: "0.8rem", color: "#6b7280" }}>
+                            {RATING_LABELS[form.scores[q]?.rating] || "Rate 1–5"}
+                          </Typography>
+                        </Box>
+                        <TextField
+                          label="Remarks"
+                          size="small"
+                          fullWidth
+                          multiline
+                          minRows={1}
+                          value={form.scores[q]?.remarks || ""}
+                          onChange={(e) => setScore(q, "remarks", e.target.value)}
+                          inputProps={{ maxLength: 4000 }}
+                        />
+                      </Box>
+                    ))}
+                  </Stack>
+                </Box>
+              ) : null}
 
+              {overallList.length ? (
+                <Box sx={{ mb: 3 }}>
+                  <SectionTitle>Overall assessment</SectionTitle>
+                  <Stack spacing={1.5}>
+                    {overallList.map((q, i) => (
+                      <Box key={q} sx={{ p: 1.5, borderRadius: 2, border: "1px solid #e8eaed", bgcolor: "#fff" }}>
+                        <Typography sx={{ fontWeight: 700, fontSize: "0.88rem", color: "#111", mb: 1 }}>
+                          {i + 1}. {q}
+                        </Typography>
+                        <Stack spacing={1.25}>
+                          <TextField
+                            label="Details"
+                            size="small"
+                            fullWidth
+                            multiline
+                            minRows={1}
+                            value={form.overall[q]?.details || ""}
+                            onChange={(e) => setOverall(q, "details", e.target.value)}
+                            inputProps={{ maxLength: 4000 }}
+                          />
+                          <TextField
+                            label="Remarks"
+                            size="small"
+                            fullWidth
+                            multiline
+                            minRows={1}
+                            value={form.overall[q]?.remarks || ""}
+                            onChange={(e) => setOverall(q, "remarks", e.target.value)}
+                            inputProps={{ maxLength: 4000 }}
+                          />
+                        </Stack>
+                      </Box>
+                    ))}
+                  </Stack>
+                </Box>
+              ) : null}
+
+              {!criteriaList.length && !overallList.length ? (
+                <Box sx={{ mb: 3 }}>
+                  <Alert severity="info" sx={{ mb: 1.5 }}>
+                    No assessment questions have been set up for this role yet. Add your remarks below.
+                  </Alert>
+                  <TextField
+                    label="Remarks"
+                    fullWidth
+                    multiline
+                    minRows={3}
+                    value={form.comments}
+                    onChange={(e) => set("comments", e.target.value)}
+                    inputProps={{ maxLength: 4000 }}
+                  />
+                </Box>
+              ) : null}
+
+              <Box sx={{ p: 1.5, borderRadius: 2, border: "1px solid rgba(29, 87, 88, 0.25)", bgcolor: "#F5FCFB" }}>
               <Typography sx={{ fontSize: "0.82rem", fontWeight: 700, color: "#374151", mb: 0.75 }}>Would you recommend this candidate? *</Typography>
               <ToggleButtonGroup
                 exclusive
                 value={form.recommendation}
                 onChange={(_, v) => v && set("recommendation", v)}
                 disabled={!canEditFeedback}
-                sx={{ mb: 2.5, display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", sm: "repeat(4, minmax(0, 1fr))" }, gap: 1 }}
+                sx={{ mb: 0, display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", sm: "repeat(4, minmax(0, 1fr))" }, gap: 1 }}
               >
                 {FEEDBACK_RECOMMENDATIONS.map((r) => (
                   <ToggleButton
@@ -523,37 +653,7 @@ export default function PanelInterviewDetail({ roundId }) {
                   </ToggleButton>
                 ))}
               </ToggleButtonGroup>
-
-              <Stack spacing={2}>
-                <TextField
-                  label="Strengths"
-                  multiline
-                  minRows={2}
-                  value={form.strengths}
-                  onChange={(e) => set("strengths", e.target.value)}
-                  placeholder="What did the candidate do well?"
-                  inputProps={{ maxLength: 4000 }}
-                />
-                <TextField
-                  label="Concerns"
-                  multiline
-                  minRows={2}
-                  value={form.concerns}
-                  onChange={(e) => set("concerns", e.target.value)}
-                  placeholder="Gaps, risks or areas to probe in the next level"
-                  inputProps={{ maxLength: 4000 }}
-                />
-                <TextField
-                  label="Overall comments"
-                  required
-                  multiline
-                  minRows={3}
-                  value={form.comments}
-                  onChange={(e) => set("comments", e.target.value)}
-                  placeholder="Your summary of the interview"
-                  inputProps={{ maxLength: 4000 }}
-                />
-              </Stack>
+              </Box>
 
               {canEditFeedback ? (
                 <Box sx={{ mt: 2.5, display: "flex", gap: 1, alignItems: "center", flexWrap: "wrap" }}>

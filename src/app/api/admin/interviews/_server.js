@@ -41,9 +41,12 @@ export function parseRoundDetails(body = {}) {
   const data = {};
   if ("title" in body) data.title = str(body.title);
   if ("mode" in body) {
-    data.mode = ["online", "in_person", "phone"].includes(body.mode) ? body.mode : null;
+    data.mode = ["online", "in_person", "phone", "hybrid"].includes(body.mode) ? body.mode : null;
   }
   if ("location" in body) data.location = str(body.location);
+  if ("meetingLink" in body) data.meetingLink = str(body.meetingLink);
+  // only hybrid levels keep a separate meeting link
+  if ("mode" in body && data.mode !== "hybrid") data.meetingLink = null;
   if ("notes" in body) data.notes = str(body.notes);
   if ("scheduledAt" in body) {
     if (!body.scheduledAt) data.scheduledAt = null;

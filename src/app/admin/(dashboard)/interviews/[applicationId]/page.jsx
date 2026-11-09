@@ -29,6 +29,7 @@ import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 import VideocamOutlinedIcon from "@mui/icons-material/VideocamOutlined";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import EmojiEventsOutlinedIcon from "@mui/icons-material/EmojiEventsOutlined";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
@@ -59,6 +60,7 @@ const outlineBtn = {
 
 function ModeIcon({ mode }) {
   if (mode === "in_person") return <PlaceOutlinedIcon sx={{ fontSize: 17 }} />;
+  if (mode === "hybrid") return <GroupsOutlinedIcon sx={{ fontSize: 17 }} />;
   if (mode === "phone") return <PhoneOutlinedIcon sx={{ fontSize: 17 }} />;
   return <VideocamOutlinedIcon sx={{ fontSize: 17 }} />;
 }
@@ -363,8 +365,19 @@ export default function CandidateInterviewsPage() {
                         </Box>
                       ) : null}
                     </Box>
+                    {round.mode === "hybrid" && round.meetingLink ? (
+                      <Typography sx={{ fontSize: "inherit", pl: 3.1, wordBreak: "break-all" }}>
+                        <Box component="span" sx={{ color: "#6b7280" }}>Online: </Box>
+                        <a href={round.meetingLink} target="_blank" rel="noopener noreferrer" style={{ color: BRAND.primary, fontWeight: 600 }}>
+                          {round.meetingLink}
+                        </a>
+                      </Typography>
+                    ) : null}
                     {round.location ? (
                       <Typography sx={{ fontSize: "inherit", pl: 3.1, wordBreak: "break-all" }}>
+                        {round.mode === "hybrid" ? (
+                          <Box component="span" sx={{ color: "#6b7280" }}>In person: </Box>
+                        ) : null}
                         {/^https?:\/\//.test(round.location) ? (
                           <a href={round.location} target="_blank" rel="noopener noreferrer" style={{ color: BRAND.primary, fontWeight: 600 }}>
                             {round.location}

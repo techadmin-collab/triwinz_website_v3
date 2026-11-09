@@ -27,6 +27,7 @@ import {
   addDays,
   formatDay,
   formatRange,
+  slotsOf,
   todayKey,
   weekStart,
 } from "../../../../../lib/availability";
@@ -96,13 +97,15 @@ export default function PanelAvailabilityPage() {
 
   const weekCounts = useMemo(() => {
     const counts = new Map();
-    (data?.slots || []).forEach((s) => counts.set(s.interviewerId, (counts.get(s.interviewerId) || 0) + 1));
+    (data?.slots || []).forEach((s) =>
+      counts.set(s.interviewerId, (counts.get(s.interviewerId) || 0) + slotsOf([s]).length),
+    );
     return counts;
   }, [data]);
 
   const interviewers = data?.interviewers || [];
   const activeInterviewers = interviewers.filter((i) => i.active);
-  const totalPeople = new Set((data?.slots || []).map((s) => s.interviewerId)).size;
+  const totalPeople = new Set((data?.slots || []).filter((s) => slotsOf([s]).length).map((s) => s.interviewerId)).size;
 
   return (
     <Box sx={{ minWidth: 0 }}>
@@ -116,7 +119,7 @@ export default function PanelAvailabilityPage() {
       </Button>
       <AdminPageHeader
         title="Panel availability"
-        description={`When your interview panel is free, from their private links. Times are ${TZ_LABEL}.`}
+        description={`When your interview panel is free, shown as 1-hour interview slots. Times are ${TZ_LABEL}.`}
         action={
           <Button
             component={Link}
@@ -214,7 +217,9 @@ export default function PanelAvailabilityPage() {
             }}
           >
             {days.map((day) => {
-              const people = [...(byDay.get(day)?.values() || [])].sort((a, b) => a.name.localeCompare(b.name));
+              const people = [...(byDay.get(day)?.values() || [])]
+                .filter((p) => slotsOf(p.ranges).length) // only people with at least one full hour free
+                .sort((a, b) => a.name.localeCompare(b.name));
               const isToday = day === today;
               const past = day < today;
               return (
@@ -257,9 +262,9 @@ export default function PanelAvailabilityPage() {
                             </Typography>
                           ) : null}
                           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 0.25 }}>
-                            {p.ranges.map((r) => (
+                            {slotsOf(p.ranges).map((r) => (
                               <Chip
-                                key={r.id}
+                                key={r.startMin}
                                 size="small"
                                 label={formatRange(r.startMin, r.endMin)}
                                 sx={{
@@ -287,7 +292,7 @@ export default function PanelAvailabilityPage() {
             <Box sx={{ px: 2, py: 1.25, borderBottom: "1px solid #f1f2f4" }}>
               <Typography sx={{ fontWeight: 800, fontSize: "0.9rem", color: "#111" }}>Panel members</Typography>
               <Typography sx={{ fontSize: "0.75rem", color: "#6b7280" }}>
-                Who has their link and how many time ranges they shared for this week.
+                Who has their link and how many 1-hour slots they shared for this week.
               </Typography>
             </Box>
             {activeInterviewers.length === 0 ? (
@@ -321,7 +326,7 @@ export default function PanelAvailabilityPage() {
                       </Typography>
                     </Box>
                     <Chip size="small" label={st.label} sx={{ height: 22, fontSize: "0.68rem", fontWeight: 700, color: st.color, bgcolor: st.bg }} />
-                    <Tooltip title="Time ranges this week">
+                    <Tooltip title="1-hour slots this week">
                       <Typography
                         sx={{ width: 44, textAlign: "right", fontSize: "0.8rem", fontWeight: 800, color: count ? BRAND.primary : "#c4c9cf" }}
                       >

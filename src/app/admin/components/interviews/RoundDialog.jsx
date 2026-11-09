@@ -33,6 +33,7 @@ const empty = {
   scheduledAt: "",
   mode: "online",
   location: "",
+  meetingLink: "",
   notes: "",
   checklist: [],
 };
@@ -51,6 +52,7 @@ export default function RoundDialog({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [checklistText, setChecklistText] = useState("");
+  const [manualTime, setManualTime] = useState(false);
 
   function addChecklistItem() {
     const text = checklistText.replace(/\s+/g, " ").trim();
@@ -70,12 +72,14 @@ export default function RoundDialog({
             scheduledAt: toLocalInput(round.scheduledAt),
             mode: round.mode || "online",
             location: round.location || "",
+            meetingLink: round.meetingLink || "",
             notes: round.notes || "",
             checklist: [],
           }
         : empty,
     );
     setChecklistText("");
+    setManualTime(false);
   }, [open, round]);
 
   const set = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
@@ -100,7 +104,11 @@ export default function RoundDialog({
   }
 
   const locationLabel =
-    form.mode === "in_person" ? "Address / room" : form.mode === "phone" ? "Phone number (optional)" : "Meeting link";
+    form.mode === "in_person" || form.mode === "hybrid"
+      ? "Location / address"
+      : form.mode === "phone"
+        ? "Phone number (optional)"
+        : "Meeting link";
 
   return (
     <Dialog open={open} onClose={saving ? undefined : onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
@@ -147,30 +155,6 @@ export default function RoundDialog({
               error={error}
             />
 
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <TextField
-                label="Date & time"
-                type="datetime-local"
-                fullWidth
-                value={form.scheduledAt}
-                onChange={(e) => set("scheduledAt", e.target.value)}
-                InputLabelProps={{ shrink: true }}
-                helperText="Optional. You can add it later. Times from the panel are in IST."
-              />
-              <TextField
-                select
-                label="Mode"
-                fullWidth
-                value={form.mode}
-                onChange={(e) => set("mode", e.target.value)}
-              >
-                {INTERVIEW_MODES.map((m) => (
-                  <MenuItem key={m.value} value={m.value}>
-                    {m.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Stack>
 
             {open ? (
               <AvailabilityAssist
@@ -190,12 +174,71 @@ export default function RoundDialog({
               />
             ) : null}
 
+            {/* Fallback when nobody has shared a suitable slot */}
+            {manualTime ? (
+              <TextField
+                label="Date & time (manual)"
+                type="datetime-local"
+                fullWidth
+                size="small"
+                value={form.scheduledAt}
+                onChange={(e) => set("scheduledAt", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                helperText="Your computer's time. Leave empty to set the time later."
+              />
+            ) : (
+              <Typography sx={{ mt: -1, fontSize: "0.78rem", color: "#6b7280" }}>
+                No suitable slot?{" "}
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={() => setManualTime(true)}
+                  sx={{ p: 0, border: 0, bgcolor: "transparent", color: BRAND.primary, fontWeight: 700, cursor: "pointer", fontSize: "inherit", fontFamily: "inherit" }}
+                >
+                  Set a time manually
+                </Box>{" "}
+                or leave it and add the time later.
+              </Typography>
+            )}
+
+            <TextField
+              select
+              label="Mode"
+              fullWidth
+              value={form.mode}
+              onChange={(e) => set("mode", e.target.value)}
+            >
+              {INTERVIEW_MODES.map((m) => (
+                <MenuItem key={m.value} value={m.value}>
+                  {m.label}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            {form.mode === "hybrid" ? (
+              <TextField
+                label="Google Meet link"
+                fullWidth
+                value={form.meetingLink}
+                onChange={(e) => set("meetingLink", e.target.value)}
+                placeholder="https://meet.google.com/..."
+                helperText="For anyone joining online"
+              />
+            ) : null}
+
             <TextField
               label={locationLabel}
               fullWidth
               value={form.location}
               onChange={(e) => set("location", e.target.value)}
-              placeholder={form.mode === "online" ? "https://meet.google.com/..." : ""}
+              placeholder={
+                form.mode === "online"
+                  ? "https://meet.google.com/..."
+                  : form.mode === "hybrid" || form.mode === "in_person"
+                    ? "Office address, floor / meeting room"
+                    : ""
+              }
+              helperText={form.mode === "hybrid" ? "For anyone attending in person" : undefined}
             />
 
             <TextField

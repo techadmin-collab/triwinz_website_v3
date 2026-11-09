@@ -44,6 +44,8 @@ export async function POST(req) {
       requirements: toLines(body.requirements),
       qualifications: toLines(body.qualifications),
       niceToHave: toLines(body.niceToHave),
+      assessmentCriteria: toLines(body.assessmentCriteria),
+      overallQuestions: toLines(body.overallQuestions),
       published: Boolean(body.published),
     },
   });

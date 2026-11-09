@@ -4,6 +4,7 @@ import { requirePanel } from "../../../../../../lib/interviewerPortal";
 import {
   FEEDBACK_OPEN_STATUSES,
   FEEDBACK_RECOMMENDATIONS,
+  averageScore,
   OBJECT_ID_RE,
 } from "../../../../../../lib/interviews";
 import { checklistFor } from "../../../../../../lib/interviewChecklist";
@@ -21,6 +22,21 @@ async function loadRound(interviewer, roundId) {
   // only interviews they are on the panel for
   if (!round || !round.interviewerIds.includes(interviewer.id)) return null;
   return round;
+}
+
+function serializeFeedback(fb) {
+  if (!fb) return null;
+  return {
+    rating: fb.rating,
+    recommendation: fb.recommendation,
+    scores: fb.scores || [],
+    overall: fb.overall || [],
+    strengths: fb.strengths,
+    concerns: fb.concerns,
+    comments: fb.comments,
+    submittedAt: fb.submittedAt,
+    updatedAt: fb.updatedAt,
+  };
 }
 
 function notFound() {
@@ -61,6 +77,8 @@ export async function GET(_req, { params }) {
         requirements: true,
         qualifications: true,
         niceToHave: true,
+        assessmentCriteria: true,
+        overallQuestions: true,
       },
     }),
     checklistFor(round.id, interviewer.id),
@@ -84,6 +102,7 @@ export async function GET(_req, { params }) {
         scheduledAt: round.scheduledAt,
         mode: round.mode,
         location: round.location,
+        meetingLink: round.mode === "hybrid" ? round.meetingLink : null,
         notes: round.notes,
         panel: round.interviewerNames.filter(Boolean),
       },
@@ -91,24 +110,19 @@ export async function GET(_req, { params }) {
       job: job || null,
       checklist,
       teamNotes,
-      feedback: feedback
-        ? {
-            rating: feedback.rating,
-            recommendation: feedback.recommendation,
-            strengths: feedback.strengths,
-            concerns: feedback.concerns,
-            comments: feedback.comments,
-            submittedAt: feedback.submittedAt,
-            updatedAt: feedback.updatedAt,
-          }
-        : null,
+      feedback: serializeFeedback(feedback),
       canEditFeedback: FEEDBACK_OPEN_STATUSES.includes(round.status),
     },
     { headers: { "cache-control": "no-store" } },
   );
 }
 
-// PUT { rating 1-5, recommendation, strengths?, concerns?, comments }
+// PUT {
+//   scores:  [{ question, rating 1-5, remarks? }]   one per role criterion (from the job)
+//   overall: [{ question, details?, remarks? }]     one per overall question (from the job)
+//   recommendation: strong_yes | yes | no | strong_no
+//   comments?: remarks, used only when the job has no assessment questions
+// }
 export async function PUT(req, { params }) {
   const { interviewer, error } = await requirePanel(params);
   if (error) return error;
@@ -123,25 +137,44 @@ export async function PUT(req, { params }) {
     );
   }
 
+  const job = await prisma.job.findUnique({
+    where: { slug: round.jobSlug },
+    select: { assessmentCriteria: true, overallQuestions: true },
+  });
+  const criteria = job?.assessmentCriteria || [];
+  const questions = job?.overallQuestions || [];
+
   const body = await req.json().catch(() => ({}));
-  const rating = Number(body.rating);
-  if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
-    return NextResponse.json({ error: "Please give a rating from 1 to 5 stars" }, { status: 400 });
+  const given = (list) => (Array.isArray(list) ? list : []);
+  const find = (list, question) => given(list).find((x) => x?.question === question) || {};
+
+  const scores = [];
+  for (const question of criteria) {
+    const entry = find(body.scores, question);
+    const rating = Number(entry.rating);
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+      return NextResponse.json({ error: `Please rate “${question}” from 1 to 5` }, { status: 400 });
+    }
+    scores.push({ question, rating, remarks: clean(entry.remarks) });
   }
+  const overall = questions.map((question) => {
+    const entry = find(body.overall, question);
+    return { question, details: clean(entry.details), remarks: clean(entry.remarks) };
+  });
+
   if (!FEEDBACK_RECOMMENDATIONS.some((r) => r.value === body.recommendation)) {
-    return NextResponse.json({ error: "Please choose a recommendation" }, { status: 400 });
-  }
-  const comments = clean(body.comments);
-  if (!comments) {
-    return NextResponse.json({ error: "Please add your overall comments" }, { status: 400 });
+    return NextResponse.json({ error: "Please answer “Would you recommend this candidate?”" }, { status: 400 });
   }
 
+  const average = averageScore(scores);
   const data = {
-    rating,
+    scores,
+    overall,
+    rating: average === null ? null : Math.round(average),
     recommendation: body.recommendation,
-    strengths: clean(body.strengths),
-    concerns: clean(body.concerns),
-    comments,
+    comments: criteria.length || questions.length ? null : clean(body.comments),
+    strengths: null,
+    concerns: null,
     interviewerName: interviewer.name,
   };
 
@@ -156,16 +189,5 @@ export async function PUT(req, { params }) {
     },
   });
 
-  return NextResponse.json({
-    ok: true,
-    feedback: {
-      rating: saved.rating,
-      recommendation: saved.recommendation,
-      strengths: saved.strengths,
-      concerns: saved.concerns,
-      comments: saved.comments,
-      submittedAt: saved.submittedAt,
-      updatedAt: saved.updatedAt,
-    },
-  });
+  return NextResponse.json({ ok: true, feedback: serializeFeedback(saved) });
 }

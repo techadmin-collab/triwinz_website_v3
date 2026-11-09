@@ -17,6 +17,7 @@ export const INTERVIEW_MODES = [
   { value: "online", label: "Online" },
   { value: "in_person", label: "In person" },
   { value: "phone", label: "Phone" },
+  { value: "hybrid", label: "Hybrid" }, // online + in person: meeting link and location
 ];
 
 export const LEVEL_TITLE_SUGGESTIONS = ["Technical", "Managerial", "HR", "Final"];
@@ -111,6 +112,13 @@ export const FEEDBACK_RECOMMENDATIONS = [
 
 export function recommendationMeta(value) {
   return FEEDBACK_RECOMMENDATIONS.find((r) => r.value === value) || null;
+}
+
+/** Average of the role-based criteria ratings, e.g. 3.8 (or null) */
+export function averageScore(scores = []) {
+  const list = (scores || []).filter((s) => Number.isFinite(s?.rating));
+  if (!list.length) return null;
+  return Math.round((list.reduce((sum, s) => sum + s.rating, 0) / list.length) * 10) / 10;
 }
 
 // Levels whose feedback can still be changed by the panel

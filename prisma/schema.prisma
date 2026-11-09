@@ -52,6 +52,9 @@ model Job {
   requirements     String[]
   qualifications   String[] @default([])
   niceToHave       String[]
+  // Interview assessment for this role (filled in by the panel in the assessment sheet)
+  assessmentCriteria String[] @default([]) // each gets a 1-5 rating + remarks
+  overallQuestions   String[] @default([]) // each gets a details answer + remarks
   published        Boolean  @default(false)
   createdAt        DateTime @default(now())
 }
@@ -194,7 +197,8 @@ model InterviewRound {
   interviewerNames String[]  // copy of the names, kept even if an interviewer is removed
   scheduledAt      DateTime?
   mode             String?   // online | in_person | phone
-  location         String?   // meeting link or address
+  location         String?   // meeting link or address (the address for hybrid levels)
+  meetingLink      String?   // Google Meet link for hybrid levels
   notes            String?
   status           String    @default("scheduled") // scheduled | passed | rejected | on_hold | cancelled
   feedback         String?
@@ -241,11 +245,13 @@ model InterviewFeedback {
   applicationId   String   @db.ObjectId
   interviewerId   String   @db.ObjectId
   interviewerName String
-  rating          Int      // 1-5
+  rating          Int?     // overall 1-5 (older assessments) or the average of the criteria
   recommendation  String   // strong_yes | yes | no | strong_no
-  strengths       String?
-  concerns        String?
-  comments        String
+  scores          AssessmentScore[] // role-based criteria: rating + remarks
+  overall         OverallAnswer[]   // overall assessment: details + remarks
+  strengths       String?  // older assessments
+  concerns        String?  // older assessments
+  comments        String?  // older assessments / remarks when a job has no questions
   submittedAt     DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -286,4 +292,17 @@ model InterviewNote {
 
   @@index([roundId])
   @@index([applicationId])
+}
+
+// Answers saved with an assessment (the question text is kept, so later edits to the job don't change past answers)
+type AssessmentScore {
+  question String
+  rating   Int
+  remarks  String?
+}
+
+type OverallAnswer {
+  question String
+  details  String?
+  remarks  String?
 }

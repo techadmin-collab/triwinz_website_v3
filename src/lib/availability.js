@@ -109,3 +109,20 @@ export function normalizeRanges(input) {
   }
   return { ranges: merged };
 }
+
+// Interviews are scheduled for one hour, so admins see availability as 1-hour slots:
+// 10:00–12:00 -> 10:00–11:00, 11:00–12:00. Leftover time shorter than an hour is left out.
+export const INTERVIEW_MINUTES = 60;
+
+export function splitIntoSlots(startMin, endMin, length = INTERVIEW_MINUTES) {
+  const slots = [];
+  for (let s = startMin; s + length <= endMin; s += length) {
+    slots.push({ startMin: s, endMin: s + length });
+  }
+  return slots;
+}
+
+/** All 1-hour slots inside a list of ranges [{ startMin, endMin }] */
+export function slotsOf(ranges = [], length = INTERVIEW_MINUTES) {
+  return ranges.flatMap((r) => splitIntoSlots(r.startMin, r.endMin, length));
+}

@@ -45,6 +45,8 @@ const empty = {
   requirements: "",
   qualifications: "",
   niceToHave: "",
+  assessmentCriteria: "",
+  overallQuestions: "",
   published: false,
 };
 
@@ -85,6 +87,8 @@ export default function JobForm({ jobId }) {
         requirements: linesToText(data.requirements),
         qualifications: linesToText(data.qualifications),
         niceToHave: linesToText(data.niceToHave),
+        assessmentCriteria: linesToText(data.assessmentCriteria),
+        overallQuestions: linesToText(data.overallQuestions),
         published: Boolean(data.published),
       });
       setSlugTouched(true);
@@ -374,6 +378,48 @@ export default function JobForm({ jobId }) {
                 sx={fieldSx}
               />
             </Box>
+        </FormSection>
+
+        <FormSection
+          title="Interview assessment"
+          description="What the interview panel assesses for this role. They see these in the assessment sheet on their panel page. Not shown on the website."
+        >
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
+            <TextField
+              label="Assessment criteria"
+              fullWidth
+              size="small"
+              multiline
+              minRows={5}
+              placeholder={"React and Next.js\nNode.js and REST APIs\nProblem solving\nCommunication\n..."}
+              helperText="One per line. The panel rates each from 1 to 5 and adds remarks."
+              value={form.assessmentCriteria}
+              onChange={(e) => update("assessmentCriteria", e.target.value)}
+              sx={fieldSx}
+            />
+            <TextField
+              label="Overall assessment questions"
+              fullWidth
+              size="small"
+              multiline
+              minRows={5}
+              placeholder={"Current and expected CTC\nNotice period\nWilling to relocate?\n..."}
+              helperText="One per line. The panel writes the details and adds remarks."
+              value={form.overallQuestions}
+              onChange={(e) => update("overallQuestions", e.target.value)}
+              sx={fieldSx}
+            />
+          </Box>
+          <Typography sx={{ mt: 1.5, fontSize: "0.8rem", color: "#6b7280" }}>
+            The sheet always ends with &quot;Would you recommend this candidate?&quot;. Changing these later
+            doesn&apos;t change assessments that were already submitted.
+          </Typography>
         </FormSection>
 
         <FormSection title="Publishing">
