@@ -14,6 +14,8 @@ import {
   TextField,
   IconButton,
   Typography,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
@@ -53,6 +55,7 @@ export default function RoundDialog({
   const [error, setError] = useState("");
   const [checklistText, setChecklistText] = useState("");
   const [manualTime, setManualTime] = useState(false);
+  const [sendEmails, setSendEmails] = useState(true);
 
   function addChecklistItem() {
     const text = checklistText.replace(/\s+/g, " ").trim();
@@ -80,6 +83,8 @@ export default function RoundDialog({
     );
     setChecklistText("");
     setManualTime(false);
+    // new level: email by default; editing: only if asked
+    setSendEmails(!round);
   }, [open, round]);
 
   const set = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
@@ -98,6 +103,7 @@ export default function RoundDialog({
       scheduledAt: fromLocalInput(form.scheduledAt),
       // only sent for a new level; an existing level's checklist is edited on its card
       ...(round ? {} : { checklist: pending }),
+      sendEmails: Boolean(sendEmails && form.scheduledAt),
     });
     setSaving(false);
     if (ok) onClose();
@@ -305,6 +311,41 @@ export default function RoundDialog({
                 </Stack>
               </Box>
             ) : null}
+
+            {/* Interview emails */}
+            <Box
+              sx={{
+                p: 1.5,
+                borderRadius: 2,
+                border: "1px solid",
+                borderColor: sendEmails && form.scheduledAt ? "rgba(29, 87, 88, 0.3)" : "#e5e7eb",
+                bgcolor: sendEmails && form.scheduledAt ? "#F5FCFB" : "#fafafa",
+              }}
+            >
+              <FormControlLabel
+                sx={{ m: 0, alignItems: "flex-start" }}
+                control={
+                  <Checkbox
+                    checked={sendEmails}
+                    disabled={!form.scheduledAt}
+                    onChange={(e) => setSendEmails(e.target.checked)}
+                    sx={{ p: 0.5, mr: 1, color: "#9ca3af", "&.Mui-checked": { color: BRAND.primary } }}
+                  />
+                }
+                label={
+                  <Box>
+                    <Typography sx={{ fontWeight: 700, fontSize: "0.88rem", color: "#111" }}>
+                      {round ? "Email the updated details to the candidate and panel" : "Email the candidate and panel"}
+                    </Typography>
+                    <Typography sx={{ fontSize: "0.76rem", color: "#6b7280" }}>
+                      {form.scheduledAt
+                        ? "The candidate gets an invitation; each panel member gets the details and their panel page link (cc HR). Both include a calendar invite."
+                        : "Book a slot first. Emails are sent only when the interview has a date and time."}
+                    </Typography>
+                  </Box>
+                }
+              />
+            </Box>
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5 }}>

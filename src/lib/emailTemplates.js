@@ -404,6 +404,171 @@ export function interviewerAvailabilityTemplate({ name, url }) {
   return { subject, text, html };
 }
 
+/* ---------- Interview scheduled ---------- */
+
+function detailRowsHtml(rows) {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;margin:0 0 22px;border:1px solid #e5eaea;border-radius:10px;border-collapse:separate;">
+    ${rows
+      .map(
+        ([label, value], i) => `<tr>
+        <td style="padding:10px 14px;${i ? "border-top:1px solid #eef1f1;" : ""}color:#6b7280;font-size:13px;width:34%;vertical-align:top;">${escapeHtml(label)}</td>
+        <td style="padding:10px 14px;${i ? "border-top:1px solid #eef1f1;" : ""}color:#111827;font-size:14px;font-weight:600;vertical-align:top;">${value}</td>
+      </tr>`,
+      )
+      .join("")}
+  </table>`;
+}
+
+function linkHtml(url, label) {
+  return `<a href="${escapeHtml(url)}" style="color:#1D5758;font-weight:700;word-break:break-all;">${escapeHtml(label || url)}</a>`;
+}
+
+/** Rows shared by both emails: [label, html, text] */
+function interviewRows({ jobTitle, levelText, whenText, modeText, meetingLink, location }) {
+  const rows = [
+    ["Position", escapeHtml(jobTitle), jobTitle],
+    ["Interview", escapeHtml(levelText), levelText],
+    ["Date & time", escapeHtml(whenText), whenText],
+  ];
+  if (modeText) rows.push(["Mode", escapeHtml(modeText), modeText]);
+  if (meetingLink) rows.push(["Meeting link", linkHtml(meetingLink, "Join meeting"), meetingLink]);
+  if (location) rows.push([meetingLink ? "Venue" : "Location", escapeHtml(location), location]);
+  return rows;
+}
+
+/** Interview scheduled → candidate */
+export function interviewScheduledCandidateTemplate({ fullName, jobTitle, levelText, whenText, modeText, meetingLink, location, isUpdate }) {
+  const subject = `${isUpdate ? "Updated: " : ""}Interview scheduled: ${jobTitle} at TriWinz`;
+  const rows = interviewRows({ jobTitle, levelText, whenText, modeText, meetingLink, location });
+  const text = [
+    `Dear ${fullName},`,
+    "",
+    isUpdate
+      ? `The details of your interview for the ${jobTitle} position at TriWinz Technologies have been updated. Please see the latest details below.`
+      : `Thank you for your interest in the ${jobTitle} position at TriWinz Technologies. We are pleased to invite you for an interview.`,
+    "",
+    ...rows.map(([label, , value]) => `${label}: ${value}`),
+    "",
+    "Please join a few minutes early. A calendar invite is attached. If you need to reschedule, just reply to this email.",
+    "",
+    "Best regards,",
+    "Talent Acquisition Team",
+    "TriWinz Technologies Pvt. Ltd.",
+    "Thiruvananthapuram, Kerala",
+  ].join("\n");
+
+  const html = baseLayout({
+    title: isUpdate ? "Your interview has been updated" : "Your interview is scheduled",
+    eyebrow: "TriWinz Careers",
+    preview: `${levelText} for ${jobTitle} · ${whenText}`,
+    footerNote: "This email was sent by the TriWinz Talent Acquisition team.",
+    bodyHtml: `
+      <p style="margin:0 0 14px;">Dear <strong style="color:#111827;">${escapeHtml(fullName)}</strong>,</p>
+      <p style="margin:0 0 18px;">
+        ${
+          isUpdate
+            ? `The details of your interview for the <strong style="color:#111827;">${escapeHtml(jobTitle)}</strong> position at TriWinz Technologies have been updated. Please see the latest details below.`
+            : `Thank you for your interest in the <strong style="color:#111827;">${escapeHtml(jobTitle)}</strong> position at TriWinz Technologies. We are pleased to invite you for an interview.`
+        }
+      </p>
+      ${detailRowsHtml(rows.map(([l, h]) => [l, h]))}
+      <p style="margin:0 0 22px;">
+        Please join a few minutes early. A calendar invite is attached. If you need to reschedule, just reply to this email.
+      </p>
+      <p style="margin:0;color:#111827;line-height:1.7;">
+        Best regards,<br />
+        <strong>Talent Acquisition Team</strong><br />
+        TriWinz Technologies Pvt. Ltd.<br />
+        <span style="color:#6b7280;">Thiruvananthapuram, Kerala</span>
+      </p>
+    `,
+  });
+
+  return { subject, text, html };
+}
+
+/** Interview scheduled → panel member */
+export function interviewScheduledPanelTemplate({
+  name,
+  candidateName,
+  jobTitle,
+  levelText,
+  whenText,
+  modeText,
+  meetingLink,
+  location,
+  panelNames,
+  notes,
+  panelUrl,
+  isUpdate,
+}) {
+  const subject = `${isUpdate ? "Updated: " : ""}Interview: ${candidateName} · ${jobTitle} · ${whenText}`;
+  const rows = [
+    ["Candidate", escapeHtml(candidateName), candidateName],
+    ...interviewRows({ jobTitle, levelText, whenText, modeText, meetingLink, location }),
+  ];
+  if (panelNames?.length) rows.push(["Panel", escapeHtml(panelNames.join(", ")), panelNames.join(", ")]);
+
+  const text = [
+    `Dear ${name},`,
+    "",
+    isUpdate
+      ? `The interview below has been updated. Please see the latest details.`
+      : `You have been scheduled to interview a candidate for TriWinz.`,
+    "",
+    ...rows.map(([label, , value]) => `${label}: ${value}`),
+    notes ? `Notes from the TriWinz team: ${notes}` : null,
+    "",
+    panelUrl
+      ? `Open your panel page to see the candidate's resume, the job description and the interview checklist, and to submit your assessment: ${panelUrl}`
+      : null,
+    "",
+    "A calendar invite is attached.",
+    "",
+    "Best regards,",
+    "Talent Acquisition Team",
+    "TriWinz Technologies Pvt. Ltd.",
+  ]
+    .filter((l) => l !== null)
+    .join("\n");
+
+  const html = baseLayout({
+    title: isUpdate ? "Interview updated" : "New interview scheduled",
+    eyebrow: "Interview panel",
+    preview: `${candidateName} · ${jobTitle} · ${whenText}`,
+    footerNote: "Your panel link is personal to you. Please don't forward this email outside the panel.",
+    bodyHtml: `
+      <p style="margin:0 0 14px;">Dear <strong style="color:#111827;">${escapeHtml(name)}</strong>,</p>
+      <p style="margin:0 0 18px;">
+        ${isUpdate ? "The interview below has been updated. Please see the latest details." : "You have been scheduled to interview a candidate for TriWinz."}
+      </p>
+      ${detailRowsHtml(rows.map(([l, h]) => [l, h]))}
+      ${
+        notes
+          ? `<p style="margin:0 0 6px;color:#6b7280;font-size:13px;">Notes from the TriWinz team</p>
+             <div style="margin:0 0 22px;padding:12px 14px;background:#f8fafb;border:1px solid #eef2f3;border-radius:8px;white-space:pre-wrap;color:#111827;">${escapeHtml(notes)}</div>`
+          : ""
+      }
+      ${
+        panelUrl
+          ? `<p style="margin:0 0 14px;">Open your panel page to see the candidate's resume, the job description and the interview checklist, and to submit your assessment.</p>
+             <p style="margin:0 0 22px;">
+               <a href="${escapeHtml(panelUrl)}" style="display:inline-block;background:#1D5758;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:8px;">Open my panel page</a>
+             </p>`
+          : ""
+      }
+      <p style="margin:0 0 22px;color:#6b7280;font-size:13px;">A calendar invite is attached.</p>
+      <p style="margin:0;color:#111827;line-height:1.7;">
+        Best regards,<br />
+        <strong>Talent Acquisition Team</strong><br />
+        TriWinz Technologies Pvt. Ltd.
+      </p>
+    `,
+  });
+
+  return { subject, text, html };
+}
+
 /** Training program application → confirmation to applicant */
 export function trainingApplicationReceivedTemplate({ fullName }) {
   const subject = "We received your application: Intensive Corporate Training Programme";

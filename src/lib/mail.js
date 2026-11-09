@@ -22,6 +22,7 @@ function getTransporter() {
 
 export async function sendMail({
   to,
+  cc,
   subject,
   text,
   html,
@@ -34,6 +35,7 @@ export async function sendMail({
   await transporter.sendMail({
     from,
     to,
+    cc,
     subject,
     text,
     html: html || text,

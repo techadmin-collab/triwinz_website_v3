@@ -10,6 +10,7 @@ const SOURCE_LABELS = {
   "job-application": "Job application form",
   "training-application": "Training application form",
   contact: "Contact form",
+  interview: "Interview emails",
 };
 
 const MAX_RECENT = 10;

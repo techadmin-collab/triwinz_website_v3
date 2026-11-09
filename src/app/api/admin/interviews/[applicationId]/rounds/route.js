@@ -10,6 +10,7 @@ import {
   roundsFor,
 } from "../../_server";
 import { CHECKLIST_MAX_ITEMS, cleanChecklistText } from "../../../../../../lib/interviewChecklist";
+import { sendInterviewEmails } from "../../../../../../lib/interviewEmails";
 
 // Add the next level (Level 1, or the next one after a passed level)
 export async function POST(req, { params }) {
@@ -76,5 +77,8 @@ export async function POST(req, { params }) {
     });
   }
 
-  return NextResponse.json(round, { status: 201 });
+  // Invite the candidate and the panel (on by default; needs a date & time)
+  const emails = body.sendEmails === false ? null : await sendInterviewEmails({ round, application });
+
+  return NextResponse.json({ ...round, emails }, { status: 201 });
 }

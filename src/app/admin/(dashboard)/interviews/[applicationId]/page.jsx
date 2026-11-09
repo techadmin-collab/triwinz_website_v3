@@ -119,6 +119,23 @@ export default function CandidateInterviewsPage() {
   const canHire = !closed && latest?.status === "passed";
   const nextLevel = (latest?.level || 0) + 1;
 
+  // e.g. "Emails sent to the candidate and 2 panel members" / what didn't go out
+  function showEmailSummary(emails) {
+    if (!emails || emails.skipped) return;
+    const panel = emails.panel || [];
+    const sentPanel = panel.filter((p) => p.status === "sent").length;
+    const parts = [];
+    if (emails.candidate === "sent") parts.push("the candidate");
+    if (sentPanel) parts.push(`${sentPanel} panel member${sentPanel === 1 ? "" : "s"}`);
+    if (parts.length) toast.success(`Interview emails sent to ${parts.join(" and ")}`);
+    const problems = [];
+    if (emails.candidate === "failed") problems.push("the candidate (sending failed)");
+    if (emails.candidate === "no_email") problems.push("the candidate (no email address)");
+    panel.filter((p) => p.status === "failed").forEach((p) => problems.push(`${p.name} (sending failed)`));
+    panel.filter((p) => p.status === "no_email").forEach((p) => problems.push(`${p.name} (no email address)`));
+    if (problems.length) toast.error(`Not emailed: ${problems.join(", ")}`, { duration: 9000 });
+  }
+
   function addInterviewer(created) {
     setData((prev) => ({ ...prev, interviewers: [...prev.interviewers, created] }));
   }
@@ -138,7 +155,9 @@ export default function CandidateInterviewsPage() {
       toast.error(body.error || "Save failed");
       return false;
     }
+    const saved = await res.json().catch(() => ({}));
     toast.success(editing ? "Level updated" : `Level ${roundDialog.level} scheduled`);
+    showEmailSummary(saved.emails);
     load();
     return true;
   }

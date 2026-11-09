@@ -3,6 +3,7 @@ import { prisma } from "../../../../../../lib/prisma";
 import { requireModule } from "../../../../../../lib/requireAdmin";
 import { OBJECT_ID_RE, ROUND_STATUSES } from "../../../../../../lib/interviews";
 import { sendApplicationRejectedEmail } from "../../../../../../lib/sendApplicationEmails";
+import { sendInterviewEmails } from "../../../../../../lib/interviewEmails";
 import {
   clientOutdated,
   badRequest,
@@ -89,7 +90,13 @@ export async function PUT(req, { params }) {
     }
   }
 
-  return NextResponse.json({ round: updated, applicationStatus: appStatus });
+  // Optionally email the updated details to the candidate and panel
+  const emails =
+    body.sendEmails === true && updated.status === "scheduled"
+      ? await sendInterviewEmails({ round: updated, application, isUpdate: true })
+      : null;
+
+  return NextResponse.json({ round: updated, applicationStatus: appStatus, emails });
 }
 
 // Remove a level (only the latest one, so levels stay in order)
