@@ -15,7 +15,16 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Typography,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  useMediaQuery,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
+import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
+import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 import VideocamOutlinedIcon from "@mui/icons-material/VideocamOutlined";
@@ -84,6 +93,10 @@ export default function PanelInterviewDetail({ roundId }) {
   const [saving, setSaving] = useState(false);
   const [resumeOpen, setResumeOpen] = useState(false);
   const [showCover, setShowCover] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [liveChecklist, setLiveChecklist] = useState(null); // latest items from the sheet
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   const api = `/api/panel/${encodeURIComponent(token)}/interviews/${roundId}`;
 
@@ -136,6 +149,7 @@ export default function PanelInterviewDetail({ roundId }) {
       const first = !data.feedback;
       setData((d) => ({ ...d, feedback: json.feedback }));
       toast.success(first ? "Assessment submitted. Thank you!" : "Assessment updated");
+      setSheetOpen(false);
       refresh();
     } catch (err) {
       toast.error(err.message);
@@ -184,6 +198,20 @@ export default function PanelInterviewDetail({ roundId }) {
     form.concerns === (feedback.concerns || "") &&
     form.comments === (feedback.comments || "");
   const cover = candidate.coverLetter || "";
+  const checklistItems = liveChecklist || checklist || [];
+  const checklistTotal = checklistItems.length;
+  const checklistDone = checklistItems.filter((i) => i.done).length;
+  const unsaved =
+    canEditFeedback &&
+    (feedback
+      ? !savedSame
+      : Boolean(form.rating || form.recommendation || form.comments.trim() || form.strengths.trim() || form.concerns.trim()));
+
+  function closeSheet() {
+    if (saving) return;
+    if (unsaved && !window.confirm("Your assessment isn't submitted yet. Close the sheet anyway? What you typed stays until you leave this page.")) return;
+    setSheetOpen(false);
+  }
 
   return (
     <Box>
@@ -202,11 +230,69 @@ export default function PanelInterviewDetail({ roundId }) {
         <Chip label={status.label} sx={{ fontWeight: 800, bgcolor: status.bg, color: status.color }} />
       </Box>
 
+      {/* Assessment: opens the assessment sheet (checklist + assessment) */}
+      <Paper
+        elevation={0}
+        sx={{
+          mb: 2.5,
+          p: { xs: 1.75, sm: 2.25 },
+          borderRadius: 2.5,
+          border: "1px solid",
+          borderColor: feedback ? "#A7F3D0" : "rgba(29, 87, 88, 0.2)",
+          bgcolor: feedback ? "#F0FDF7" : "#F5FCFB",
+          display: "flex",
+          alignItems: { xs: "flex-start", sm: "center" },
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 1.5,
+        }}
+      >
+        <Box sx={{ display: "flex", gap: 1.5, alignItems: "flex-start", flex: 1, minWidth: 0 }}>
+          <Box
+            sx={{
+              width: 42,
+              height: 42,
+              borderRadius: 2,
+              flexShrink: 0,
+              display: "grid",
+              placeItems: "center",
+              bgcolor: feedback ? "#D1FAE5" : "#E6F7F6",
+              color: feedback ? "#047857" : BRAND.primary,
+            }}
+          >
+            {feedback ? <CheckCircleIcon /> : <AssignmentOutlinedIcon />}
+          </Box>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography sx={{ fontWeight: 800, color: "#111" }}>
+              {feedback ? "Assessment submitted" : "Assessment"}
+            </Typography>
+            <Typography sx={{ fontSize: "0.84rem", color: "#4b5563" }}>
+              {feedback
+                ? `Submitted ${new Date(feedback.updatedAt || feedback.submittedAt).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}.${canEditFeedback ? " You can still update it until the team records the result." : ""}`
+                : !canEditFeedback
+                  ? interview.status === "cancelled"
+                    ? "This interview was cancelled."
+                    : "This interview has been closed."
+                  : "Open the assessment sheet to use the interview checklist and record your rating, recommendation and comments."}
+              {checklistTotal ? ` Checklist: ${checklistDone} of ${checklistTotal} done.` : ""}
+            </Typography>
+          </Box>
+        </Box>
+        <Button
+          variant="contained"
+          disableElevation
+          startIcon={feedback || !canEditFeedback ? <AssignmentOutlinedIcon /> : <PlayArrowRoundedIcon />}
+          onClick={() => setSheetOpen(true)}
+          sx={{ ...brandButtonSx, fontWeight: 800, px: 3, py: 1.1, flexShrink: 0, width: { xs: "100%", sm: "auto" } }}
+        >
+          {!canEditFeedback ? "View assessment" : feedback ? "Edit assessment" : "Start assessment"}
+        </Button>
+      </Paper>
+
       <Box
         sx={{
           display: "grid",
           gap: 2,
-          gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "minmax(0, 1fr) minmax(0, 1.25fr)" },
+          gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "minmax(0, 1fr) minmax(0, 1fr)" },
           alignItems: "start",
         }}
       >
@@ -263,18 +349,6 @@ export default function PanelInterviewDetail({ roundId }) {
             ) : null}
           </Card>
 
-          <Card title="Interview checklist" icon={ChecklistIcon}>
-            <Typography sx={{ fontSize: "0.8rem", color: "#6b7280", mb: 1.25 }}>
-              Optional points to cover. Tick them as you go, and add your own. Everyone on this interview&apos;s panel
-              and the TriWinz team can see this list.
-            </Typography>
-            <InterviewChecklist
-              apiBase={`/api/panel/${encodeURIComponent(token)}/interviews/${roundId}/checklist`}
-              initialItems={checklist}
-              locked={!canEditFeedback}
-              bare
-            />
-          </Card>
 
           <Card title="Candidate" icon={DescriptionOutlinedIcon}>
             <Typography sx={{ fontWeight: 700, color: "#111" }}>{candidate.fullName}</Typography>
@@ -319,12 +393,65 @@ export default function PanelInterviewDetail({ roundId }) {
               </Box>
             ) : null}
           </Card>
-
-          {job ? <JobDescriptionCard job={job} /> : null}
         </Stack>
 
-        {/* Right: feedback */}
-        <Card sx={{ minWidth: 0 }}>
+        {/* Right: job description */}
+        <Stack spacing={2} sx={{ minWidth: 0 }}>
+          {job ? (
+            <JobDescriptionCard job={job} />
+          ) : (
+            <Card title="Job description" icon={DescriptionOutlinedIcon}>
+              <Typography sx={{ fontSize: "0.86rem", color: "#6b7280" }}>
+                The job description for {candidate.jobTitle} isn&apos;t available.
+              </Typography>
+            </Card>
+          )}
+        </Stack>
+      </Box>
+
+      {/* Assessment sheet */}
+      <Dialog
+        open={sheetOpen}
+        onClose={closeSheet}
+        fullScreen={fullScreen}
+        maxWidth="lg"
+        fullWidth
+        keepMounted
+        PaperProps={{ sx: { borderRadius: fullScreen ? 0 : 3, bgcolor: "#F7FBFB" } }}
+      >
+        <DialogTitle component="div" sx={{ pr: 7, py: 1.75, bgcolor: "#fff", borderBottom: "1px solid #e8eaed" }}>
+          <Typography sx={{ fontWeight: 800, fontSize: { xs: "1.1rem", sm: "1.2rem" }, color: "#111" }}>
+            Assessment sheet
+          </Typography>
+          <IconButton onClick={closeSheet} aria-label="Close" sx={{ position: "absolute", top: 10, right: 12 }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ p: { xs: 1.5, sm: 2.5 } }}>
+          <Box
+            sx={{
+              pt: { xs: 1.5, sm: 2.5 },
+              display: "grid",
+              gap: 2,
+              gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 0.9fr) minmax(0, 1.1fr)" },
+              alignItems: "start",
+            }}
+          >
+            <Card title="Interview checklist" icon={ChecklistIcon}>
+            <Typography sx={{ fontSize: "0.8rem", color: "#6b7280", mb: 1.25 }}>
+              Optional points to cover. Tick them as you go, and add your own. Everyone on this interview&apos;s panel
+              and the TriWinz team can see this list.
+            </Typography>
+            <InterviewChecklist
+              apiBase={`/api/panel/${encodeURIComponent(token)}/interviews/${roundId}/checklist`}
+              initialItems={checklist}
+              locked={!canEditFeedback}
+              bare
+              onItemsChange={setLiveChecklist}
+            />
+            </Card>
+
+            <Card sx={{ minWidth: 0 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5, flexWrap: "wrap" }}>
             <Typography sx={{ fontWeight: 800, color: "#111", fontSize: "1.05rem" }}>Your assessment</Typography>
             {feedback ? (
@@ -446,8 +573,10 @@ export default function PanelInterviewDetail({ roundId }) {
               ) : null}
             </fieldset>
           </Box>
-        </Card>
-      </Box>
+            </Card>
+          </Box>
+        </DialogContent>
+      </Dialog>
 
       <ResumePreviewDialog
         open={resumeOpen}

@@ -27,8 +27,16 @@ const NO_ITEMS = [];
  *  - isAdmin: admin can remove any item; panel members only their own (item.mine)
  *  - locked: read-only (interview closed)
  *  - bare: no outer border/title (when the parent already provides a card)
+ *  - onItemsChange(items): optional, called whenever the list changes
  */
-export default function InterviewChecklist({ apiBase, initialItems = NO_ITEMS, isAdmin = false, locked = false, bare = false }) {
+export default function InterviewChecklist({
+  apiBase,
+  initialItems = NO_ITEMS,
+  isAdmin = false,
+  locked = false,
+  bare = false,
+  onItemsChange,
+}) {
   const [items, setItems] = useState(initialItems);
   const [text, setText] = useState("");
   const [adding, setAdding] = useState(false);
@@ -37,6 +45,11 @@ export default function InterviewChecklist({ apiBase, initialItems = NO_ITEMS, i
   useEffect(() => {
     setItems(initialItems);
   }, [initialItems]);
+
+  useEffect(() => {
+    onItemsChange?.(items);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
 
   const doneCount = items.filter((i) => i.done).length;
 
