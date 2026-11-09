@@ -1,28 +1,17 @@
 import Link from "next/link";
-import { Box, Card, Chip, Typography, Stack } from "@mui/material";
-import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
-import HomeWorkOutlinedIcon from "@mui/icons-material/HomeWorkOutlined";
-import EventAvailableOutlinedIcon from "@mui/icons-material/EventAvailableOutlined";
+import { Box, Card, Chip, Typography } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { getWorkModeLabel } from "./workMode";
 import { formatJobTypes } from "../../../../lib/jobTypes";
 
-export default function JobCard({
-  title,
-  department,
-  location,
-  type,
-  workMode,
-  experience,
-  joiningPeriod,
-  summary,
-  qualifications,
-  slug,
-}) {
-  const qualificationItems = Array.isArray(qualifications)
-    ? qualifications.filter(Boolean)
-    : [];
+// Listing card: department label, job title, job type + work mode, and "View role".
+// Full details (summary, qualifications, location...) are on the job page.
+export default function JobCard({ title, department, type, workMode, slug }) {
+  const chipSx = {
+    bgcolor: "#fff",
+    color: "#1D5758",
+    fontWeight: 600,
+    border: "1px solid rgba(29, 87, 88, 0.22)",
+  };
 
   return (
     <Link
@@ -35,161 +24,94 @@ export default function JobCard({
       }}
     >
       <Card
+        elevation={0}
         sx={{
-          p: 0,
           height: "100%",
+          minHeight: 190,
           display: "flex",
           flexDirection: "column",
+          px: { xs: 2.5, md: 3 },
+          pt: { xs: 2.5, md: 3 },
+          pb: { xs: 2, md: 2.5 },
+          borderRadius: "14px",
+          border: "1px solid #e3ecec",
+          borderLeft: "5px solid #2BD1C7",
+          bgcolor: "#fff",
           cursor: "pointer",
-          overflow: "hidden",
           fontFamily: "montserrat, inter",
-          transition: "transform 0.3s ease, box-shadow 0.3s ease",
+          boxShadow: "0 4px 14px rgba(29, 87, 88, 0.05)",
+          transition: "transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease",
           "&:hover": {
-            transform: "translateY(-4px)",
-            boxShadow: "0 12px 32px rgba(29, 87, 88, 0.15)",
+            transform: "translateY(-3px)",
+            borderLeftColor: "#1D5758",
+            boxShadow: "0 12px 28px rgba(29, 87, 88, 0.14)",
           },
+          "&:hover .job-card-go": {
+            backgroundImage: "linear-gradient(135deg, #1D5758 0%, #2BD1C7 100%)",
+          },
+          "&:hover .job-card-go svg": { transform: "translateX(2px)" },
         }}
       >
-        <Box
-          sx={{
-            height: 8,
-            flexShrink: 0,
-            background: "linear-gradient(122deg, #1D5758ff 0%, #2BD1C7ff 100%)",
-          }}
-        />
+        {department ? (
+          <Typography
+            sx={{
+              fontSize: "0.72rem",
+              fontWeight: 800,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "#1A9E96",
+            }}
+          >
+            {department}
+          </Typography>
+        ) : null}
 
-        <Box
+        <Typography
+          component="h3"
           sx={{
-            p: 3.5,
-            display: "flex",
-            flexDirection: "column",
-            flex: 1,
-            gap: 2,
+            mt: 1,
+            mb: 1.75,
+            fontWeight: 800,
+            fontSize: { xs: "1.15rem", md: "1.3rem" },
+            lineHeight: 1.25,
+            color: "#111",
+            wordBreak: "break-word",
           }}
         >
-          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-            <Chip
-              label={department}
-              size="small"
-              sx={{
-                backgroundColor: "grey.100",
-                color: "grey.800",
-                fontWeight: 500,
-              }}
-            />
-            <Chip
-              label={formatJobTypes(type)}
-              size="small"
-              sx={{
-                backgroundColor: "rgba(29, 87, 88, 0.08)",
-                color: "#1D5758",
-                fontWeight: 500,
-              }}
-            />
-            <Chip
-              label={workMode || "Hybrid"}
-              size="small"
-              sx={{
-                backgroundColor: "rgba(43, 209, 199, 0.08)",
-                color: "#178C85",
-                fontWeight: 500,
-              }}
-            />
-          </Stack>
+          {title}
+        </Typography>
 
-          <Typography variant="h5" fontWeight={700}>
-            {title}
-          </Typography>
+        <Box sx={{ display: "flex", gap: 0.75, flexWrap: "wrap" }}>
+          <Chip label={formatJobTypes(type)} size="small" sx={chipSx} />
+          <Chip label={workMode || "Hybrid"} size="small" sx={chipSx} />
+        </Box>
 
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            fontWeight={500}
-            sx={{ lineHeight: 1.6, whiteSpace: "pre-line" }}
-          >
-            {summary}
-          </Typography>
-
-          <Box
-            sx={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              minHeight: 0,
-            }}
-          >
-            {qualificationItems.length > 0 ? (
-              <Box>
-                <Typography
-                  variant="body2"
-                  color="#4b5563"
-                  fontWeight={600}
-                  sx={{ lineHeight: 1.6, mb: 0.5 }}
-                >
-                  Qualifications and Certifications
-                </Typography>
-                <Stack spacing={0.5}>
-                  {qualificationItems.map((item, index) => (
-                    <Typography
-                      key={`${index}-${item}`}
-                      variant="body2"
-                      color="text.secondary"
-                      fontWeight={500}
-                      sx={{ lineHeight: 1.6 }}
-                    >
-                      • {item}
-                    </Typography>
-                  ))}
-                </Stack>
-              </Box>
-            ) : null}
-          </Box>
-
-          <Stack spacing={0.8} sx={{ color: "text.secondary" }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <LocationOnOutlinedIcon sx={{ fontSize: 18 }} />
-              <Typography variant="body2" fontWeight={500}>
-                {location}
-              </Typography>
-            </Box>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <HomeWorkOutlinedIcon sx={{ fontSize: 18 }} />
-              <Typography variant="body2" fontWeight={500}>
-                {getWorkModeLabel(workMode)}
-              </Typography>
-            </Box>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <WorkOutlineIcon sx={{ fontSize: 18 }} />
-              <Typography variant="body2" fontWeight={500}>
-                {experience}
-              </Typography>
-            </Box>
-            {joiningPeriod ? (
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <EventAvailableOutlinedIcon sx={{ fontSize: 18 }} />
-                <Typography variant="body2" fontWeight={500}>
-                  Joining · {joiningPeriod}
-                </Typography>
-              </Box>
-            ) : null}
-          </Stack>
-
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 0.5,
-              pt: 1,
-              borderTop: "1px solid",
-              borderColor: "divider",
-              color: "#1D5758",
-              fontWeight: 600,
-              fontSize: "0.9rem",
-            }}
-          >
+        <Box
+          sx={{
+            mt: "auto",
+            pt: 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography sx={{ fontWeight: 700, fontSize: "0.92rem", color: "#1D5758" }}>
             View role
-            <ArrowForwardIcon sx={{ fontSize: 18 }} />
+          </Typography>
+          <Box
+            className="job-card-go"
+            sx={{
+              width: 38,
+              height: 38,
+              borderRadius: "50%",
+              display: "grid",
+              placeItems: "center",
+              color: "#fff",
+              bgcolor: "#1D5758",
+              transition: "background 0.3s ease",
+            }}
+          >
+            <ArrowForwardIcon sx={{ fontSize: 18, transition: "transform 0.25s ease" }} />
           </Box>
         </Box>
       </Card>

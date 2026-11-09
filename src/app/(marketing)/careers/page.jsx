@@ -1,8 +1,5 @@
-import { Box, Button, Container, Typography } from "@mui/material";
-import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
-import Link from "next/link";
+import { Box, Container, Typography } from "@mui/material";
 import JobCard from "./sections/JobCard";
-import { TRAINING_PROGRAM_SLUG } from "./sections/trainingProgram";
 import { getPublishedJobs } from "./sections/jobs";
 import { defaultOpenGraph, defaultTwitter } from "../../../lib/seo";
 
@@ -124,35 +121,6 @@ export default async function CareersPage() {
             looking for people who care about craft, ownership, and building
             technology that helps businesses scale.
           </Typography>
-
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-            <Link
-              href={`/careers/${TRAINING_PROGRAM_SLUG}`}
-              style={{ textDecoration: "none" }}
-            >
-              <Button
-                startIcon={<SchoolOutlinedIcon />}
-                sx={{
-                  py: 1.5,
-                  px: 4,
-                  borderRadius: 2.5,
-                  fontWeight: 800,
-                  letterSpacing: "0.02em",
-                  textTransform: "none",
-                  fontSize: "1rem",
-                  color: "#1D5758",
-                  backgroundColor: "#fff",
-                  boxShadow: "0 10px 24px rgba(0, 0, 0, 0.18)",
-                  "&:hover": {
-                    backgroundColor: "#E6FAF8",
-                    boxShadow: "0 12px 28px rgba(0, 0, 0, 0.24)",
-                  },
-                }}
-              >
-                Join Our Corporate Training Programme
-              </Button>
-            </Link>
-          </Box>
         </Container>
       </Box>
 
