@@ -30,7 +30,7 @@ export default function PanelFeedbackList({ feedback = [], interviewerNames = []
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: feedback.length ? 1 : 0 }}>
         <RateReviewOutlinedIcon sx={{ fontSize: 18, color: "#1D5758" }} />
         <Typography sx={{ fontWeight: 800, fontSize: "0.84rem", color: "#111" }}>
-          Panel feedback
+          Panel assessment
         </Typography>
         <Typography sx={{ fontSize: "0.75rem", color: "#6b7280" }}>
           · {feedback.length} of {Math.max(interviewerNames.length, feedback.length)} submitted

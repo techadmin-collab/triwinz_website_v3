@@ -253,3 +253,37 @@ model InterviewFeedback {
   @@index([applicationId])
   @@index([interviewerId])
 }
+
+// Optional checklist for one interview level. The admin team and the level's panel
+// members can add items; anyone on the panel can tick them.
+model InterviewChecklistItem {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  roundId       String    @db.ObjectId
+  applicationId String    @db.ObjectId
+  text          String
+  done          Boolean   @default(false)
+  doneByName    String?
+  doneAt        DateTime?
+  addedBy       String    // admin | panel
+  addedByName   String
+  interviewerId String?   @db.ObjectId // set when a panel member added it
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([roundId])
+  @@index([applicationId])
+}
+
+// Notes the admin team adds to an interview level (shown to the level's panel).
+model InterviewNote {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  roundId       String   @db.ObjectId
+  applicationId String   @db.ObjectId
+  text          String
+  authorName    String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([roundId])
+  @@index([applicationId])
+}

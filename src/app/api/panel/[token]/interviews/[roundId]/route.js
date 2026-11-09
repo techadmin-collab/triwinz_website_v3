@@ -6,6 +6,7 @@ import {
   FEEDBACK_RECOMMENDATIONS,
   OBJECT_ID_RE,
 } from "../../../../../../lib/interviews";
+import { checklistFor } from "../../../../../../lib/interviewChecklist";
 
 const LIMIT = 4000;
 
@@ -34,7 +35,7 @@ export async function GET(_req, { params }) {
   const round = await loadRound(interviewer, roundId);
   if (!round) return notFound();
 
-  const [application, feedback] = await Promise.all([
+  const [application, feedback, job, checklist, teamNotes] = await Promise.all([
     prisma.jobApplication.findUnique({
       where: { id: round.applicationId },
       // email and phone are deliberately not shared with the panel
@@ -43,6 +44,33 @@ export async function GET(_req, { params }) {
     prisma.interviewFeedback.findUnique({
       where: { roundId_interviewerId: { roundId: round.id, interviewerId: interviewer.id } },
     }),
+    // the job description for this role (same details as the careers page)
+    prisma.job.findUnique({
+      where: { slug: round.jobSlug },
+      select: {
+        title: true,
+        department: true,
+        location: true,
+        type: true,
+        workMode: true,
+        experience: true,
+        joiningPeriod: true,
+        summary: true,
+        about: true,
+        responsibilities: true,
+        requirements: true,
+        qualifications: true,
+        niceToHave: true,
+      },
+    }),
+    checklistFor(round.id, interviewer.id),
+    prisma.interviewNote
+      ? prisma.interviewNote.findMany({
+          where: { roundId: round.id },
+          orderBy: { createdAt: "asc" },
+          select: { id: true, text: true, authorName: true, createdAt: true },
+        })
+      : Promise.resolve([]),
   ]);
   if (!application) return notFound();
 
@@ -60,6 +88,9 @@ export async function GET(_req, { params }) {
         panel: round.interviewerNames.filter(Boolean),
       },
       candidate: application,
+      job: job || null,
+      checklist,
+      teamNotes,
       feedback: feedback
         ? {
             rating: feedback.rating,
@@ -87,7 +118,7 @@ export async function PUT(req, { params }) {
 
   if (!FEEDBACK_OPEN_STATUSES.includes(round.status)) {
     return NextResponse.json(
-      { error: "This interview has been closed, so feedback can no longer be changed." },
+      { error: "This interview has been closed, so the assessment can no longer be changed." },
       { status: 409 },
     );
   }

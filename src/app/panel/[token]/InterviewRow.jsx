@@ -59,9 +59,9 @@ export default function InterviewRow({ iv, base, last = false }) {
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 0.5, flexShrink: 0 }}>
         {waiting ? (
-          <Chip size="small" label="Feedback needed" sx={{ height: 22, fontSize: "0.68rem", fontWeight: 800, bgcolor: "#FEF3C7", color: "#B45309" }} />
+          <Chip size="small" label="Assessment needed" sx={{ height: 22, fontSize: "0.68rem", fontWeight: 800, bgcolor: "#FEF3C7", color: "#B45309" }} />
         ) : rec ? (
-          <Chip size="small" label={`Your feedback: ${rec.label}`} sx={{ height: 22, fontSize: "0.68rem", fontWeight: 700, bgcolor: rec.bg, color: rec.color }} />
+          <Chip size="small" label={`Your assessment: ${rec.label}`} sx={{ height: 22, fontSize: "0.68rem", fontWeight: 700, bgcolor: rec.bg, color: rec.color }} />
         ) : (
           <Chip
             size="small"

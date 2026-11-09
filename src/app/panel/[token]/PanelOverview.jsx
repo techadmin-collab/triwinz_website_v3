@@ -71,7 +71,7 @@ export default function PanelOverview() {
         Welcome, {me.name.split(" ")[0]}
       </Typography>
       <Typography sx={{ color: "#6b7280", fontSize: "0.92rem", mt: 0.5, mb: 3 }}>
-        Your interviews with TriWinz, feedback to share and the times you&apos;re free.
+        Your interviews with TriWinz, assessments to share and the times you&apos;re free.
       </Typography>
 
       <Box
@@ -85,7 +85,7 @@ export default function PanelOverview() {
         <Stat icon={EventNoteOutlinedIcon} label="Upcoming interviews" value={counts?.upcoming ?? 0} hint="Scheduled with you" href={`${base}/interviews`} />
         <Stat
           icon={RateReviewOutlinedIcon}
-          label="Feedback to give"
+          label="Assessments to give"
           value={counts?.needsFeedback ?? 0}
           hint={counts?.needsFeedback ? "Interviews waiting for your review" : "You're all caught up"}
           href={`${base}/interviews?tab=feedback`}
@@ -121,7 +121,7 @@ export default function PanelOverview() {
       ) : (
         <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "repeat(2, minmax(0, 1fr))" } }}>
           <Section
-            title="Waiting for your feedback"
+            title="Waiting for your assessment"
             action={
               waiting.length ? (
                 <Button component={Link} href={`${base}/interviews?tab=feedback`} endIcon={<ArrowForwardIcon />} size="small" sx={{ textTransform: "none", fontWeight: 700, color: BRAND.primary }}>

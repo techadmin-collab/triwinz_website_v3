@@ -9,10 +9,11 @@ import {
   parseRoundDetails,
   roundsFor,
 } from "../../_server";
+import { CHECKLIST_MAX_ITEMS, cleanChecklistText } from "../../../../../../lib/interviewChecklist";
 
 // Add the next level (Level 1, or the next one after a passed level)
 export async function POST(req, { params }) {
-  const { error } = await requireModule("interviews");
+  const { error, session } = await requireModule("interviews");
   if (error) return error;
   const outdated = clientOutdated();
   if (outdated) return outdated;
@@ -50,6 +51,22 @@ export async function POST(req, { params }) {
       status: "scheduled",
     },
   });
+
+  // Optional checklist typed while scheduling
+  const checklist = Array.isArray(body.checklist)
+    ? body.checklist.map(cleanChecklistText).filter(Boolean).slice(0, CHECKLIST_MAX_ITEMS)
+    : [];
+  if (checklist.length && prisma.interviewChecklistItem) {
+    await prisma.interviewChecklistItem.createMany({
+      data: checklist.map((text) => ({
+        roundId: round.id,
+        applicationId,
+        text,
+        addedBy: "admin",
+        addedByName: session?.user?.name || "TriWinz team",
+      })),
+    });
+  }
 
   // Anyone being interviewed counts as shortlisted
   if (application.status === "new" || application.status === "on_hold") {

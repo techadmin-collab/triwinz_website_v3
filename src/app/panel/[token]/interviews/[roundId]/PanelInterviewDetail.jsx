@@ -29,6 +29,9 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { toast } from "react-hot-toast";
 import ResumePreviewDialog from "../../../../admin/components/ResumePreviewDialog";
+import JobDescriptionCard from "./JobDescriptionCard";
+import InterviewChecklist from "../../../../admin/components/interviews/InterviewChecklist";
+import ChecklistIcon from "@mui/icons-material/Checklist";
 import { BRAND, brandButtonSx } from "../../../../../lib/brand";
 import {
   FEEDBACK_RECOMMENDATIONS,
@@ -129,10 +132,10 @@ export default function PanelInterviewDetail({ roundId }) {
         body: JSON.stringify(form),
       });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json.error || "Could not save your feedback");
+      if (!res.ok) throw new Error(json.error || "Could not save your assessment");
       const first = !data.feedback;
       setData((d) => ({ ...d, feedback: json.feedback }));
-      toast.success(first ? "Feedback submitted. Thank you!" : "Feedback updated");
+      toast.success(first ? "Assessment submitted. Thank you!" : "Assessment updated");
       refresh();
     } catch (err) {
       toast.error(err.message);
@@ -168,7 +171,7 @@ export default function PanelInterviewDetail({ roundId }) {
     );
   }
 
-  const { interview, candidate, feedback, canEditFeedback } = data;
+  const { interview, candidate, job, checklist, teamNotes = [], feedback, canEditFeedback } = data;
   const status = roundStatusMeta(interview.status);
   const ModeIcon = modeIcon(interview.mode);
   const isLink = interview.location && /^https?:\/\//i.test(interview.location);
@@ -231,15 +234,46 @@ export default function PanelInterviewDetail({ roundId }) {
                 <Line icon={PeopleAltOutlinedIcon}>Panel: {interview.panel.join(", ")}</Line>
               ) : null}
             </Stack>
-            {interview.notes ? (
+            {interview.notes || teamNotes.length ? (
               <Box sx={{ mt: 1.75, p: 1.5, borderRadius: 1.5, bgcolor: "#F5FCFB", border: "1px solid #dcefed" }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.5 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.75 }}>
                   <StickyNote2OutlinedIcon sx={{ fontSize: 16, color: BRAND.primary }} />
                   <Typography sx={{ fontSize: "0.75rem", fontWeight: 800, color: BRAND.primary }}>Notes from the TriWinz team</Typography>
                 </Box>
-                <Typography sx={{ fontSize: "0.86rem", color: "#374151", whiteSpace: "pre-line" }}>{interview.notes}</Typography>
+                <Stack spacing={1.25}>
+                  {interview.notes ? (
+                    <Typography sx={{ fontSize: "0.86rem", color: "#374151", whiteSpace: "pre-line" }}>{interview.notes}</Typography>
+                  ) : null}
+                  {teamNotes.map((note, i) => (
+                    <Box
+                      key={note.id}
+                      sx={{ pt: interview.notes || i ? 1.25 : 0, borderTop: interview.notes || i ? "1px solid #dcefed" : 0 }}
+                    >
+                      <Typography sx={{ fontSize: "0.86rem", color: "#374151", whiteSpace: "pre-line", wordBreak: "break-word" }}>
+                        {note.text}
+                      </Typography>
+                      <Typography sx={{ mt: 0.4, fontSize: "0.7rem", color: "#9ca3af" }}>
+                        {note.authorName} ·{" "}
+                        {new Date(note.createdAt).toLocaleString(undefined, { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Stack>
               </Box>
             ) : null}
+          </Card>
+
+          <Card title="Interview checklist" icon={ChecklistIcon}>
+            <Typography sx={{ fontSize: "0.8rem", color: "#6b7280", mb: 1.25 }}>
+              Optional points to cover. Tick them as you go, and add your own. Everyone on this interview&apos;s panel
+              and the TriWinz team can see this list.
+            </Typography>
+            <InterviewChecklist
+              apiBase={`/api/panel/${encodeURIComponent(token)}/interviews/${roundId}/checklist`}
+              initialItems={checklist}
+              locked={!canEditFeedback}
+              bare
+            />
           </Card>
 
           <Card title="Candidate" icon={DescriptionOutlinedIcon}>
@@ -285,12 +319,14 @@ export default function PanelInterviewDetail({ roundId }) {
               </Box>
             ) : null}
           </Card>
+
+          {job ? <JobDescriptionCard job={job} /> : null}
         </Stack>
 
         {/* Right: feedback */}
         <Card sx={{ minWidth: 0 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5, flexWrap: "wrap" }}>
-            <Typography sx={{ fontWeight: 800, color: "#111", fontSize: "1.05rem" }}>Your feedback</Typography>
+            <Typography sx={{ fontWeight: 800, color: "#111", fontSize: "1.05rem" }}>Your assessment</Typography>
             {feedback ? (
               <Chip
                 size="small"
@@ -308,11 +344,11 @@ export default function PanelInterviewDetail({ roundId }) {
             <Alert icon={<LockOutlinedIcon fontSize="small" />} severity="info" sx={{ mb: 2 }}>
               {interview.status === "cancelled"
                 ? "This interview was cancelled."
-                : "This interview has been closed, so feedback can no longer be changed."}
+                : "This interview has been closed, so your assessment can no longer be changed."}
             </Alert>
           ) : upcoming && !feedback ? (
             <Alert severity="info" sx={{ mb: 2 }}>
-              This interview hasn&apos;t happened yet. Come back after it to share your feedback.
+              This interview hasn&apos;t happened yet. Come back after it to share your assessment.
             </Alert>
           ) : null}
 
@@ -401,7 +437,7 @@ export default function PanelInterviewDetail({ roundId }) {
                     disabled={saving || savedSame}
                     sx={{ ...brandButtonSx, fontWeight: 800, px: 3, py: 1 }}
                   >
-                    {saving ? "Saving..." : feedback ? "Update feedback" : "Submit feedback"}
+                    {saving ? "Saving..." : feedback ? "Update assessment" : "Submit assessment"}
                   </Button>
                   {feedback && !savedSame ? (
                     <Typography sx={{ fontSize: "0.75rem", color: "#b45309" }}>You have unsaved changes.</Typography>

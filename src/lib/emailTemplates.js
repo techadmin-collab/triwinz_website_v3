@@ -355,7 +355,7 @@ export function interviewerAvailabilityTemplate({ name, url }) {
     "",
     "Thank you for being part of the TriWinz interview panel.",
     "",
-    "Your personal page is ready. Use the link below to see the interviews scheduled with you, view candidate resumes, share your feedback and mark the dates and times you are available. You can come back to the same link at any time.",
+    "Your personal page is ready. Use the link below to see the interviews scheduled with you, view candidate resumes, share your assessment and mark the dates and times you are available. You can come back to the same link at any time.",
     "",
     url,
     "",
@@ -370,7 +370,7 @@ export function interviewerAvailabilityTemplate({ name, url }) {
   const html = baseLayout({
     title: "Your interview panel page",
     eyebrow: "Interview panel",
-    preview: "See your interviews, share feedback and mark your availability",
+    preview: "See your interviews, share assessments and mark your availability",
     footerNote:
       "This link is personal to you. Please don't forward this email.",
     bodyHtml: `
@@ -380,7 +380,7 @@ export function interviewerAvailabilityTemplate({ name, url }) {
       </p>
       <p style="margin:0 0 22px;">
         Your personal page is ready. Use it to see the interviews scheduled with you, view candidate
-        resumes, share your feedback and mark the dates and times you are available.
+        resumes, share your assessment and mark the dates and times you are available.
         You can come back to the same link at any time.
       </p>
       <p style="margin:0 0 22px;">

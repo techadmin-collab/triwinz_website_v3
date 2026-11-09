@@ -12,7 +12,11 @@ import {
   MenuItem,
   Stack,
   TextField,
+  IconButton,
+  Typography,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
 import InterviewerPicker from "./InterviewerPicker";
 import AvailabilityAssist from "./AvailabilityAssist";
 import {
@@ -30,6 +34,7 @@ const empty = {
   mode: "online",
   location: "",
   notes: "",
+  checklist: [],
 };
 
 /** Add a new level or edit an existing level's details. */
@@ -45,6 +50,14 @@ export default function RoundDialog({
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [checklistText, setChecklistText] = useState("");
+
+  function addChecklistItem() {
+    const text = checklistText.replace(/\s+/g, " ").trim();
+    if (!text) return;
+    setForm((prev) => ({ ...prev, checklist: [...prev.checklist, text].slice(0, 50) }));
+    setChecklistText("");
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -58,9 +71,11 @@ export default function RoundDialog({
             mode: round.mode || "online",
             location: round.location || "",
             notes: round.notes || "",
+            checklist: [],
           }
         : empty,
     );
+    setChecklistText("");
   }, [open, round]);
 
   const set = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
@@ -72,7 +87,14 @@ export default function RoundDialog({
       return;
     }
     setSaving(true);
-    const ok = await onSubmit({ ...form, scheduledAt: fromLocalInput(form.scheduledAt) });
+    const pending = checklistText.trim() ? [...form.checklist, checklistText.trim()] : form.checklist;
+    const { checklist, ...rest } = form;
+    const ok = await onSubmit({
+      ...rest,
+      scheduledAt: fromLocalInput(form.scheduledAt),
+      // only sent for a new level; an existing level's checklist is edited on its card
+      ...(round ? {} : { checklist: pending }),
+    });
     setSaving(false);
     if (ok) onClose();
   }
@@ -185,6 +207,61 @@ export default function RoundDialog({
               onChange={(e) => set("notes", e.target.value)}
               placeholder="Topics to cover, things to check, etc."
             />
+
+            {!round ? (
+              <Box>
+                <Typography sx={{ fontSize: "0.85rem", fontWeight: 700, color: "#374151" }}>
+                  Checklist (optional)
+                </Typography>
+                <Typography sx={{ fontSize: "0.75rem", color: "#6b7280", mb: 1 }}>
+                  Points the panel should cover. They see it on their panel page, can tick items and add their own.
+                </Typography>
+                {form.checklist.length ? (
+                  <Stack spacing={0.5} sx={{ mb: 1 }}>
+                    {form.checklist.map((item, i) => (
+                      <Box
+                        key={`${i}-${item}`}
+                        sx={{ display: "flex", alignItems: "center", gap: 1, px: 1.25, py: 0.5, borderRadius: 1.5, bgcolor: "#F5FCFB", border: "1px solid #dcefed" }}
+                      >
+                        <Typography sx={{ flex: 1, fontSize: "0.84rem", color: "#111", wordBreak: "break-word" }}>{item}</Typography>
+                        <IconButton
+                          size="small"
+                          aria-label="Remove item"
+                          onClick={() => set("checklist", form.checklist.filter((_, j) => j !== i))}
+                          sx={{ color: "#9ca3af", "&:hover": { color: "#dc2626" } }}
+                        >
+                          <CloseIcon sx={{ fontSize: 16 }} />
+                        </IconButton>
+                      </Box>
+                    ))}
+                  </Stack>
+                ) : null}
+                <Stack direction="row" spacing={1}>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    value={checklistText}
+                    onChange={(e) => setChecklistText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addChecklistItem();
+                      }
+                    }}
+                    placeholder="e.g. Ask about their last project"
+                    inputProps={{ maxLength: 300 }}
+                  />
+                  <Button
+                    onClick={addChecklistItem}
+                    disabled={!checklistText.trim()}
+                    startIcon={<AddIcon />}
+                    sx={{ textTransform: "none", fontWeight: 700, color: BRAND.primary, flexShrink: 0 }}
+                  >
+                    Add
+                  </Button>
+                </Stack>
+              </Box>
+            ) : null}
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5 }}>

@@ -12,7 +12,7 @@ import InterviewRow, { isUpcoming, needsFeedback } from "../InterviewRow";
 
 const TABS = [
   { value: "upcoming", label: "Upcoming" },
-  { value: "feedback", label: "Feedback needed" },
+  { value: "feedback", label: "Assessment needed" },
   { value: "past", label: "Past" },
   { value: "all", label: "All" },
 ];
@@ -49,7 +49,7 @@ export default function PanelInterviews() {
         My interviews
       </Typography>
       <Typography sx={{ color: "#6b7280", fontSize: "0.92rem", mt: 0.5, mb: 2.5 }}>
-        Interviews you&apos;re on the panel for. Open one to see the candidate&apos;s resume and share your feedback.
+        Interviews you&apos;re on the panel for. Open one to see the candidate&apos;s resume and share your assessment.
       </Typography>
 
       <Paper elevation={0} sx={{ borderRadius: 2.5, border: "1px solid #e8eaed", overflow: "hidden" }}>
@@ -84,7 +84,7 @@ export default function PanelInterviews() {
           <Box sx={{ py: 6, px: 2, textAlign: "center" }}>
             <EventNoteOutlinedIcon sx={{ fontSize: 34, color: BRAND.primary, opacity: 0.6 }} />
             <Typography sx={{ mt: 1, fontWeight: 700, color: "#111" }}>
-              {tab === "feedback" ? "No feedback pending" : tab === "upcoming" ? "No upcoming interviews" : "No interviews yet"}
+              {tab === "feedback" ? "No assessments pending" : tab === "upcoming" ? "No upcoming interviews" : "No interviews yet"}
             </Typography>
             <Typography sx={{ fontSize: "0.85rem", color: "#6b7280" }}>
               {tab === "feedback"

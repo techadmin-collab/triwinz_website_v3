@@ -115,7 +115,7 @@ export default function ResultDialog({ open, round, candidateName, onClose, onSu
         </Box>
 
         <TextField
-          label="Interviewer feedback"
+          label="Assessment"
           multiline
           minRows={4}
           fullWidth

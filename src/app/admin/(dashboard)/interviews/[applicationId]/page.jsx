@@ -39,6 +39,8 @@ import RoundDialog from "../../../components/interviews/RoundDialog";
 import ResultDialog from "../../../components/interviews/ResultDialog";
 import StageChip from "../../../components/interviews/StageChip";
 import PanelFeedbackList from "../../../components/interviews/PanelFeedbackList";
+import InterviewChecklist from "../../../components/interviews/InterviewChecklist";
+import InterviewNotes from "../../../components/interviews/InterviewNotes";
 import {
   formatDateTime,
   levelLabel,
@@ -378,6 +380,14 @@ export default function CandidateInterviewsPage() {
                       </Typography>
                     ) : null}
                   </Stack>
+
+                  <InterviewChecklist
+                    apiBase={`/api/admin/interviews/rounds/${round.id}/checklist`}
+                    initialItems={round.checklist}
+                    isAdmin
+                  />
+
+                  <InterviewNotes roundId={round.id} initialNotes={round.interviewNotes} />
 
                   {round.status !== "cancelled" ? (
                     <PanelFeedbackList feedback={round.panelFeedback || []} interviewerNames={round.interviewerNames || []} />

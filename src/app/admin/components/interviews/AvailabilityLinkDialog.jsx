@@ -115,8 +115,8 @@ export default function AvailabilityLinkDialog({ interviewer, onClose, onChange 
       <DialogContent>
         <Typography sx={{ color: "#6b7280", fontSize: "0.88rem", mb: 2 }}>
           <strong style={{ color: "#111" }}>{interviewer.name}</strong> can open this private link to see the interviews
-          they&apos;re on, view the candidate&apos;s resume, give feedback and mark when they&apos;re free. No login
-          needed. Feedback shows on each candidate&apos;s interview page.
+          they&apos;re on, view the candidate&apos;s resume, submit their assessment and mark when they&apos;re free. No login
+          needed. Assessments show on each candidate&apos;s interview page.
         </Typography>
 
         {!interviewer.active ? (
