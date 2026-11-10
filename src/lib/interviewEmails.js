@@ -1,5 +1,5 @@
 // Emails sent when an interview level is scheduled (or its details are updated).
-// Candidate: one email. Each panel member: one email, cc'd to the HR inbox.
+// Candidate: one email, cc'd to the HR inbox. Each panel member: one email, cc'd to the HR inbox.
 import { prisma } from "./prisma";
 import { sendMail } from "./mail";
 import { formatIST, levelLabel, modeLabel } from "./interviews";
@@ -86,6 +86,7 @@ export async function sendInterviewEmails({ round, application, isUpdate = false
       const mail = interviewScheduledCandidateTemplate({ fullName: application.fullName, ...base });
       await sendMail({
         to: application.email,
+        cc: ccAddress(),
         subject: mail.subject,
         text: mail.text,
         html: mail.html,
