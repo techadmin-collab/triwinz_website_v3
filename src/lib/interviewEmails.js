@@ -12,8 +12,21 @@ import { reportIssue } from "./reportIssue";
 
 const INTERVIEW_MINUTES = 60;
 
+// Copied on every interview email (candidate and panel).
+// Override with INTERVIEW_CC_EMAIL (comma-separated) in .env / Vercel.
+const DEFAULT_CC = [
+  "parvathys@triwinz.com",
+  "parameswaran@triwinz.com",
+  "rajkiran@triwinz.com",
+  "abdul.samad@triwinz.net",
+];
+
 function ccAddress() {
-  return process.env.INTERVIEW_CC_EMAIL || "parvathys@triwinz.com";
+  const fromEnv = (process.env.INTERVIEW_CC_EMAIL || "")
+    .split(",")
+    .map((e) => e.trim())
+    .filter(Boolean);
+  return fromEnv.length ? fromEnv : DEFAULT_CC;
 }
 
 function icsDate(date) {
