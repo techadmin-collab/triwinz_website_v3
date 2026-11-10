@@ -328,7 +328,7 @@ export default function PanelInterviewDetail({ roundId }) {
           alignItems: "start",
         }}
       >
-        {/* Left: interview + candidate */}
+        {/* Left: interview details + checklist */}
         <Stack spacing={2} sx={{ minWidth: 0 }}>
           <Card title="Interview details" icon={EventOutlinedIcon}>
             <Stack spacing={1.25}>
@@ -398,9 +398,30 @@ export default function PanelInterviewDetail({ roundId }) {
                 </Stack>
               </Box>
             ) : null}
+
+            {/* Interview checklist (optional points to cover) */}
+            <Box sx={{ mt: 2, pt: 2, borderTop: "1px solid #eef1f1" }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.5 }}>
+                <ChecklistIcon sx={{ fontSize: 18, color: BRAND.primary }} />
+                <Typography sx={{ fontWeight: 800, fontSize: "0.9rem", color: "#111" }}>Interview checklist</Typography>
+              </Box>
+              <Typography sx={{ fontSize: "0.78rem", color: "#6b7280", mb: 1 }}>
+                Optional points to cover. Tick them as you go, and add your own. Everyone on this interview&apos;s panel
+                and the TriWinz team can see this list.
+              </Typography>
+              <InterviewChecklist
+                apiBase={`/api/panel/${encodeURIComponent(token)}/interviews/${roundId}/checklist`}
+                initialItems={checklist}
+                locked={!canEditFeedback}
+                bare
+                onItemsChange={setLiveChecklist}
+              />
+            </Box>
           </Card>
+        </Stack>
 
-
+        {/* Right: candidate + job description */}
+        <Stack spacing={2} sx={{ minWidth: 0 }}>
           <Card title="Candidate" icon={DescriptionOutlinedIcon}>
             <Typography sx={{ fontWeight: 700, color: "#111" }}>{candidate.fullName}</Typography>
             <Typography sx={{ fontSize: "0.85rem", color: "#6b7280", mb: 1.5 }}>Applied for {candidate.jobTitle}</Typography>
@@ -444,10 +465,6 @@ export default function PanelInterviewDetail({ roundId }) {
               </Box>
             ) : null}
           </Card>
-        </Stack>
-
-        {/* Right: job description */}
-        <Stack spacing={2} sx={{ minWidth: 0 }}>
           {job ? (
             <JobDescriptionCard job={job} />
           ) : (
@@ -479,28 +496,7 @@ export default function PanelInterviewDetail({ roundId }) {
           </IconButton>
         </DialogTitle>
         <DialogContent sx={{ p: { xs: 1.5, sm: 2.5 } }}>
-          <Box
-            sx={{
-              pt: { xs: 1.5, sm: 2.5 },
-              display: "grid",
-              gap: 2,
-              gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 0.9fr) minmax(0, 1.1fr)" },
-              alignItems: "start",
-            }}
-          >
-            <Card title="Interview checklist" icon={ChecklistIcon}>
-            <Typography sx={{ fontSize: "0.8rem", color: "#6b7280", mb: 1.25 }}>
-              Optional points to cover. Tick them as you go, and add your own. Everyone on this interview&apos;s panel
-              and the TriWinz team can see this list.
-            </Typography>
-            <InterviewChecklist
-              apiBase={`/api/panel/${encodeURIComponent(token)}/interviews/${roundId}/checklist`}
-              initialItems={checklist}
-              locked={!canEditFeedback}
-              bare
-              onItemsChange={setLiveChecklist}
-            />
-            </Card>
+          <Box sx={{ pt: { xs: 1.5, sm: 2.5 } }}>
 
             <Card sx={{ minWidth: 0 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5, flexWrap: "wrap" }}>
@@ -532,76 +528,91 @@ export default function PanelInterviewDetail({ roundId }) {
 
           <Box component="form" onSubmit={submit}>
             <fieldset disabled={!canEditFeedback || saving} style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}>
-              {criteriaList.length ? (
-                <Box sx={{ mb: 3 }}>
-                  <SectionTitle>Assessment</SectionTitle>
-                  <Stack spacing={1.5}>
-                    {criteriaList.map((q, i) => (
-                      <Box key={q} sx={{ p: 1.5, borderRadius: 2, border: "1px solid #e8eaed", bgcolor: "#fff" }}>
-                        <Typography sx={{ fontWeight: 700, fontSize: "0.88rem", color: "#111", mb: 0.5 }}>
-                          {i + 1}. {q} <Box component="span" sx={{ color: "#dc2626" }}>*</Box>
-                        </Typography>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, mb: 1, flexWrap: "wrap" }}>
-                          <Rating
-                            value={form.scores[q]?.rating || null}
-                            onChange={(_, v) => setScore(q, "rating", v || 0)}
-                            readOnly={!canEditFeedback}
-                            sx={{ "& .MuiRating-iconFilled": { color: "#F59E0B" } }}
-                          />
-                          <Typography sx={{ fontSize: "0.8rem", color: "#6b7280" }}>
-                            {RATING_LABELS[form.scores[q]?.rating] || "Rate 1–5"}
+              {criteriaList.length || overallList.length ? (
+                <Box
+                  sx={{
+                    mb: 3,
+                    display: "grid",
+                    gap: 2.5,
+                    alignItems: "start",
+                    gridTemplateColumns: {
+                      xs: "minmax(0, 1fr)",
+                      md: criteriaList.length && overallList.length ? "repeat(2, minmax(0, 1fr))" : "minmax(0, 1fr)",
+                    },
+                  }}
+                >
+                {criteriaList.length ? (
+                  <Box sx={{ minWidth: 0 }}>
+                    <SectionTitle>Assessment</SectionTitle>
+                    <Stack spacing={1.5}>
+                      {criteriaList.map((q, i) => (
+                        <Box key={q} sx={{ p: 1.5, borderRadius: 2, border: "1px solid #e8eaed", bgcolor: "#fff" }}>
+                          <Typography sx={{ fontWeight: 700, fontSize: "0.88rem", color: "#111", mb: 0.5 }}>
+                            {i + 1}. {q} <Box component="span" sx={{ color: "#dc2626" }}>*</Box>
                           </Typography>
-                        </Box>
-                        <TextField
-                          label="Remarks"
-                          size="small"
-                          fullWidth
-                          multiline
-                          minRows={1}
-                          value={form.scores[q]?.remarks || ""}
-                          onChange={(e) => setScore(q, "remarks", e.target.value)}
-                          inputProps={{ maxLength: 4000 }}
-                        />
-                      </Box>
-                    ))}
-                  </Stack>
-                </Box>
-              ) : null}
-
-              {overallList.length ? (
-                <Box sx={{ mb: 3 }}>
-                  <SectionTitle>Overall assessment</SectionTitle>
-                  <Stack spacing={1.5}>
-                    {overallList.map((q, i) => (
-                      <Box key={q} sx={{ p: 1.5, borderRadius: 2, border: "1px solid #e8eaed", bgcolor: "#fff" }}>
-                        <Typography sx={{ fontWeight: 700, fontSize: "0.88rem", color: "#111", mb: 1 }}>
-                          {i + 1}. {q}
-                        </Typography>
-                        <Stack spacing={1.25}>
-                          <TextField
-                            label="Details"
-                            size="small"
-                            fullWidth
-                            multiline
-                            minRows={1}
-                            value={form.overall[q]?.details || ""}
-                            onChange={(e) => setOverall(q, "details", e.target.value)}
-                            inputProps={{ maxLength: 4000 }}
-                          />
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, mb: 1, flexWrap: "wrap" }}>
+                            <Rating
+                              value={form.scores[q]?.rating || null}
+                              onChange={(_, v) => setScore(q, "rating", v || 0)}
+                              readOnly={!canEditFeedback}
+                              sx={{ "& .MuiRating-iconFilled": { color: "#F59E0B" } }}
+                            />
+                            <Typography sx={{ fontSize: "0.8rem", color: "#6b7280" }}>
+                              {RATING_LABELS[form.scores[q]?.rating] || "Rate 1–5"}
+                            </Typography>
+                          </Box>
                           <TextField
                             label="Remarks"
                             size="small"
                             fullWidth
                             multiline
                             minRows={1}
-                            value={form.overall[q]?.remarks || ""}
-                            onChange={(e) => setOverall(q, "remarks", e.target.value)}
+                            value={form.scores[q]?.remarks || ""}
+                            onChange={(e) => setScore(q, "remarks", e.target.value)}
                             inputProps={{ maxLength: 4000 }}
                           />
-                        </Stack>
-                      </Box>
-                    ))}
-                  </Stack>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Box>
+                ) : null}
+
+                {overallList.length ? (
+                  <Box sx={{ minWidth: 0 }}>
+                    <SectionTitle>Overall assessment</SectionTitle>
+                    <Stack spacing={1.5}>
+                      {overallList.map((q, i) => (
+                        <Box key={q} sx={{ p: 1.5, borderRadius: 2, border: "1px solid #e8eaed", bgcolor: "#fff" }}>
+                          <Typography sx={{ fontWeight: 700, fontSize: "0.88rem", color: "#111", mb: 1 }}>
+                            {i + 1}. {q}
+                          </Typography>
+                          <Stack spacing={1.25}>
+                            <TextField
+                              label="Details"
+                              size="small"
+                              fullWidth
+                              multiline
+                              minRows={1}
+                              value={form.overall[q]?.details || ""}
+                              onChange={(e) => setOverall(q, "details", e.target.value)}
+                              inputProps={{ maxLength: 4000 }}
+                            />
+                            <TextField
+                              label="Remarks"
+                              size="small"
+                              fullWidth
+                              multiline
+                              minRows={1}
+                              value={form.overall[q]?.remarks || ""}
+                              onChange={(e) => setOverall(q, "remarks", e.target.value)}
+                              inputProps={{ maxLength: 4000 }}
+                            />
+                          </Stack>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Box>
+                ) : null}
                 </Box>
               ) : null}
 
