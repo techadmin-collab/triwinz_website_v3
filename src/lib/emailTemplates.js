@@ -221,7 +221,6 @@ export function applicationReceivedTemplate({ fullName, jobTitle }) {
     "Best regards,",
     "Talent Acquisition Team",
     "TriWinz Technologies Pvt. Ltd.",
-    "Thiruvananthapuram, Kerala",
   ].join("\n");
 
   const html = baseLayout({
@@ -250,8 +249,7 @@ export function applicationReceivedTemplate({ fullName, jobTitle }) {
       <p style="margin:0;color:#111827;line-height:1.7;">
         Best regards,<br />
         <strong>Talent Acquisition Team</strong><br />
-        TriWinz Technologies Pvt. Ltd.<br />
-        <span style="color:#6b7280;">Thiruvananthapuram, Kerala</span>
+        TriWinz Technologies Pvt. Ltd.
       </p>
     `,
   });
@@ -273,7 +271,6 @@ export function applicationRejectedTemplate({ fullName, jobTitle }) {
     "Best regards,",
     "Talent Acquisition Team",
     "TriWinz Technologies Pvt. Ltd.",
-    "Thiruvananthapuram, Kerala",
   ].join("\n");
 
   const html = baseLayout({
@@ -300,8 +297,7 @@ export function applicationRejectedTemplate({ fullName, jobTitle }) {
       <p style="margin:0;color:#111827;line-height:1.7;">
         Best regards,<br />
         <strong>Talent Acquisition Team</strong><br />
-        TriWinz Technologies Pvt. Ltd.<br />
-        <span style="color:#6b7280;">Thiruvananthapuram, Kerala</span>
+        TriWinz Technologies Pvt. Ltd.
       </p>
     `,
   });
@@ -320,7 +316,6 @@ export function contactReceivedTemplate({ fullName }) {
     "Best regards,",
     "Team TriWinz",
     "TriWinz Technologies Pvt. Ltd.",
-    "Thiruvananthapuram, Kerala",
   ].join("\n");
 
   const html = baseLayout({
@@ -338,8 +333,7 @@ export function contactReceivedTemplate({ fullName }) {
       <p style="margin:0;color:#111827;line-height:1.7;">
         Best regards,<br />
         <strong>Team TriWinz</strong><br />
-        TriWinz Technologies Pvt. Ltd.<br />
-        <span style="color:#6b7280;">Thiruvananthapuram, Kerala</span>
+        TriWinz Technologies Pvt. Ltd.
       </p>
     `,
   });
@@ -364,7 +358,6 @@ export function interviewerAvailabilityTemplate({ name, url }) {
     "Best regards,",
     "Talent Acquisition Team",
     "TriWinz Technologies Pvt. Ltd.",
-    "Thiruvananthapuram, Kerala",
   ].join("\n");
 
   const html = baseLayout({
@@ -395,8 +388,7 @@ export function interviewerAvailabilityTemplate({ name, url }) {
       <p style="margin:0;color:#111827;line-height:1.7;">
         Best regards,<br />
         <strong>Talent Acquisition Team</strong><br />
-        TriWinz Technologies Pvt. Ltd.<br />
-        <span style="color:#6b7280;">Thiruvananthapuram, Kerala</span>
+        TriWinz Technologies Pvt. Ltd.
       </p>
     `,
   });
@@ -454,7 +446,6 @@ export function interviewScheduledCandidateTemplate({ fullName, jobTitle, levelT
     "Best regards,",
     "Talent Acquisition Team",
     "TriWinz Technologies Pvt. Ltd.",
-    "Thiruvananthapuram, Kerala",
   ].join("\n");
 
   const html = baseLayout({
@@ -478,8 +469,7 @@ export function interviewScheduledCandidateTemplate({ fullName, jobTitle, levelT
       <p style="margin:0;color:#111827;line-height:1.7;">
         Best regards,<br />
         <strong>Talent Acquisition Team</strong><br />
-        TriWinz Technologies Pvt. Ltd.<br />
-        <span style="color:#6b7280;">Thiruvananthapuram, Kerala</span>
+        TriWinz Technologies Pvt. Ltd.
       </p>
     `,
   });
@@ -582,7 +572,6 @@ export function trainingApplicationReceivedTemplate({ fullName }) {
     "Best regards,",
     "Training Team",
     "TriWinz Technologies Pvt. Ltd.",
-    "Thiruvananthapuram, Kerala",
   ].join("\n");
 
   const html = baseLayout({
@@ -604,8 +593,7 @@ export function trainingApplicationReceivedTemplate({ fullName }) {
       <p style="margin:0;color:#111827;line-height:1.7;">
         Best regards,<br />
         <strong>Training Team</strong><br />
-        TriWinz Technologies Pvt. Ltd.<br />
-        <span style="color:#6b7280;">Thiruvananthapuram, Kerala</span>
+        TriWinz Technologies Pvt. Ltd.
       </p>
     `,
   });
