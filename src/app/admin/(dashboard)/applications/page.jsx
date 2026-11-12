@@ -298,6 +298,25 @@ export default function AdminApplicationsPage() {
     }
   }
 
+  async function saveResumeStatus(nextStatus) {
+    if (!resumeView?.id) return;
+    const res = await fetch(`/api/admin/applications/${resumeView.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: nextStatus }),
+    });
+    if (!res.ok) {
+      toast.error("Failed to update status");
+      throw new Error("Failed to update status");
+    }
+    toast.success(
+      nextStatus === "rejected"
+        ? "Status updated. Rejection email sent."
+        : "Status updated",
+    );
+    await load(page, pageSize);
+  }
+
   async function confirmDelete() {
     if (!pendingDelete) return;
     setDeleting(true);
@@ -805,6 +824,8 @@ export default function AdminApplicationsPage() {
                             size="small"
                             onClick={() =>
                               setResumeView({
+                                id: row.id,
+                                status: normalizeStatus(row.status),
                                 url: row.resumeUrl,
                                 fileName: row.resumeFileName,
                                 fullName: row.fullName,
@@ -1027,6 +1048,8 @@ export default function AdminApplicationsPage() {
         open={Boolean(resumeView)}
         resume={resumeView}
         onClose={() => setResumeView(null)}
+        statusOptions={APPLICATION_STATUSES}
+        onStatusSave={saveResumeStatus}
       />
 
       <ConfirmDeleteDialog
