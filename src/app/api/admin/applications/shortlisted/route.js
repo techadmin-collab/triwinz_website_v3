@@ -7,7 +7,7 @@ export async function GET() {
   if (error) return error;
 
   const applications = await prisma.jobApplication.findMany({
-    where: { status: { in: ["shortlisted", "reviewed"] } },
+    where: { status: "shortlisted" },
     select: { jobSlug: true, jobTitle: true },
     orderBy: { jobTitle: "asc" },
   });

@@ -66,6 +66,7 @@ const dataTextSx = {
 
 const APPLICATION_STATUSES = [
   { value: "new", label: "New" },
+  { value: "reviewed", label: "Reviewed" },
   { value: "shortlisted", label: "Shortlisted" },
   { value: "on_hold", label: "On hold" },
   { value: "rejected", label: "Rejected" },
@@ -84,7 +85,6 @@ const SORT_OPTIONS = [
 ];
 
 function normalizeStatus(status) {
-  if (status === "reviewed") return "shortlisted";
   if (status === "archived") return "rejected";
   return APPLICATION_STATUSES.some((item) => item.value === status)
     ? status

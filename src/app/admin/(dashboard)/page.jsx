@@ -42,9 +42,7 @@ export default async function AdminDashboardPage() {
   ] = await Promise.all([
     prisma.job.count(),
     prisma.jobApplication.count({ where: { status: "new" } }),
-    prisma.jobApplication.count({
-      where: { status: { in: ["shortlisted", "reviewed"] } },
-    }),
+    prisma.jobApplication.count({ where: { status: "shortlisted" } }),
     prisma.jobApplication.count({ where: { status: "selected" } }),
     canViewApplications
       ? prisma.job.findMany({

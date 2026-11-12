@@ -70,7 +70,7 @@ export async function POST(req, { params }) {
   }
 
   // Anyone being interviewed counts as shortlisted
-  if (application.status === "new" || application.status === "on_hold") {
+  if (["new", "reviewed", "on_hold"].includes(application.status)) {
     await prisma.jobApplication.update({
       where: { id: applicationId },
       data: { status: "shortlisted" },

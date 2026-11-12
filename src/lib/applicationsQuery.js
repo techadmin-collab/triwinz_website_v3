@@ -1,5 +1,6 @@
 const ALLOWED_STATUSES = [
   "new",
+  "reviewed",
   "shortlisted",
   "on_hold",
   "rejected",
@@ -36,9 +37,7 @@ export function buildApplicationsWhere({
   const and = [];
 
   if (status && ALLOWED_STATUSES.includes(status)) {
-    if (status === "shortlisted") {
-      where.status = { in: ["shortlisted", "reviewed"] };
-    } else if (status === "rejected") {
+    if (status === "rejected") {
       where.status = { in: ["rejected", "archived"] };
     } else {
       where.status = status;

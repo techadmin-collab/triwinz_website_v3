@@ -21,7 +21,7 @@ export async function GET() {
   const applications = await prisma.jobApplication.findMany({
     where: {
       OR: [
-        { status: { in: ["shortlisted", "reviewed"] } },
+        { status: "shortlisted" },
         { id: { in: [...byApp.keys()] } },
       ],
     },

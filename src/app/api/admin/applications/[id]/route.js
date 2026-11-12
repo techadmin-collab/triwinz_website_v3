@@ -10,7 +10,7 @@ export async function PATCH(req, { params }) {
 
   const { id } = await params;
   const body = await req.json();
-  const allowed = ["new", "shortlisted", "on_hold", "rejected", "selected"];
+  const allowed = ["new", "reviewed", "shortlisted", "on_hold", "rejected", "selected"];
   const data = {};
 
   if (body.status !== undefined) {
