@@ -40,6 +40,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { toast } from "react-hot-toast";
 import ResumePreviewDialog from "../../../../admin/components/ResumePreviewDialog";
 import JobDescriptionCard from "./JobDescriptionCard";
+import MyQuestions from "./MyQuestions";
 import InterviewChecklist from "../../../../admin/components/interviews/InterviewChecklist";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import { BRAND, brandButtonSx } from "../../../../../lib/brand";
@@ -134,10 +135,12 @@ export default function PanelInterviewDetail({ roundId }) {
   const [showCover, setShowCover] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [liveChecklist, setLiveChecklist] = useState(null); // latest items from the sheet
+  const [myQuestions, setMyQuestions] = useState([]); // private to this panel member
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   const api = `/api/panel/${encodeURIComponent(token)}/interviews/${roundId}`;
+  const questionsApi = `/api/panel/${encodeURIComponent(token)}/questions`;
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -147,6 +150,7 @@ export default function PanelInterviewDetail({ roundId }) {
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || "Could not load this interview");
       setData(json);
+      setMyQuestions(json.myQuestions || []);
       const initial = buildForm(json);
       setForm(initial);
       setBaseline(initial);
@@ -418,6 +422,16 @@ export default function PanelInterviewDetail({ roundId }) {
               />
             </Box>
           </Card>
+
+          <Card>
+            <MyQuestions
+              apiBase={questionsApi}
+              roundId={roundId}
+              items={myQuestions}
+              onItemsChange={setMyQuestions}
+              locked={!canEditFeedback}
+            />
+          </Card>
         </Stack>
 
         {/* Right: candidate + job description */}
@@ -497,6 +511,15 @@ export default function PanelInterviewDetail({ roundId }) {
         </DialogTitle>
         <DialogContent sx={{ p: { xs: 1.5, sm: 2.5 } }}>
           <Box sx={{ pt: { xs: 1.5, sm: 2.5 } }}>
+            <Card sx={{ mb: 2 }}>
+              <MyQuestions
+                apiBase={questionsApi}
+                roundId={roundId}
+                items={myQuestions}
+                onItemsChange={setMyQuestions}
+                locked={!canEditFeedback}
+              />
+            </Card>
 
             <Card sx={{ minWidth: 0 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5, flexWrap: "wrap" }}>

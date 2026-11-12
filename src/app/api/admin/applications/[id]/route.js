@@ -94,6 +94,9 @@ export async function DELETE(_req, { params }) {
     if (prisma.interviewRound) {
       await prisma.interviewRound.deleteMany({ where: { applicationId: id } });
     }
+    if (prisma.interviewerQuestion) {
+      await prisma.interviewerQuestion.deleteMany({ where: { applicationId: id } }).catch(() => {});
+    }
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Delete failed" }, { status: 400 });

@@ -8,6 +8,7 @@ import {
   OBJECT_ID_RE,
 } from "../../../../../../lib/interviews";
 import { checklistFor } from "../../../../../../lib/interviewChecklist";
+import { questionsFor } from "../../../../../../lib/interviewerQuestions";
 
 const LIMIT = 4000;
 
@@ -51,7 +52,7 @@ export async function GET(_req, { params }) {
   const round = await loadRound(interviewer, roundId);
   if (!round) return notFound();
 
-  const [application, feedback, job, checklist, teamNotes] = await Promise.all([
+  const [application, feedback, job, checklist, teamNotes, myQuestions] = await Promise.all([
     prisma.jobApplication.findUnique({
       where: { id: round.applicationId },
       // email and phone are deliberately not shared with the panel
@@ -89,6 +90,8 @@ export async function GET(_req, { params }) {
           select: { id: true, text: true, authorName: true, createdAt: true },
         })
       : Promise.resolve([]),
+    // this panel member's own questions only
+    questionsFor(round.id, interviewer.id),
   ]);
   if (!application) return notFound();
 
@@ -110,6 +113,7 @@ export async function GET(_req, { params }) {
       job: job || null,
       checklist,
       teamNotes,
+      myQuestions,
       feedback: serializeFeedback(feedback),
       canEditFeedback: FEEDBACK_OPEN_STATUSES.includes(round.status),
     },
