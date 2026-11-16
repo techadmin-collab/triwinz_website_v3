@@ -45,6 +45,7 @@ export default function RoundDialog({
   open,
   level,
   round, // existing round when editing
+  candidateName, // optional: shown under the title
   interviewers,
   onInterviewerCreated,
   onClose,
@@ -121,6 +122,11 @@ export default function RoundDialog({
       <Box component="form" onSubmit={handleSubmit}>
         <DialogTitle sx={{ fontWeight: 800 }}>
           {round ? `Edit Level ${level}` : `Schedule Level ${level}`}
+          {candidateName ? (
+            <Typography component="span" sx={{ display: "block", fontSize: "0.85rem", fontWeight: 500, color: "#6b7280", mt: 0.25 }}>
+              {candidateName}
+            </Typography>
+          ) : null}
         </DialogTitle>
         <DialogContent>
           <Stack spacing={2.25} sx={{ pt: 1 }}>

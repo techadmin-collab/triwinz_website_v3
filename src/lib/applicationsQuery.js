@@ -2,11 +2,16 @@ const ALLOWED_STATUSES = [
   "new",
   "reviewed",
   "shortlisted",
+  "interviewing", // not stored: open applications that have an interview level
   "on_hold",
   "rejected",
   "selected",
 ];
 const ALLOWED_PAGE_SIZES = [5, 10, 20];
+
+// Hired or rejected: these stay in their own tabs even when the candidate had interviews
+export const CLOSED_STATUSES = ["rejected", "archived", "selected"];
+const OPEN_STATUSES = ["new", "reviewed", "shortlisted", "on_hold"];
 
 const ALLOWED_SORTS = {
   newest: { createdAt: "desc" },
@@ -32,12 +37,22 @@ export function buildApplicationsWhere({
   dateFrom,
   dateTo,
   nameSearch,
+  interviewAppIds = [],
 }) {
   const where = {};
   const and = [];
 
   if (status && ALLOWED_STATUSES.includes(status)) {
-    if (status === "rejected") {
+    if (status === "interviewing") {
+      // every candidate with an interview level who isn't hired or rejected
+      // (upcoming, waiting for a result, passed a level, on hold)
+      where.status = { notIn: CLOSED_STATUSES };
+      and.push({ id: { in: interviewAppIds } });
+    } else if (OPEN_STATUSES.includes(status)) {
+      // new / reviewed / shortlisted / on hold: only those not in interviews yet
+      where.status = status;
+      if (interviewAppIds.length) and.push({ id: { notIn: interviewAppIds } });
+    } else if (status === "rejected") {
       where.status = { in: ["rejected", "archived"] };
     } else {
       where.status = status;
@@ -80,6 +95,16 @@ export function buildApplicationsWhere({
   }
 
   return where;
+}
+
+/** Ids of applications that have at least one interview level. */
+export async function interviewApplicationIds(prisma) {
+  if (!prisma.interviewRound) return [];
+  const rows = await prisma.interviewRound.findMany({
+    distinct: ["applicationId"],
+    select: { applicationId: true },
+  });
+  return rows.map((r) => r.applicationId).filter(Boolean);
 }
 
 export function buildApplicationsOrderBy(sort) {

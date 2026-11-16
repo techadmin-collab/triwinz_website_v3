@@ -52,6 +52,7 @@ export async function GET() {
         status: latest.status,
         scheduledAt: latest.scheduledAt,
         mode: latest.mode,
+        interviewerIds: latest.interviewerIds,
         interviewerNames: latest.interviewerNames,
       },
       stage: getStage(app, appRounds),

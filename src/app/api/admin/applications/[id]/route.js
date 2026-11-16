@@ -38,6 +38,36 @@ export async function PATCH(req, { params }) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
+    // A candidate in the interview process is rejected through the interview result,
+    // not from here: only allowed when the latest level's result is "Rejected".
+    if (
+      data.status === "rejected" &&
+      existing.status !== "rejected" &&
+      existing.status !== "archived" &&
+      prisma.interviewRound
+    ) {
+      const latest = await prisma.interviewRound.findFirst({
+        where: { applicationId: id, status: { not: "cancelled" } },
+        orderBy: { level: "desc" },
+      });
+      if (latest && latest.status !== "rejected") {
+        const level = latest.title ? `Level ${latest.level} (${latest.title})` : `Level ${latest.level}`;
+        const result =
+          latest.status === "passed"
+            ? `the result for ${level} is Passed`
+            : latest.status === "on_hold"
+              ? `the result for ${level} is On hold`
+              : `no result has been recorded for ${level} yet`;
+        return NextResponse.json(
+          {
+            error: `${existing.fullName} is in the interview process and ${result}. To reject this candidate, open them on the Interviews page and record the result of ${level} as Rejected.`,
+            code: "INTERVIEW_RESULT_REQUIRED",
+          },
+          { status: 409 },
+        );
+      }
+    }
+
     const application = await prisma.jobApplication.update({
       where: { id },
       data,

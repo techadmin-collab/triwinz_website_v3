@@ -16,11 +16,13 @@ import {
   Paper,
   Select,
   Stack,
+  Tab,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
+  Tabs,
   TextField,
   Tooltip,
   Typography,
@@ -33,10 +35,12 @@ import InboxOutlinedIcon from "@mui/icons-material/InboxOutlined";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import EventAvailableOutlinedIcon from "@mui/icons-material/EventAvailableOutlined";
 import { toast } from "react-hot-toast";
 import ConfirmDeleteDialog from "../../components/ConfirmDeleteDialog";
 import ApplicationEditDialog from "../../components/ApplicationEditDialog";
 import ResumePreviewDialog from "../../components/ResumePreviewDialog";
+import RoundDialog from "../../components/interviews/RoundDialog";
 import AdminPageHeader from "../../components/AdminPageHeader";
 import { BRAND } from "../../../../lib/brand";
 import { truncateText } from "../../../../lib/resumeFile";
@@ -84,6 +88,22 @@ const SORT_OPTIONS = [
   { value: "status_desc", label: "Status Z–A" },
 ];
 
+// Tabs: the statuses, plus "In interview" (shortlisted with an interview level) and "All"
+const TAB_ORDER = ["new", "interviewing", "shortlisted", "on_hold", "reviewed", "rejected", "selected", ""];
+const STATUS_TABS = TAB_ORDER.map((value) =>
+  value === "interviewing"
+    ? { value, label: "In interview" }
+    : value === ""
+      ? { value, label: "All" }
+      : APPLICATION_STATUSES.find((item) => item.value === value),
+);
+
+// Status tab from the URL: opens on "New" by default; ?status=all shows every status
+function tabFromParam(value) {
+  if (value === "all") return "";
+  return STATUS_TABS.some((item) => item.value && item.value === value) ? value : "new";
+}
+
 function normalizeStatus(status) {
   if (status === "archived") return "rejected";
   return APPLICATION_STATUSES.some((item) => item.value === status)
@@ -120,14 +140,16 @@ export default function AdminApplicationsPage() {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [newCount, setNewCount] = useState(0);
+  const [statusCounts, setStatusCounts] = useState({});
+  const [scheduleFor, setScheduleFor] = useState(null); // application to schedule Level 1 for
+  const [interviewers, setInterviewers] = useState(null); // loaded the first time it's needed
+  const [openingSchedule, setOpeningSchedule] = useState(null);
   const [from, setFrom] = useState(0);
   const [to, setTo] = useState(0);
   const [jobOptions, setJobOptions] = useState([]);
   const [referralSourceOptions, setReferralSourceOptions] = useState([]);
   const [statusFilter, setStatusFilter] = useState(
-    APPLICATION_STATUSES.some((item) => item.value === initialStatus)
-      ? initialStatus
-      : "",
+    tabFromParam(initialStatus),
   );
   const [jobFilter, setJobFilter] = useState(initialJobSlug);
   const [referralSourceFilter, setReferralSourceFilter] = useState("");
@@ -148,18 +170,14 @@ export default function AdminApplicationsPage() {
   useEffect(() => {
     const nextStatus = searchParams.get("status") || "";
     const nextJobSlug = searchParams.get("jobSlug") || "";
-    setStatusFilter(
-      APPLICATION_STATUSES.some((item) => item.value === nextStatus)
-        ? nextStatus
-        : "",
-    );
+    setStatusFilter(tabFromParam(nextStatus));
     setJobFilter(nextJobSlug);
     setPage(1);
   }, [searchParams]);
 
+  // the status tabs are not counted as a filter
   const hasActiveFilters = Boolean(
-    statusFilter ||
-      jobFilter ||
+    jobFilter ||
       referralSourceFilter ||
       debouncedNameSearch ||
       dateFrom ||
@@ -193,6 +211,7 @@ export default function AdminApplicationsPage() {
     setTotal(data.total || 0);
     setTotalPages(data.totalPages || 1);
     setNewCount(data.newCount || 0);
+    setStatusCounts(data.statusCounts || {});
     setFrom(data.from || 0);
     setTo(data.to || 0);
     setJobOptions(data.jobOptions || []);
@@ -228,7 +247,6 @@ export default function AdminApplicationsPage() {
   }
 
   function clearFilters() {
-    setStatusFilter("");
     setJobFilter("");
     setReferralSourceFilter("");
     setNameSearch("");
@@ -287,7 +305,10 @@ export default function AdminApplicationsPage() {
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
-        toast.error("Failed to update application");
+        const body = await res.json().catch(() => ({}));
+        toast.error(body.error || "Failed to update application", {
+          duration: body.code ? 9000 : 4000,
+        });
         return;
       }
       toast.success("Application updated");
@@ -306,7 +327,10 @@ export default function AdminApplicationsPage() {
       body: JSON.stringify({ status: nextStatus }),
     });
     if (!res.ok) {
-      toast.error("Failed to update status");
+      const body = await res.json().catch(() => ({}));
+      toast.error(body.error || "Failed to update status", {
+        duration: body.code ? 9000 : 4000,
+      });
       throw new Error("Failed to update status");
     }
     toast.success(
@@ -315,6 +339,67 @@ export default function AdminApplicationsPage() {
         : "Status updated",
     );
     await load(page, pageSize);
+  }
+
+  async function openSchedule(row) {
+    if (interviewers) {
+      setScheduleFor(row);
+      return;
+    }
+    setOpeningSchedule(row.id);
+    try {
+      const res = await fetch("/api/admin/interviewers");
+      const body = await res.json().catch(() => null);
+      if (!res.ok) {
+        toast.error(
+          body?.error ||
+            (res.status === 403
+              ? "You don't have access to Interviews, so you can't schedule interviews."
+              : "Could not load the interview panel"),
+          { duration: 7000 },
+        );
+        return;
+      }
+      setInterviewers(Array.isArray(body) ? body : []);
+      setScheduleFor(row);
+    } finally {
+      setOpeningSchedule(null);
+    }
+  }
+
+  // e.g. "Interview emails sent to the candidate and 2 panel members" / what didn't go out
+  function showEmailSummary(emails) {
+    if (!emails || emails.skipped) return;
+    const panel = emails.panel || [];
+    const sentPanel = panel.filter((p) => p.status === "sent").length;
+    const parts = [];
+    if (emails.candidate === "sent") parts.push("the candidate");
+    if (sentPanel) parts.push(`${sentPanel} panel member${sentPanel === 1 ? "" : "s"}`);
+    if (parts.length) toast.success(`Interview emails sent to ${parts.join(" and ")}`);
+    const problems = [];
+    if (emails.candidate === "failed") problems.push("the candidate (sending failed)");
+    if (emails.candidate === "no_email") problems.push("the candidate (no email address)");
+    panel.filter((p) => p.status === "failed").forEach((p) => problems.push(`${p.name} (sending failed)`));
+    panel.filter((p) => p.status === "no_email").forEach((p) => problems.push(`${p.name} (no email address)`));
+    if (problems.length) toast.error(`Not emailed: ${problems.join(", ")}`, { duration: 9000 });
+  }
+
+  async function submitSchedule(payload) {
+    if (!scheduleFor) return false;
+    const res = await fetch(`/api/admin/interviews/${scheduleFor.id}/rounds`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      toast.error(body.error || "Could not schedule the interview");
+      return false;
+    }
+    toast.success(`Level 1 scheduled for ${scheduleFor.fullName}`);
+    showEmailSummary(body.emails);
+    await load(page, pageSize);
+    return true;
   }
 
   async function confirmDelete() {
@@ -466,38 +551,6 @@ export default function AdminApplicationsPage() {
               onChange={(e) => setNameSearch(e.target.value)}
               sx={filterFieldSx}
             />
-          </Box>
-
-          <Box sx={{ flex: 1 }}>
-            <Typography
-              sx={{
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                color: "#6b7280",
-                mb: 0.75,
-                textTransform: "uppercase",
-                letterSpacing: "0.04em",
-              }}
-            >
-              Status
-            </Typography>
-            <Select
-              size="small"
-              fullWidth
-              displayEmpty
-              value={statusFilter}
-              onChange={(e) =>
-                handleFilterChange(setStatusFilter, e.target.value)
-              }
-              sx={filterFieldSx}
-            >
-              <MenuItem value="">All statuses</MenuItem>
-              {APPLICATION_STATUSES.map((status) => (
-                <MenuItem key={status.value} value={status.value}>
-                  {status.label}
-                </MenuItem>
-              ))}
-            </Select>
           </Box>
 
           <Box sx={{ flex: 1.4 }}>
@@ -668,6 +721,62 @@ export default function AdminApplicationsPage() {
           bgcolor: "#fff",
         }}
       >
+        <Tabs
+          value={statusFilter}
+          onChange={(_, value) => handleFilterChange(setStatusFilter, value)}
+          variant="scrollable"
+          scrollButtons="auto"
+          allowScrollButtonsMobile
+          aria-label="Application status"
+          sx={{
+            px: 1,
+            minHeight: 48,
+            borderBottom: "1px solid #e8eaed",
+            "& .MuiTabs-indicator": { bgcolor: BRAND.primary, height: 3, borderRadius: "3px 3px 0 0" },
+            "& .MuiTab-root": {
+              minHeight: 48,
+              px: 1.75,
+              textTransform: "none",
+              fontWeight: 700,
+              fontSize: "0.85rem",
+              color: "#6b7280",
+            },
+            "& .MuiTab-root.Mui-selected": { color: BRAND.primary },
+          }}
+        >
+          {STATUS_TABS.map((tab) => {
+            const count = statusCounts[tab.value || "all"] || 0;
+            const selected = statusFilter === tab.value;
+            return (
+              <Tab
+                key={tab.value || "all"}
+                value={tab.value}
+                label={
+                  <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.75 }}>
+                    {tab.label}
+                    <Box
+                      component="span"
+                      sx={{
+                        minWidth: 22,
+                        px: 0.75,
+                        py: 0.1,
+                        borderRadius: 10,
+                        fontSize: "0.72rem",
+                        fontWeight: 800,
+                        lineHeight: 1.6,
+                        textAlign: "center",
+                        bgcolor: selected ? BRAND.primary : "#f3f4f6",
+                        color: selected ? "#fff" : "#4b5563",
+                      }}
+                    >
+                      {count}
+                    </Box>
+                  </Box>
+                }
+              />
+            );
+          })}
+        </Tabs>
         {loading ? (
           <Box sx={{ p: 8, textAlign: "center" }}>
             <CircularProgress size={28} sx={{ color: BRAND.primary }} />
@@ -695,6 +804,10 @@ export default function AdminApplicationsPage() {
             <Typography color="text.secondary">
               {hasActiveFilters
                 ? "No applications match your filters."
+                : statusFilter
+                  ? statusFilter === "interviewing"
+                    ? "No candidates are in the interview process right now."
+                    : `No ${getStatusLabel(statusFilter).toLowerCase()} applications.`
                 : "New submissions from careers will appear here."}
             </Typography>
           </Box>
@@ -856,7 +969,7 @@ export default function AdminApplicationsPage() {
                       </TableCell>
                       <TableCell>
                         <Typography variant="inherit" sx={dataTextSx}>
-                          {getStatusLabel(row.status)}
+                          {row.inInterview ? "In interview" : getStatusLabel(row.status)}
                         </Typography>
                       </TableCell>
                       <TableCell align="right">
@@ -864,7 +977,34 @@ export default function AdminApplicationsPage() {
                           direction="row"
                           spacing={0.75}
                           justifyContent="flex-end"
+                          alignItems="center"
                         >
+                          {row.status === "shortlisted" && !row.inInterview ? (
+                            <Button
+                              size="small"
+                              onClick={() => openSchedule(row)}
+                              disabled={openingSchedule === row.id}
+                              startIcon={
+                                openingSchedule === row.id ? (
+                                  <CircularProgress size={14} sx={{ color: "inherit" }} />
+                                ) : (
+                                  <EventAvailableOutlinedIcon fontSize="small" />
+                                )
+                              }
+                              sx={{
+                                textTransform: "none",
+                                fontWeight: 700,
+                                whiteSpace: "nowrap",
+                                color: "#fff",
+                                px: 1.5,
+                                backgroundImage: BRAND.gradient,
+                                "&:hover": { opacity: 0.92 },
+                                "&.Mui-disabled": { color: "#fff", opacity: 0.7 },
+                              }}
+                            >
+                              Schedule interview
+                            </Button>
+                          ) : null}
                           <Tooltip title="Edit application">
                             <IconButton
                               aria-label="Edit application"
@@ -1042,6 +1182,16 @@ export default function AdminApplicationsPage() {
           if (!savingApplication) setApplicationEdit(null);
         }}
         onSave={saveApplicationEdit}
+      />
+
+      <RoundDialog
+        open={Boolean(scheduleFor)}
+        level={1}
+        candidateName={scheduleFor ? `${scheduleFor.fullName} · ${scheduleFor.jobTitle}` : ""}
+        interviewers={interviewers || []}
+        onInterviewerCreated={(created) => setInterviewers((prev) => [...(prev || []), created])}
+        onClose={() => setScheduleFor(null)}
+        onSubmit={submitSchedule}
       />
 
       <ResumePreviewDialog

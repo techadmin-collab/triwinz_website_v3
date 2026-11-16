@@ -32,6 +32,7 @@ import { formatDateTime, levelLabel } from "../../../../lib/interviews";
 import { BRAND } from "../../../../lib/brand";
 
 const TABS = [
+  { value: "upcoming", label: "Upcoming" },
   { value: "in_progress", label: "In progress" },
   { value: "not_scheduled", label: "Not scheduled" },
   { value: "hired", label: "Hired" },
@@ -39,11 +40,113 @@ const TABS = [
   { value: "all", label: "All" },
 ];
 
+// Tabs grouped by interviewer and sorted by date
+const GROUPED_TABS = ["upcoming", "in_progress"];
+const UPCOMING_GRACE_MS = 60 * 60 * 1000; // an interview that started in the last hour still counts as upcoming
+
+/** Upcoming = the latest level is scheduled for later (or its date is still to be confirmed). */
+function isUpcoming(item, now) {
+  const latest = item.latest;
+  if (item.stage.key !== "in_progress" || latest?.status !== "scheduled") return false;
+  if (!latest.scheduledAt) return true;
+  return new Date(latest.scheduledAt).getTime() >= now - UPCOMING_GRACE_MS;
+}
+
+function tabKey(item, now) {
+  return isUpcoming(item, now) ? "upcoming" : item.stage.key;
+}
+
+// soonest first; interviews without a date go last
+function byDate(a, b) {
+  const ta = a.latest?.scheduledAt ? new Date(a.latest.scheduledAt).getTime() : Infinity;
+  const tb = b.latest?.scheduledAt ? new Date(b.latest.scheduledAt).getTime() : Infinity;
+  return ta - tb;
+}
+
+/** [{ key, name, items }] - one group per panel member on the latest level, A to Z. */
+function groupByInterviewer(list, onlyInterviewer) {
+  const groups = new Map();
+  list.forEach((item) => {
+    const ids = item.latest?.interviewerIds || [];
+    const names = item.latest?.interviewerNames || [];
+    const panel = ids.length
+      ? ids.map((id, n) => ({ id, name: names[n] || "Interviewer" }))
+      : [{ id: "none", name: "No interviewer assigned" }];
+    panel
+      .filter((p) => onlyInterviewer === "all" || p.id === onlyInterviewer)
+      .forEach((p) => {
+        if (!groups.has(p.id)) groups.set(p.id, { key: p.id, name: p.name, items: [] });
+        groups.get(p.id).items.push(item);
+      });
+  });
+  return [...groups.values()].sort((a, b) => {
+    if (a.key === "none") return 1;
+    if (b.key === "none") return -1;
+    return a.name.localeCompare(b.name);
+  });
+}
+
+function CandidateRow({ item: i, last }) {
+  return (
+    <Link href={`/admin/interviews/${i.id}`} style={{ textDecoration: "none", color: "inherit", display: "block" }}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "auto minmax(0,1fr) auto", md: "auto minmax(0,1.3fr) minmax(0,1.5fr) auto auto" },
+          alignItems: "center",
+          columnGap: { xs: 1.5, md: 2 },
+          rowGap: 0.75,
+          px: { xs: 1.5, sm: 2.25 },
+          py: 1.1,
+          borderBottom: last ? 0 : "1px solid #f1f2f4",
+          "&:hover": { bgcolor: "#F5FCFB" },
+          "&:hover .row-arrow": { transform: "translateX(3px)", color: BRAND.primary },
+        }}
+      >
+        <Avatar sx={{ width: 32, height: 32, bgcolor: "#E6F7F6", color: BRAND.primary, fontWeight: 800, fontSize: "0.82rem" }}>
+          {i.fullName?.[0]?.toUpperCase()}
+        </Avatar>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography sx={{ fontWeight: 700, fontSize: "0.86rem", color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {i.fullName}
+          </Typography>
+          <Typography sx={{ fontSize: "0.74rem", color: "#6b7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {i.jobTitle}
+          </Typography>
+          {i.latest?.scheduledAt ? (
+            <Typography sx={{ display: { xs: "block", md: "none" }, fontSize: "0.7rem", color: "#9ca3af" }}>
+              {formatDateTime(i.latest.scheduledAt)}
+            </Typography>
+          ) : null}
+        </Box>
+        <Box sx={{ display: { xs: "none", md: "block" }, minWidth: 0 }}>
+          {i.latest ? (
+            <>
+              <Typography sx={{ fontSize: "0.76rem", fontWeight: 600, color: "#374151", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {levelLabel(i.latest)} · {i.latest.interviewerNames.join(", ")}
+              </Typography>
+              <Typography sx={{ fontSize: "0.7rem", color: "#9ca3af" }}>
+                {i.latest.scheduledAt ? formatDateTime(i.latest.scheduledAt) : "Date not set"}
+              </Typography>
+            </>
+          ) : (
+            <Typography sx={{ fontSize: "0.74rem", color: "#9ca3af" }}>No interviews scheduled</Typography>
+          )}
+        </Box>
+        <Box sx={{ justifySelf: "end" }}>
+          <StageChip label={i.stage.label} color={i.stage.color} bg={i.stage.bg} size="sm" />
+        </Box>
+        <ArrowForwardIcon className="row-arrow" sx={{ display: { xs: "none", md: "block" }, fontSize: 16, color: "#9ca3af", transition: "transform 0.2s ease" }} />
+      </Box>
+    </Link>
+  );
+}
+
 export default function InterviewsPage() {
   const [items, setItems] = useState([]);
   const [interviewers, setInterviewers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState("in_progress");
+  const [tab, setTab] = useState("upcoming");
   const [search, setSearch] = useState("");
   const [job, setJob] = useState("all");
   const [interviewer, setInterviewer] = useState("all");
@@ -92,13 +195,26 @@ export default function InterviewsPage() {
     );
   }, [items, search, job, interviewer]);
 
+  const now = useMemo(() => Date.now(), [items]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const counts = useMemo(() => {
     const c = { all: filtered.length };
-    filtered.forEach((i) => (c[i.stage.key] = (c[i.stage.key] || 0) + 1));
+    filtered.forEach((i) => {
+      const key = tabKey(i, now);
+      c[key] = (c[key] || 0) + 1;
+    });
     return c;
-  }, [filtered]);
+  }, [filtered, now]);
 
-  const visible = tab === "all" ? filtered : filtered.filter((i) => i.stage.key === tab);
+  const grouped = GROUPED_TABS.includes(tab);
+  const visible = useMemo(() => {
+    const list = tab === "all" ? filtered : filtered.filter((i) => tabKey(i, now) === tab);
+    return grouped ? [...list].sort(byDate) : list;
+  }, [filtered, tab, now, grouped]);
+  const groups = useMemo(
+    () => (grouped ? groupByInterviewer(visible, interviewer) : []),
+    [grouped, visible, interviewer],
+  );
   const pageRows = visible.slice((page - 1) * pageSize, page * pageSize);
 
   const upcoming = useMemo(() => {
@@ -289,7 +405,7 @@ export default function InterviewsPage() {
             </Tabs>
           </Box>
 
-          {visible.length === 0 ? (
+          {visible.length === 0 || (grouped && groups.length === 0) ? (
             <Paper elevation={0} sx={{ p: 6, textAlign: "center", borderRadius: 2, border: "1px solid #e8eaed", bgcolor: "#fff" }}>
               <PeopleAltOutlinedIcon sx={{ color: "#9ca3af", fontSize: 32, mb: 1 }} />
               <Typography sx={{ fontWeight: 700, color: "#111" }}>No candidates here</Typography>
@@ -297,55 +413,41 @@ export default function InterviewsPage() {
                 Shortlist candidates from Applications to start their interviews.
               </Typography>
             </Paper>
+          ) : grouped ? (
+            <Box sx={{ display: "grid", gap: 2 }}>
+              {groups.map((group) => (
+                <Paper key={group.key} elevation={0} sx={{ borderRadius: 2, border: "1px solid #e8eaed", bgcolor: "#fff", overflow: "hidden" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.25,
+                      px: { xs: 1.5, sm: 2.25 },
+                      py: 1.1,
+                      bgcolor: "#F5FCFB",
+                      borderBottom: "1px solid #e8eaed",
+                    }}
+                  >
+                    <Avatar sx={{ width: 28, height: 28, bgcolor: group.key === "none" ? "#e5e7eb" : BRAND.primary, color: group.key === "none" ? "#6b7280" : "#fff", fontWeight: 800, fontSize: "0.78rem" }}>
+                      {group.key === "none" ? "?" : group.name?.[0]?.toUpperCase()}
+                    </Avatar>
+                    <Typography sx={{ fontWeight: 800, color: "#111", fontSize: "0.9rem", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {group.name}
+                    </Typography>
+                    <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, color: "#6b7280", flexShrink: 0 }}>
+                      {group.items.length} interview{group.items.length === 1 ? "" : "s"}
+                    </Typography>
+                  </Box>
+                  {group.items.map((i, index) => (
+                    <CandidateRow key={i.id} item={i} last={index === group.items.length - 1} />
+                  ))}
+                </Paper>
+              ))}
+            </Box>
           ) : (
             <Paper elevation={0} sx={{ borderRadius: 2, border: "1px solid #e8eaed", bgcolor: "#fff", overflow: "hidden" }}>
               {pageRows.map((i, index) => (
-                <Link key={i.id} href={`/admin/interviews/${i.id}`} style={{ textDecoration: "none", color: "inherit", display: "block" }}>
-                  <Box
-                    sx={{
-                      display: "grid",
-                      gridTemplateColumns: { xs: "auto minmax(0,1fr) auto", md: "auto minmax(0,1.3fr) minmax(0,1.5fr) auto auto" },
-                      alignItems: "center",
-                      columnGap: { xs: 1.5, md: 2 },
-                      rowGap: 0.75,
-                      px: { xs: 1.5, sm: 2.25 },
-                      py: 1.1,
-                      borderBottom: index === pageRows.length - 1 ? 0 : "1px solid #f1f2f4",
-                      "&:hover": { bgcolor: "#F5FCFB" },
-                      "&:hover .row-arrow": { transform: "translateX(3px)", color: BRAND.primary },
-                    }}
-                  >
-                    <Avatar sx={{ width: 32, height: 32, bgcolor: "#E6F7F6", color: BRAND.primary, fontWeight: 800, fontSize: "0.82rem" }}>
-                      {i.fullName?.[0]?.toUpperCase()}
-                    </Avatar>
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography sx={{ fontWeight: 700, fontSize: "0.86rem", color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {i.fullName}
-                      </Typography>
-                      <Typography sx={{ fontSize: "0.74rem", color: "#6b7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {i.jobTitle}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: { xs: "none", md: "block" }, minWidth: 0 }}>
-                      {i.latest ? (
-                        <>
-                          <Typography sx={{ fontSize: "0.76rem", fontWeight: 600, color: "#374151", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                            {levelLabel(i.latest)} · {i.latest.interviewerNames.join(", ")}
-                          </Typography>
-                          <Typography sx={{ fontSize: "0.7rem", color: "#9ca3af" }}>
-                            {i.latest.scheduledAt ? formatDateTime(i.latest.scheduledAt) : "Date not set"}
-                          </Typography>
-                        </>
-                      ) : (
-                        <Typography sx={{ fontSize: "0.74rem", color: "#9ca3af" }}>No interviews scheduled</Typography>
-                      )}
-                    </Box>
-                    <Box sx={{ justifySelf: "end" }}>
-                      <StageChip label={i.stage.label} color={i.stage.color} bg={i.stage.bg} size="sm" />
-                    </Box>
-                    <ArrowForwardIcon className="row-arrow" sx={{ display: { xs: "none", md: "block" }, fontSize: 16, color: "#9ca3af", transition: "transform 0.2s ease" }} />
-                  </Box>
-                </Link>
+                <CandidateRow key={i.id} item={i} last={index === pageRows.length - 1} />
               ))}
               <ListPagination
                 count={visible.length}

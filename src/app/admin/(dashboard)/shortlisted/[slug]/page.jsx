@@ -203,7 +203,10 @@ export default function ShortlistedJobApplicationsPage() {
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
-        toast.error("Failed to update application");
+        const body = await res.json().catch(() => ({}));
+        toast.error(body.error || "Failed to update application", {
+          duration: body.code ? 9000 : 4000,
+        });
         return;
       }
       toast.success("Application updated");
@@ -222,7 +225,10 @@ export default function ShortlistedJobApplicationsPage() {
       body: JSON.stringify({ status: nextStatus }),
     });
     if (!res.ok) {
-      toast.error("Failed to update status");
+      const body = await res.json().catch(() => ({}));
+      toast.error(body.error || "Failed to update status", {
+        duration: body.code ? 9000 : 4000,
+      });
       throw new Error("Failed to update status");
     }
     toast.success(

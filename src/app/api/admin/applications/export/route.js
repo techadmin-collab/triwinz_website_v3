@@ -4,6 +4,7 @@ import { requireModule } from "../../../../../lib/requireAdmin";
 import {
   buildApplicationsOrderBy,
   buildApplicationsWhere,
+  interviewApplicationIds,
   parseApplicationsQuery,
 } from "../../../../../lib/applicationsQuery";
 
@@ -51,7 +52,8 @@ export async function GET(req) {
 
   const { searchParams } = new URL(req.url);
   const { sort, filters } = parseApplicationsQuery(searchParams);
-  const where = buildApplicationsWhere(filters);
+  const interviewAppIds = await interviewApplicationIds(prisma);
+  const where = buildApplicationsWhere({ ...filters, interviewAppIds });
   const orderBy = buildApplicationsOrderBy(sort);
 
   const items = await prisma.jobApplication.findMany({
