@@ -252,6 +252,7 @@ model InterviewFeedback {
   strengths       String?  // older assessments
   concerns        String?  // older assessments
   comments        String?  // older assessments / remarks when a job has no questions
+  notes           String?  // the interviewer's notes, written above the recommendation
   submittedAt     DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

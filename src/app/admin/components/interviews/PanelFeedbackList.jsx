@@ -69,8 +69,8 @@ export default function PanelFeedbackList({ feedback = [], interviewerNames = []
                 <Typography sx={{ mt: 0.5, fontSize: "0.8rem", color: "#374151" }}>
                   {scores.map((sc) => `${sc.question}: ${sc.rating}/5`).join(" · ")}
                 </Typography>
-              ) : f.comments ? (
-                <Typography sx={{ mt: 0.5, fontSize: "0.82rem", color: "#374151", whiteSpace: "pre-line" }}>{f.comments}</Typography>
+              ) : f.comments || f.notes ? (
+                <Typography sx={{ mt: 0.5, fontSize: "0.82rem", color: "#374151", whiteSpace: "pre-line" }}>{f.comments || f.notes}</Typography>
               ) : null
             ) : (
               <>
@@ -118,6 +118,7 @@ export default function PanelFeedbackList({ feedback = [], interviewerNames = []
                 <Section label="Strengths" text={f.strengths} />
                 <Section label="Concerns" text={f.concerns} />
                 <Section label={scores.length || overall.length ? "Overall comments" : "Remarks"} text={f.comments} />
+                <Section label="Notes" text={f.notes} />
               </>
             )}
           </Box>

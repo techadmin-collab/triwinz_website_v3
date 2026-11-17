@@ -69,6 +69,7 @@ function buildForm(json) {
     ),
     recommendation: fb?.recommendation || "",
     comments: fb?.comments || "",
+    notes: fb?.notes || "",
   };
 }
 
@@ -184,6 +185,7 @@ export default function PanelInterviewDetail({ roundId }) {
           overall: Object.entries(form.overall).map(([question, v]) => ({ question, details: v.details, remarks: v.remarks })),
           recommendation: form.recommendation,
           comments: form.comments,
+          notes: form.notes,
         }),
       });
       const json = await res.json().catch(() => ({}));
@@ -655,6 +657,21 @@ export default function PanelInterviewDetail({ roundId }) {
                   />
                 </Box>
               ) : null}
+
+              <Box sx={{ mb: 2.5 }}>
+                <SectionTitle>Notes</SectionTitle>
+                <TextField
+                  fullWidth
+                  multiline
+                  minRows={4}
+                  placeholder="Anything else about the interview or the candidate that the hiring team should know (optional)"
+                  value={form.notes}
+                  onChange={(e) => set("notes", e.target.value)}
+                  inputProps={{ maxLength: 4000, "aria-label": "Notes" }}
+                  InputProps={{ readOnly: !canEditFeedback }}
+                  sx={{ bgcolor: "#fff" }}
+                />
+              </Box>
 
               <Box sx={{ p: 1.5, borderRadius: 2, border: "1px solid rgba(29, 87, 88, 0.25)", bgcolor: "#F5FCFB" }}>
               <Typography sx={{ fontSize: "0.82rem", fontWeight: 700, color: "#374151", mb: 0.75 }}>Would you recommend this candidate? *</Typography>

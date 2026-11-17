@@ -35,6 +35,7 @@ function serializeFeedback(fb) {
     strengths: fb.strengths,
     concerns: fb.concerns,
     comments: fb.comments,
+    notes: fb.notes || null,
     submittedAt: fb.submittedAt,
     updatedAt: fb.updatedAt,
   };
@@ -126,6 +127,7 @@ export async function GET(_req, { params }) {
 //   overall: [{ question, details?, remarks? }]     one per overall question (from the job)
 //   recommendation: strong_yes | yes | no | strong_no
 //   comments?: remarks, used only when the job has no assessment questions
+//   notes?: the interviewer's notes
 // }
 export async function PUT(req, { params }) {
   const { interviewer, error } = await requirePanel(params);
@@ -177,6 +179,7 @@ export async function PUT(req, { params }) {
     rating: average === null ? null : Math.round(average),
     recommendation: body.recommendation,
     comments: criteria.length || questions.length ? null : clean(body.comments),
+    notes: clean(body.notes),
     strengths: null,
     concerns: null,
     interviewerName: interviewer.name,
