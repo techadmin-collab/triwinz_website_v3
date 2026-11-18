@@ -4,13 +4,15 @@ const ALLOWED_STATUSES = [
   "shortlisted",
   "interviewing", // not stored: open applications that have an interview level
   "on_hold",
+  "marked_for_rejection",
   "rejected",
   "selected",
 ];
 const ALLOWED_PAGE_SIZES = [5, 10, 20];
 
-// Hired or rejected: these stay in their own tabs even when the candidate had interviews
-export const CLOSED_STATUSES = ["rejected", "archived", "selected"];
+// Hired, rejected or marked for rejection: these stay in their own tabs even when the
+// candidate had interviews
+export const CLOSED_STATUSES = ["rejected", "archived", "selected", "marked_for_rejection"];
 const OPEN_STATUSES = ["new", "reviewed", "shortlisted", "on_hold"];
 
 const ALLOWED_SORTS = {
@@ -38,6 +40,7 @@ export function buildApplicationsWhere({
   dateTo,
   nameSearch,
   interviewAppIds = [],
+  withInterviews = false, // e.g. the Shortlisted page: shortlisted incl. those in interviews
 }) {
   const where = {};
   const and = [];
@@ -51,7 +54,7 @@ export function buildApplicationsWhere({
     } else if (OPEN_STATUSES.includes(status)) {
       // new / reviewed / shortlisted / on hold: only those not in interviews yet
       where.status = status;
-      if (interviewAppIds.length) and.push({ id: { notIn: interviewAppIds } });
+      if (interviewAppIds.length && !withInterviews) and.push({ id: { notIn: interviewAppIds } });
     } else if (status === "rejected") {
       where.status = { in: ["rejected", "archived"] };
     } else {
@@ -126,6 +129,7 @@ export function parseApplicationsQuery(searchParams) {
   const nameSearch = String(searchParams.get("name") || "").trim();
   const dateFrom = searchParams.get("dateFrom") || "";
   const dateTo = searchParams.get("dateTo") || "";
+  const withInterviews = searchParams.get("withInterviews") === "1";
   const requestedSort = searchParams.get("sort") || DEFAULT_SORT;
   const sort = ALLOWED_SORTS[requestedSort] ? requestedSort : DEFAULT_SORT;
 
@@ -140,6 +144,7 @@ export function parseApplicationsQuery(searchParams) {
       nameSearch,
       dateFrom: isValidDateString(dateFrom) ? dateFrom : "",
       dateTo: isValidDateString(dateTo) ? dateTo : "",
+      withInterviews,
     },
   };
 }

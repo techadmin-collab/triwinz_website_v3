@@ -15,6 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import { BRAND } from "../../../lib/brand";
+import { needsReason } from "../../../lib/applicationStatus";
 
 export default function ApplicationEditDialog({
   open,
@@ -23,6 +24,8 @@ export default function ApplicationEditDialog({
   status,
   statusOptions,
   saving,
+  reason = "",
+  onReasonChange,
   onReferralSourceChange,
   onStatusChange,
   onClose,
@@ -100,12 +103,32 @@ export default function ApplicationEditDialog({
               }}
             >
               {statusOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
+                <MenuItem key={option.value} value={option.value} disabled={option.disabled}>
                   {option.label}
                 </MenuItem>
               ))}
             </Select>
           </Box>
+
+          {needsReason(status) && onReasonChange ? (
+            <TextField
+              fullWidth
+              required
+              multiline
+              minRows={3}
+              label="Reason"
+              placeholder={
+                status === "on_hold"
+                  ? "Why is this application on hold?"
+                  : "Why should this candidate be rejected?"
+              }
+              value={reason}
+              onChange={(e) => onReasonChange(e.target.value)}
+              disabled={saving}
+              inputProps={{ maxLength: 1000 }}
+              helperText="Required. Shown on the application with your name."
+            />
+          ) : null}
 
           <TextField
             fullWidth

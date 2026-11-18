@@ -9,9 +9,10 @@ import {
   interviewApplicationIds,
   parseApplicationsQuery,
 } from "../../../../lib/applicationsQuery";
+import { isAdminSession } from "../../../../lib/permissions";
 
 export async function GET(req) {
-  const { error } = await requireModule("applications");
+  const { error, session } = await requireModule("applications");
   if (error) return error;
 
   const { searchParams } = new URL(req.url);
@@ -103,6 +104,7 @@ export async function GET(req) {
     total,
     newCount,
     statusCounts,
+    canReject: isAdminSession(session), // staff can't choose "Rejected"
     jobOptions,
     referralSourceOptions: referralSourceRows
       .map((row) => row.referralSource)

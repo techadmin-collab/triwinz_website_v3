@@ -3,29 +3,53 @@ import { prisma } from "../../../../../lib/prisma";
 import { requireModule } from "../../../../../lib/requireAdmin";
 import { deleteRawFile } from "../../../../../lib/cloudinary";
 import { sendApplicationRejectedEmail } from "../../../../../lib/sendApplicationEmails";
+import { isAdminSession } from "../../../../../lib/permissions";
+import { STATUS_REASON_LIMIT, needsReason } from "../../../../../lib/applicationStatus";
+
+const STATUS_LABELS = { on_hold: "On hold", marked_for_rejection: "Marked for rejection" };
 
 export async function PATCH(req, { params }) {
-  const { error } = await requireModule("applications");
+  const { error, session } = await requireModule("applications");
   if (error) return error;
 
   const { id } = await params;
   const body = await req.json();
-  const allowed = ["new", "reviewed", "shortlisted", "on_hold", "rejected", "selected"];
+  const allowed = [
+    "new",
+    "reviewed",
+    "shortlisted",
+    "on_hold",
+    "marked_for_rejection",
+    "rejected",
+    "selected",
+  ];
   const data = {};
 
   if (body.status !== undefined) {
     if (!allowed.includes(body.status)) {
       return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
+    // only admins and the super admin can reject; staff mark for rejection instead
+    if (body.status === "rejected" && !isAdminSession(session)) {
+      return NextResponse.json(
+        {
+          error: "Only admins can reject a candidate. Choose “Marked for rejection” and give a reason instead.",
+          code: "REJECT_NOT_ALLOWED",
+        },
+        { status: 403 },
+      );
+    }
     data.status = body.status;
   }
+  const reasonGiven = body.statusReason !== undefined;
+  const reason = reasonGiven ? String(body.statusReason || "").trim().slice(0, STATUS_REASON_LIMIT) : "";
 
   if (body.referralSource !== undefined) {
     const value = String(body.referralSource || "").trim();
     data.referralSource = value || null;
   }
 
-  if (Object.keys(data).length === 0) {
+  if (Object.keys(data).length === 0 && !reasonGiven) {
     return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
   }
 
@@ -36,6 +60,23 @@ export async function PATCH(req, { params }) {
 
     if (!existing) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    // On hold / Marked for rejection need a reason
+    const nextStatus = data.status ?? existing.status;
+    if (needsReason(nextStatus) && (nextStatus !== existing.status || reasonGiven)) {
+      if (!reason) {
+        return NextResponse.json(
+          { error: `Please give a reason for “${STATUS_LABELS[nextStatus]}”.` },
+          { status: 400 },
+        );
+      }
+      data.statusReason = reason;
+      data.statusReasonBy = session?.user?.name || session?.user?.email || null;
+      data.statusReasonAt = new Date();
+    }
+    if (!Object.keys(data).length) {
+      return NextResponse.json(existing);
     }
 
     // A candidate in the interview process is rejected through the interview result,

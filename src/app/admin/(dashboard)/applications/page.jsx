@@ -43,6 +43,7 @@ import ResumePreviewDialog from "../../components/ResumePreviewDialog";
 import RoundDialog from "../../components/interviews/RoundDialog";
 import AdminPageHeader from "../../components/AdminPageHeader";
 import { BRAND } from "../../../../lib/brand";
+import { needsReason } from "../../../../lib/applicationStatus";
 import { truncateText } from "../../../../lib/resumeFile";
 
 const PAGE_SIZE_OPTIONS = [5, 10, 20];
@@ -73,6 +74,7 @@ const APPLICATION_STATUSES = [
   { value: "reviewed", label: "Reviewed" },
   { value: "shortlisted", label: "Shortlisted" },
   { value: "on_hold", label: "On hold" },
+  { value: "marked_for_rejection", label: "Marked for rejection" },
   { value: "rejected", label: "Rejected" },
   { value: "selected", label: "Selected" },
 ];
@@ -89,7 +91,17 @@ const SORT_OPTIONS = [
 ];
 
 // Tabs: the statuses, plus "In interview" (shortlisted with an interview level) and "All"
-const TAB_ORDER = ["new", "interviewing", "shortlisted", "on_hold", "reviewed", "rejected", "selected", ""];
+const TAB_ORDER = [
+  "new",
+  "interviewing",
+  "shortlisted",
+  "on_hold",
+  "reviewed",
+  "marked_for_rejection",
+  "rejected",
+  "selected",
+  "",
+];
 const STATUS_TABS = TAB_ORDER.map((value) =>
   value === "interviewing"
     ? { value, label: "In interview" }
@@ -102,6 +114,28 @@ const STATUS_TABS = TAB_ORDER.map((value) =>
 function tabFromParam(value) {
   if (value === "all") return "";
   return STATUS_TABS.some((item) => item.value && item.value === value) ? value : "new";
+}
+
+function StatusReason({ row }) {
+  if (!needsReason(row.status) || !row.statusReason) return null;
+  const by = row.statusReasonBy ? ` (${row.statusReasonBy})` : "";
+  return (
+    <Tooltip title={`${row.statusReason}${by}`}>
+      <Typography
+        sx={{
+          mt: 0.25,
+          fontSize: "0.72rem",
+          color: "#6b7280",
+          maxWidth: 200,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {row.statusReason}
+      </Typography>
+    </Tooltip>
+  );
 }
 
 function normalizeStatus(status) {
@@ -134,6 +168,8 @@ export default function AdminApplicationsPage() {
   const [editReferralValue, setEditReferralValue] = useState("");
   const [editStatusValue, setEditStatusValue] = useState("new");
   const [savingApplication, setSavingApplication] = useState(false);
+  const [editReasonValue, setEditReasonValue] = useState("");
+  const [canReject, setCanReject] = useState(false); // admins only
   const [exporting, setExporting] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -208,6 +244,7 @@ export default function AdminApplicationsPage() {
     }
     const data = await res.json();
     setRows(data.items || []);
+    setCanReject(Boolean(data.canReject));
     setTotal(data.total || 0);
     setTotalPages(data.totalPages || 1);
     setNewCount(data.newCount || 0);
@@ -264,6 +301,18 @@ export default function AdminApplicationsPage() {
     },
   };
 
+  // staff can't choose "Rejected" (only admins can reject)
+  function statusOptionsFor(current) {
+    if (canReject) return APPLICATION_STATUSES;
+    return APPLICATION_STATUSES.flatMap((option) =>
+      option.value !== "rejected"
+        ? [option]
+        : current === "rejected"
+          ? [{ ...option, disabled: true }]
+          : [],
+    );
+  }
+
   function openApplicationEdit(row) {
     setApplicationEdit({
       id: row.id,
@@ -271,8 +320,10 @@ export default function AdminApplicationsPage() {
       jobTitle: row.jobTitle,
       referralSource: row.referralSource || "",
       status: normalizeStatus(row.status),
+      statusReason: row.statusReason || "",
     });
     setEditReferralValue(row.referralSource || "");
+    setEditReasonValue(needsReason(row.status) ? row.statusReason || "" : "");
     setEditStatusValue(normalizeStatus(row.status));
   }
 
@@ -290,6 +341,15 @@ export default function AdminApplicationsPage() {
     }
     if (nextStatus !== prevStatus) {
       payload.status = nextStatus;
+    }
+    const reason = editReasonValue.trim();
+    const reasonChanged = reason !== (applicationEdit.statusReason || "").trim();
+    if (needsReason(nextStatus) && (nextStatus !== prevStatus || reasonChanged)) {
+      if (!reason) {
+        toast.error(`Please give a reason for “${getStatusLabel(nextStatus)}”`);
+        return;
+      }
+      payload.statusReason = reason;
     }
 
     if (Object.keys(payload).length === 0) {
@@ -319,12 +379,14 @@ export default function AdminApplicationsPage() {
     }
   }
 
-  async function saveResumeStatus(nextStatus) {
+  async function saveResumeStatus(nextStatus, reason) {
     if (!resumeView?.id) return;
     const res = await fetch(`/api/admin/applications/${resumeView.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: nextStatus }),
+      body: JSON.stringify(
+        needsReason(nextStatus) ? { status: nextStatus, statusReason: reason } : { status: nextStatus },
+      ),
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
@@ -939,6 +1001,7 @@ export default function AdminApplicationsPage() {
                               setResumeView({
                                 id: row.id,
                                 status: normalizeStatus(row.status),
+                                statusReason: row.statusReason || "",
                                 url: row.resumeUrl,
                                 fileName: row.resumeFileName,
                                 fullName: row.fullName,
@@ -971,6 +1034,7 @@ export default function AdminApplicationsPage() {
                         <Typography variant="inherit" sx={dataTextSx}>
                           {row.inInterview ? "In interview" : getStatusLabel(row.status)}
                         </Typography>
+                        <StatusReason row={row} />
                       </TableCell>
                       <TableCell align="right">
                         <Stack
@@ -1174,7 +1238,9 @@ export default function AdminApplicationsPage() {
         application={applicationEdit}
         referralSource={editReferralValue}
         status={editStatusValue}
-        statusOptions={APPLICATION_STATUSES}
+        statusOptions={statusOptionsFor(applicationEdit?.status)}
+        reason={editReasonValue}
+        onReasonChange={setEditReasonValue}
         saving={savingApplication}
         onReferralSourceChange={setEditReferralValue}
         onStatusChange={setEditStatusValue}
@@ -1198,7 +1264,7 @@ export default function AdminApplicationsPage() {
         open={Boolean(resumeView)}
         resume={resumeView}
         onClose={() => setResumeView(null)}
-        statusOptions={APPLICATION_STATUSES}
+        statusOptions={statusOptionsFor(resumeView?.status)}
         onStatusSave={saveResumeStatus}
       />
 

@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { BRAND } from "../../../lib/brand";
+import { needsReason } from "../../../lib/applicationStatus";
 
 function fileKind(fileName = "", url = "") {
   const value = `${fileName} ${url}`.toLowerCase();
@@ -32,7 +33,8 @@ function previewUrl(url, kind) {
 
 /**
  * Optional status control: pass `statusOptions` ([{ value, label }]) and
- * `onStatusSave(nextStatus)` (async, throws on failure); `resume.status` is the current status.
+ * `onStatusSave(nextStatus, reason)` (async, throws on failure); `resume.status` is the current
+ * status and `resume.statusReason` its reason (On hold / Marked for rejection need one).
  */
 export default function ResumePreviewDialog({ open, resume, onClose, statusOptions, onStatusSave }) {
   const kind = fileKind(resume?.fileName, resume?.url);
@@ -41,19 +43,27 @@ export default function ResumePreviewDialog({ open, resume, onClose, statusOptio
   const [status, setStatus] = useState(resume?.status || "");
   const [savedStatus, setSavedStatus] = useState(resume?.status || "");
   const [saving, setSaving] = useState(false);
+  const [reason, setReason] = useState(resume?.statusReason || "");
+  const [savedReason, setSavedReason] = useState(resume?.statusReason || "");
 
   useEffect(() => {
     setStatus(resume?.status || "");
     setSavedStatus(resume?.status || "");
+    setReason(resume?.statusReason || "");
+    setSavedReason(resume?.statusReason || "");
   }, [resume]);
 
-  const changed = showStatus && status !== savedStatus;
+  const askReason = showStatus && needsReason(status);
+  const changed =
+    showStatus && (status !== savedStatus || (askReason && reason.trim() !== savedReason.trim()));
+  const missingReason = askReason && !reason.trim();
 
   async function saveStatus() {
     setSaving(true);
     try {
-      await onStatusSave(status);
+      await onStatusSave(status, reason.trim());
       setSavedStatus(status);
+      setSavedReason(reason.trim());
     } catch {
       // the page shows the error
     } finally {
@@ -119,7 +129,7 @@ export default function ResumePreviewDialog({ open, resume, onClose, statusOptio
                 sx={{ minWidth: 170, flex: { xs: 1, sm: "none" } }}
               >
                 {statusOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
+                  <MenuItem key={option.value} value={option.value} disabled={option.disabled}>
                     {option.label}
                   </MenuItem>
                 ))}
@@ -128,7 +138,7 @@ export default function ResumePreviewDialog({ open, resume, onClose, statusOptio
                 variant="contained"
                 disableElevation
                 onClick={saveStatus}
-                disabled={!changed || saving}
+                disabled={!changed || saving || missingReason}
                 sx={{
                   textTransform: "none",
                   fontWeight: 700,
@@ -139,6 +149,21 @@ export default function ResumePreviewDialog({ open, resume, onClose, statusOptio
                 {saving ? "Saving..." : "Update"}
               </Button>
             </Box>
+            {askReason ? (
+              <TextField
+                size="small"
+                required
+                multiline
+                maxRows={3}
+                label="Reason"
+                placeholder={status === "on_hold" ? "Why on hold?" : "Why reject this candidate?"}
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                disabled={saving}
+                inputProps={{ maxLength: 1000 }}
+                sx={{ mt: 1, width: { xs: "100%", sm: 340 }, display: "block", "& .MuiInputBase-root": { width: "100%" } }}
+              />
+            ) : null}
             {changed && status === "rejected" ? (
               <Typography sx={{ mt: 0.5, fontSize: "0.75rem", color: "#b91c1c", fontWeight: 600 }}>
                 The candidate will get a rejection email.

@@ -41,6 +41,7 @@ import ResumePreviewDialog from "../../../components/ResumePreviewDialog";
 import AdminPageHeader from "../../../components/AdminPageHeader";
 import StageChip from "../../../components/interviews/StageChip";
 import { BRAND } from "../../../../../lib/brand";
+import { needsReason } from "../../../../../lib/applicationStatus";
 import { truncateText } from "../../../../../lib/resumeFile";
 
 const PAGE_SIZE_OPTIONS = [5, 10, 20];
@@ -71,9 +72,32 @@ const APPLICATION_STATUSES = [
   { value: "reviewed", label: "Reviewed" },
   { value: "shortlisted", label: "Shortlisted" },
   { value: "on_hold", label: "On hold" },
+  { value: "marked_for_rejection", label: "Marked for rejection" },
   { value: "rejected", label: "Rejected" },
   { value: "selected", label: "Selected" },
 ];
+
+function StatusReason({ row }) {
+  if (!needsReason(row.status) || !row.statusReason) return null;
+  const by = row.statusReasonBy ? ` (${row.statusReasonBy})` : "";
+  return (
+    <Tooltip title={`${row.statusReason}${by}`}>
+      <Typography
+        sx={{
+          mt: 0.25,
+          fontSize: "0.72rem",
+          color: "#6b7280",
+          maxWidth: 200,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {row.statusReason}
+      </Typography>
+    </Tooltip>
+  );
+}
 
 function normalizeStatus(status) {
   if (status === "archived") return "rejected";
@@ -105,6 +129,8 @@ export default function ShortlistedJobApplicationsPage() {
   const [editReferralValue, setEditReferralValue] = useState("");
   const [editStatusValue, setEditStatusValue] = useState("shortlisted");
   const [savingApplication, setSavingApplication] = useState(false);
+  const [editReasonValue, setEditReasonValue] = useState("");
+  const [canReject, setCanReject] = useState(false); // admins only
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
@@ -120,6 +146,7 @@ export default function ShortlistedJobApplicationsPage() {
         page: String(pageToLoad),
         pageSize: String(size),
         status: "shortlisted",
+        withInterviews: "1", // this page also lists shortlisted candidates in interviews
         jobSlug: String(jobSlug),
       });
 
@@ -131,6 +158,7 @@ export default function ShortlistedJobApplicationsPage() {
       }
       const data = await res.json();
       setRows(data.items || []);
+    setCanReject(Boolean(data.canReject));
       setTotal(data.total || 0);
       setTotalPages(data.totalPages || 1);
       setFrom(data.from || 0);
@@ -162,6 +190,18 @@ export default function ShortlistedJobApplicationsPage() {
     setPage(1);
   }
 
+  // staff can't choose "Rejected" (only admins can reject)
+  function statusOptionsFor(current) {
+    if (canReject) return APPLICATION_STATUSES;
+    return APPLICATION_STATUSES.flatMap((option) =>
+      option.value !== "rejected"
+        ? [option]
+        : current === "rejected"
+          ? [{ ...option, disabled: true }]
+          : [],
+    );
+  }
+
   function openApplicationEdit(row) {
     setApplicationEdit({
       id: row.id,
@@ -169,8 +209,10 @@ export default function ShortlistedJobApplicationsPage() {
       jobTitle: row.jobTitle,
       referralSource: row.referralSource || "",
       status: normalizeStatus(row.status),
+      statusReason: row.statusReason || "",
     });
     setEditReferralValue(row.referralSource || "");
+    setEditReasonValue(needsReason(row.status) ? row.statusReason || "" : "");
     setEditStatusValue(normalizeStatus(row.status));
   }
 
@@ -188,6 +230,15 @@ export default function ShortlistedJobApplicationsPage() {
     }
     if (nextStatus !== prevStatus) {
       payload.status = nextStatus;
+    }
+    const reason = editReasonValue.trim();
+    const reasonChanged = reason !== (applicationEdit.statusReason || "").trim();
+    if (needsReason(nextStatus) && (nextStatus !== prevStatus || reasonChanged)) {
+      if (!reason) {
+        toast.error(`Please give a reason for “${getStatusLabel(nextStatus)}”`);
+        return;
+      }
+      payload.statusReason = reason;
     }
 
     if (Object.keys(payload).length === 0) {
@@ -217,12 +268,14 @@ export default function ShortlistedJobApplicationsPage() {
     }
   }
 
-  async function saveResumeStatus(nextStatus) {
+  async function saveResumeStatus(nextStatus, reason) {
     if (!resumeView?.id) return;
     const res = await fetch(`/api/admin/applications/${resumeView.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: nextStatus }),
+      body: JSON.stringify(
+        needsReason(nextStatus) ? { status: nextStatus, statusReason: reason } : { status: nextStatus },
+      ),
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
@@ -441,6 +494,7 @@ export default function ShortlistedJobApplicationsPage() {
                               setResumeView({
                                 id: row.id,
                                 status: normalizeStatus(row.status),
+                                statusReason: row.statusReason || "",
                                 url: row.resumeUrl,
                                 fileName: row.resumeFileName,
                                 fullName: row.fullName,
@@ -473,6 +527,7 @@ export default function ShortlistedJobApplicationsPage() {
                         <Typography variant="inherit" sx={dataTextSx}>
                           {getStatusLabel(row.status)}
                         </Typography>
+                        <StatusReason row={row} />
                       </TableCell>
                       <TableCell>
                         {stages[row.id] ? (
@@ -679,7 +734,9 @@ export default function ShortlistedJobApplicationsPage() {
         application={applicationEdit}
         referralSource={editReferralValue}
         status={editStatusValue}
-        statusOptions={APPLICATION_STATUSES}
+        statusOptions={statusOptionsFor(applicationEdit?.status)}
+        reason={editReasonValue}
+        onReasonChange={setEditReasonValue}
         saving={savingApplication}
         onReferralSourceChange={setEditReferralValue}
         onStatusChange={setEditStatusValue}
@@ -693,7 +750,7 @@ export default function ShortlistedJobApplicationsPage() {
         open={Boolean(resumeView)}
         resume={resumeView}
         onClose={() => setResumeView(null)}
-        statusOptions={APPLICATION_STATUSES}
+        statusOptions={statusOptionsFor(resumeView?.status)}
         onStatusSave={saveResumeStatus}
       />
 

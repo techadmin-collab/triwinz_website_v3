@@ -72,7 +72,10 @@ model JobApplication {
   resumeUrl                   String
   resumePublicId String?
   resumeFileName String?
-  status         String   @default("new") // new | shortlisted | on_hold | rejected | selected
+  status         String   @default("new") // new | reviewed | shortlisted | on_hold | marked_for_rejection | rejected | selected
+  statusReason   String?  // required for on_hold and marked_for_rejection
+  statusReasonBy String?  // admin user who gave the reason
+  statusReasonAt DateTime?
   hiringTerms    String?  // terms entered when the candidate is hired (Interviews)
   hiredAt        DateTime?
   createdAt      DateTime @default(now())
