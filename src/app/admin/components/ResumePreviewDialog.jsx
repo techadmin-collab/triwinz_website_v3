@@ -34,7 +34,7 @@ function previewUrl(url, kind) {
 /**
  * Optional status control: pass `statusOptions` ([{ value, label }]) and
  * `onStatusSave(nextStatus, reason)` (async, throws on failure); `resume.status` is the current
- * status and `resume.statusReason` its reason (On hold / Marked for rejection need one).
+ * status and `resume.statusReason` its reason (Reviewed / On hold / Marked for rejection need one).
  */
 export default function ResumePreviewDialog({ open, resume, onClose, statusOptions, onStatusSave }) {
   const kind = fileKind(resume?.fileName, resume?.url);
@@ -156,7 +156,13 @@ export default function ResumePreviewDialog({ open, resume, onClose, statusOptio
                 multiline
                 maxRows={3}
                 label="Reason"
-                placeholder={status === "on_hold" ? "Why on hold?" : "Why reject this candidate?"}
+                placeholder={
+                  status === "reviewed"
+                    ? "What did you find in your review?"
+                    : status === "on_hold"
+                      ? "Why on hold?"
+                      : "Why reject this candidate?"
+                }
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 disabled={saving}

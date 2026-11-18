@@ -6,7 +6,11 @@ import { sendApplicationRejectedEmail } from "../../../../../lib/sendApplication
 import { isAdminSession } from "../../../../../lib/permissions";
 import { STATUS_REASON_LIMIT, needsReason } from "../../../../../lib/applicationStatus";
 
-const STATUS_LABELS = { on_hold: "On hold", marked_for_rejection: "Marked for rejection" };
+const STATUS_LABELS = {
+  reviewed: "Reviewed",
+  on_hold: "On hold",
+  marked_for_rejection: "Marked for rejection",
+};
 
 export async function PATCH(req, { params }) {
   const { error, session } = await requireModule("applications");
@@ -62,7 +66,7 @@ export async function PATCH(req, { params }) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // On hold / Marked for rejection need a reason
+    // Reviewed / On hold / Marked for rejection need a reason
     const nextStatus = data.status ?? existing.status;
     if (needsReason(nextStatus) && (nextStatus !== existing.status || reasonGiven)) {
       if (!reason) {

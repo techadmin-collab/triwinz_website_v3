@@ -118,9 +118,11 @@ export default function ApplicationEditDialog({
               minRows={3}
               label="Reason"
               placeholder={
-                status === "on_hold"
-                  ? "Why is this application on hold?"
-                  : "Why should this candidate be rejected?"
+                status === "reviewed"
+                  ? "What did you find in your review?"
+                  : status === "on_hold"
+                    ? "Why is this application on hold?"
+                    : "Why should this candidate be rejected?"
               }
               value={reason}
               onChange={(e) => onReasonChange(e.target.value)}
