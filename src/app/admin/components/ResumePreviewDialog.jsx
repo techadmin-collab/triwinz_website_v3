@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { BRAND } from "../../../lib/brand";
-import { needsReason } from "../../../lib/applicationStatus";
+import { needsReason, reasonLabel, reasonPlaceholder } from "../../../lib/applicationStatus";
 
 function fileKind(fileName = "", url = "") {
   const value = `${fileName} ${url}`.toLowerCase();
@@ -155,14 +155,8 @@ export default function ResumePreviewDialog({ open, resume, onClose, statusOptio
                 required
                 multiline
                 maxRows={3}
-                label="Reason"
-                placeholder={
-                  status === "reviewed"
-                    ? "What did you find in your review?"
-                    : status === "on_hold"
-                      ? "Why on hold?"
-                      : "Why reject this candidate?"
-                }
+                label={reasonLabel(status)}
+                placeholder={reasonPlaceholder(status)}
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 disabled={saving}

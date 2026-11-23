@@ -1,6 +1,7 @@
 const ALLOWED_STATUSES = [
   "new",
   "reviewed",
+  "next_step", // technical review done: note tells HR what to do next
   "shortlisted",
   "interviewing", // not stored: open applications that have an interview level
   "on_hold",
@@ -13,7 +14,7 @@ const ALLOWED_PAGE_SIZES = [5, 10, 20];
 // Hired, rejected or marked for rejection: these stay in their own tabs even when the
 // candidate had interviews
 export const CLOSED_STATUSES = ["rejected", "archived", "selected", "marked_for_rejection"];
-const OPEN_STATUSES = ["new", "reviewed", "shortlisted", "on_hold"];
+const OPEN_STATUSES = ["new", "reviewed", "next_step", "shortlisted", "on_hold"];
 
 const ALLOWED_SORTS = {
   newest: { createdAt: "desc" },

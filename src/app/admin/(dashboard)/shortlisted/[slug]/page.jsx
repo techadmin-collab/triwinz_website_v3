@@ -70,6 +70,7 @@ const dataTextSx = {
 const APPLICATION_STATUSES = [
   { value: "new", label: "New" },
   { value: "reviewed", label: "Reviewed" },
+  { value: "next_step", label: "Next step" },
   { value: "shortlisted", label: "Shortlisted" },
   { value: "on_hold", label: "On hold" },
   { value: "marked_for_rejection", label: "Marked for rejection" },
@@ -235,7 +236,11 @@ export default function ShortlistedJobApplicationsPage() {
     const reasonChanged = reason !== (applicationEdit.statusReason || "").trim();
     if (needsReason(nextStatus) && (nextStatus !== prevStatus || reasonChanged)) {
       if (!reason) {
-        toast.error(`Please give a reason for “${getStatusLabel(nextStatus)}”`);
+        toast.error(
+          nextStatus === "next_step"
+            ? "Please write the next step for HR"
+            : `Please give a reason for “${getStatusLabel(nextStatus)}”`,
+        );
         return;
       }
       payload.statusReason = reason;

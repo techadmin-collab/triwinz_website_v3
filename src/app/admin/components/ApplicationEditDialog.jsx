@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import { BRAND } from "../../../lib/brand";
-import { needsReason } from "../../../lib/applicationStatus";
+import { needsReason, reasonLabel, reasonPlaceholder } from "../../../lib/applicationStatus";
 
 export default function ApplicationEditDialog({
   open,
@@ -116,14 +116,8 @@ export default function ApplicationEditDialog({
               required
               multiline
               minRows={3}
-              label="Reason"
-              placeholder={
-                status === "reviewed"
-                  ? "What did you find in your review?"
-                  : status === "on_hold"
-                    ? "Why is this application on hold?"
-                    : "Why should this candidate be rejected?"
-              }
+              label={reasonLabel(status)}
+              placeholder={reasonPlaceholder(status)}
               value={reason}
               onChange={(e) => onReasonChange(e.target.value)}
               disabled={saving}

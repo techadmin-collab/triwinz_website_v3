@@ -8,6 +8,7 @@ import { STATUS_REASON_LIMIT, needsReason } from "../../../../../lib/application
 
 const STATUS_LABELS = {
   reviewed: "Reviewed",
+  next_step: "Next step",
   on_hold: "On hold",
   marked_for_rejection: "Marked for rejection",
 };
@@ -21,6 +22,7 @@ export async function PATCH(req, { params }) {
   const allowed = [
     "new",
     "reviewed",
+    "next_step",
     "shortlisted",
     "on_hold",
     "marked_for_rejection",
@@ -71,7 +73,12 @@ export async function PATCH(req, { params }) {
     if (needsReason(nextStatus) && (nextStatus !== existing.status || reasonGiven)) {
       if (!reason) {
         return NextResponse.json(
-          { error: `Please give a reason for “${STATUS_LABELS[nextStatus]}”.` },
+          {
+            error:
+              nextStatus === "next_step"
+                ? "Please write the next step for HR."
+                : `Please give a reason for “${STATUS_LABELS[nextStatus]}”.`,
+          },
           { status: 400 },
         );
       }
